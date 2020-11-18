@@ -35,7 +35,6 @@ class User extends Authenticatable
     //　リレーションの定義
     //
     public function dept() {
-        // return $this->belongsTo( 'App\Models\Vacation\Dept' );
         return $this->belongsTo( 'App\Models\Dept' );
     }
     public function department() {

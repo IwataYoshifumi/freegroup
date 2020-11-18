@@ -108,7 +108,7 @@
                     <div class="col-12"></div>
                 @endif
                 
-                @if (Route::has('customer.login'))
+                @if (Route::has('customer.login') and 0 )
                     @auth( 'customer' )
                         <a href="{{ url('/customer/home') }}">Customer Home</a>
                     @else
@@ -122,17 +122,12 @@
             </div>
 
             <div class="content">
-                <div class="title m-b-md">
-                    Laravel 開発ベース
-                </div>
+                <h1 class="m-b-md">
+                    グループウエア  FreeGroup
+                </h1>
 
-                <div class="links">
-                    <a href="{{ route( 'mail_order.create' ) }}">メールオーダー</a>
-                    <a href="{{ route( 'sansan.form'       ) }}">Sansan API</a>
-                    <a href="{{ route( 'test.myform.input' ) }}">入力フォームテスト</a>
-                    <a href="{{ route( 'calendar.index'    ) }}">Googleカレンダー</a>
-                    <a href="">app</a>
-                    <a href="">app</a>
+                <div class="bottom-right links">
+                	<a href="https://www.network-tokai.jp">©　株式会社ネットワーク東海</a>
                 </div>
             </div>
         </div>

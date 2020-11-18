@@ -16,16 +16,13 @@ class CreateCustomersTable extends Migration
         Schema::create('customers', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            // $table->string('email')->unique()->nullable();
             $table->string('email')->nullable();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password')->nullable();
-            $table->rememberToken();
-            $table->timestamps();
+            //$table->timestamp('email_verified_at')->nullable();
+            //$table->string('password')->nullable();
+            //$table->rememberToken();
 
             // customer 用カラム
             //
-            // $table->string('login_id')->unique()->nullable();
             $table->string('kana')->nullable();
             $table->string('zip_code')->nullable();
             $table->string('prefecture')->nullable();
@@ -43,10 +40,8 @@ class CreateCustomersTable extends Migration
             // $table->string( 'salse_force_id')->nullable();
             $table->string( 'salseforce_id')->nullable();
             
-            // ソフトデリート
-            //
             $table->softDeletes();
-
+            $table->timestamps();
         });
     }
 

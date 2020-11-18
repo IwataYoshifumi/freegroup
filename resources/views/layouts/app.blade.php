@@ -33,8 +33,6 @@
 
 </head>
     
-    
-    <!--include( 'layouts.vacation.app' )-->
     @include( 'layouts.groupware.app' )
 
 </html>

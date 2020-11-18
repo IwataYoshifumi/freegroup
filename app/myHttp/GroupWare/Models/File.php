@@ -41,7 +41,6 @@ class File extends Model {
     }
     
     public function schedule_types() {
-        // return $this->hasMany( ScheduleType::class );
         return $this->morphedByMany( ScheduleType::class, 'fileable' );
     }
     

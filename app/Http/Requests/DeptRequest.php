@@ -29,13 +29,11 @@ class DeptRequest extends FormRequest
     {
         switch( Route::currentRouteName() ){
             
-            case "vacation.dept.store":
             case "dept.store":
                 $rules = [  'name' => ['required', 'string', 'max:255', Rule::unique( 'depts', 'name' ), ],
 
                         ];
                 break;
-            case "vacation.dept.update":
             case "dept.update":
                 $rules = [  'name' => ['required', 'string', 'max:255',Rule::unique('depts')->ignore( Request::input('id') ) ],
 

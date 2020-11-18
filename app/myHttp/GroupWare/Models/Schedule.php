@@ -62,26 +62,18 @@ class Schedule extends Model {
     
     //　関連社員
     public function users() {
-        // return $this->belongsToMany( User::class, 'relations', 'schedule_id', 'user_id' );
-        // return $this->belongsToMany( User::class, 'r_schedules_users', 'schedule_id', 'user_id' );
-        // return $this->morphedByMany( User::class, 'scheduleable' );
         return $this->morphedByMany( User::class, 'scheduleable' )->withPivot( 'google_calendar_event_id' );
     }
     
     public function customers() {
-        // return $this->belongsToMany( Customer::class, 'relations', 'schedule_id', 'customer_id' );
-        // return $this->belongsToMany( Customer::class, 'r_schedules_customers', 'schedule_id', 'customer_id' );
         return $this->morphedByMany( Customer::class, 'scheduleable' );
     }
 
     public function reports() {
-        // return $this->belongsToMany( Report::class, 'relations', 'schedule_id', 'report_id' );
-        // return $this->belongsToMany( Report::class, 'r_schedules_reports', 'schedule_id', 'report_id' );
         return $this->morphToMany( Report::class, 'reportable' );
     }
     
     public function files() {
-        // return $this->belongsToMany( MyFile::class, 'r_files_schedules', 'schedule_id', 'file_id' );
         return $this->morphToMany( MyFile::class, 'fileable' );
     }
     

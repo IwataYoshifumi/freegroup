@@ -39,12 +39,10 @@ class Report extends Model {
     }
     
     public function users() {
-        // return $this->belongsToMany( User::class, 'r_reports_users', 'report_id', 'user_id' );
         return $this->morphedByMany( User::class, 'reportable' );
     }
 
     public function customers() {
-        // return $this->belongsToMany( Customer::class, 'r_reports_customers', 'report_id', 'customer_id' );
         return $this->morphedByMany( Customer::class, 'reportable' );
     }
     
@@ -53,7 +51,6 @@ class Report extends Model {
     }
 
     public function files() {
-        // return $this->belongsToMany( MyFile::class, 'r_files_reports', 'report_id', 'file_id' );
         return $this->morphToMany( MyFile::class, 'fileable' );
     }
 

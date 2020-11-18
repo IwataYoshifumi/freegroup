@@ -8,9 +8,7 @@ use Illuminate\Http\Request;
 use DB;
 use App\Http\Controllers\Controller;
 
-// use App\Models\Vacation\Dept;
 use App\Models\Dept;
-// use App\Http\Requests\Vacation\DeptRequest;
 use App\Http\Requests\DeptRequest;
 use App\Http\Helpers\BackButton;
 

@@ -10,9 +10,9 @@ use App\Models\Customer;
 
 use App\myHttp\GroupWare\Models\Schedule;
 use App\myHttp\GroupWare\Models\ScheduleType;
-use App\myHttp\GroupWare\Controllers\ScheduleController;
+use App\myHttp\GroupWare\Models\Dept;
 
-use App\Models\Vacation\Dept;
+use App\myHttp\GroupWare\Controllers\ScheduleController;
 
 #dump( Request::all() );
 #dump( session( 'back_button' ) );

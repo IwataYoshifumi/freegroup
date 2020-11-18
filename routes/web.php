@@ -127,20 +127,6 @@ Route::middleware('auth:admin')->namespace( 'Admin' )->prefix( 'admin' )->name( 
 
 // Customerモデル
 //
-Route::namespace('Customer')->prefix('customer')->name('customer.')->group(function () {
-    
-    Auth::routes([
-        'register' => false,
-        'reset'    => true,
-        'verify'   => false
-    ]);
-    Route::middleware('auth:customer')->group(function () {
-        Route::get( '/',           'HomeController@index' );
-        Route::get( '/home',       'HomeController@index'                )->name( 'home' );
-        Route::get( '/change_password',  'CustomerController@password'      )->name( 'change_password' );
-        Route::post('/change_password',  'CustomerController@updatePassword')->name( 'change_password' );
-    });
-});
 Route::middleware('auth:user')->namespace( 'Customer' )->prefix( 'customer' )->name( 'customer.' )->group(function () {
 
         Route::get( '/{customer}',      'CustomerController@show'            )->name('show'  )->where( 'customer', '\d+' );
@@ -153,8 +139,6 @@ Route::middleware('auth:user')->namespace( 'Customer' )->prefix( 'customer' )->n
         Route::get( '/{customer}/delete',  'CustomerController@delete'     )->name('delete')->where( 'customer', '\d+' );
         Route::delete( '/{customer}/delete',  'CustomerController@deleted'   )->name('deleted')->where( 'customer', '\d+' );
         
-        // Route::get( '/select',     'CustomerController@select'          )->name('select');
-        // Route::post('/retire',     'CustomerController@retire'          )->name('retire');
         Route::get( '/csv',        'CustomerController@csv'             )->name('csv'   );
         
         //  JSON
@@ -173,56 +157,15 @@ Route::middleware('auth:user')->namespace( 'Customer' )->prefix( 'customer' )->n
                 ]);
 });
 
-// 有給休暇申請システム
-// 
-// VacationRouter::route(); 
-
-// グループウェアシステム
+// グループウエアシステム
 //
 GroupWareRouter::route();
 
-// 試験用ルート（未承認ルート含む）
+// テストルート
 //
-Route::prefix('/')->group( function() {
-    
-    // Google カレンダーテスト
-    //
-    // Route::resource( 'calendar', 'GoogleCalendarController' );
-    Route::get(  'calendar/',       'GoogleCalendarController@index'   )->name( 'calendar.index'  );
-    Route::get(  'calendar/create', 'GoogleCalendarController@create'  )->name( 'calendar.create' );
-    Route::post( 'calendar/create', 'GoogleCalendarController@store'   )->name( 'calendar.store'  );
-    Route::get(  'calendar/{gid}/edit/', 'GoogleCalendarController@edit' )->name( 'calendar.edit'   )->where( 'gid', '\w+' ); 
-    Route::post( 'calendar/{gid}/edit/', 'GoogleCalendarController@update' )->name( 'calendar.update' )->where( 'gid', '\w+' ); 
-    
-    config( [   'calendar.create' => '新規予定', 
-                'calendar.store'  => '新規予定',
-                'calendar.edit'   => '新規予定',
-                'calendar.update' => '新規予定',
-                'calendar.index'  => '予定一覧',
-            ]);
-    
-    
-    // 注文情報をメールで送信
-    //
-    Route::name('mail_order.')->group( function() {
-        Route::get(  '/mail_order/create',        'MailOrderController@create'  )->name( 'create' );
-        Route::post( '/mail_order/store',         'MailOrderController@store'   )->name( 'store'  );
-        Route::get(  '/mail_order/index',         'MailOrderController@index'   )->name( 'index'  );
-        Route::get(  '/mail_order/{order}',       'MailOrderController@show'    )->name( 'show'   )->where( 'order', '\d+' );
-    });
-    
-    //　入力フォームテスト
-    //
-    Route::get( '/test/myform/input', 'TestMyFormController@input' )->name('test.myform.input');
-            
-    //   Sansanフォーム
-    //
-    Route::name('sansan.')->group( function() {
-        Route::get(  '/sansan/form', 'SansanController@form' )->name('form');
-        Route::post( '/sansan/api',  'SansanController@api'  )->name('api' );
-    });
+// Route::prefix('/')->group( function() {
 
-});
+// });
 
 //　戻るボタンのルート
 //

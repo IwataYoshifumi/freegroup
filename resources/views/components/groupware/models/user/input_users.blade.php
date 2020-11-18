@@ -1,6 +1,6 @@
 @php
     use App\myHttp\GroupWare\Models\User;
-    use App\Models\Vacation\Dept;
+    use App\myHttp\GroupWare\Models\Dept;
 
 @endphp
 

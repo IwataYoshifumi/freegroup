@@ -22,19 +22,9 @@ class CreateUsersTable extends Migration
             $table->boolean('retired')->default(false);
             $table->date('date_of_retired')->nullable();
 
-            // 下記、有給休暇申請システム用カラム
-            //
-            $table->string( 'code' )->unique()->nullalbe(); //社員ID
-            $table->foreignID('dept_id');
+            $table->foreignID('dept_id')->nullalble();
             $table->string('grade')->nullable();
-            $table->date('join_date')->nullable(); // 入社年月日
-            $table->string('carrier')->nullable(); // 中途・新卒
-            $table->string('memo')->nullable();
-            $table->text('browsing');               // 閲覧権限
-            $table->integer('apploval_master_id')->nullable(); // 申請マスター
-            //
-            // 上記まで有給休暇申請システム用カラム
-            
+
             $table->rememberToken();
             $table->timestamps();
         });
