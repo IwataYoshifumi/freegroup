@@ -1,0 +1,271 @@
+/*
+BootstrapのＣＳＳ定義集
+
+.btn-primary {
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-secondary {
+    color: #fff;
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+.btn-success {
+    color: #fff;
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.btn-danger {
+    color: #fff;
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.btn-warning {
+    color: #212529;
+    background-color: #ffc107;
+    border-color: #ffc107;
+}
+
+.btn-info {
+    color: #fff;
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+}
+
+.btn-dark {
+    color: #fff;
+    background-color: #343a40;
+    border-color: #343a40;
+}
+
+.btn-outline-primary {
+    color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-outline-secondary {
+    color: #6c757d;
+    border-color: #6c757d;
+}
+
+.btn-outline-success {
+    color: #28a745;
+    border-color: #28a745;
+}
+
+.btn-outline-danger {
+    color: #dc3545;
+    border-color: #dc3545;
+}
+
+.btn-outline-warning {
+    color: #ffc107;
+    border-color: #ffc107;
+}
+
+.btn-outline-info {
+    color: #17a2b8;
+    border-color: #17a2b8;
+}
+
+.btn-outline-light {
+    color: #f8f9fa;
+    border-color: #f8f9fa;
+}
+
+.btn-outline-dark {
+    color: #343a40;
+    border-color: #343a40;
+}
+
+*/
+
+.btn-create {
+    /* btn-primary */
+    color: #fff;
+    background-color: #3490dc;
+    border-color: #3490dc;
+}
+
+.btn-index {
+    /* btn-outline-secondary */
+    color: #6c757d;
+    border-color: #6c757d;
+}
+
+.btn-show {
+    /* btn-outline-secondary */
+    color: #6c757d;
+    border-color: #6c757d;
+}
+
+.btn-detail {
+    color: #6c757d;
+    border-color: #6c757d;
+}
+
+.btn-update {
+    color: #212529;
+    background-color: #ffc107;
+    border-color: #ffc107;
+}
+
+.btn-delete {
+    color: #fff;
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.btn-submit {
+    color: #fff;
+    background-color: #3490dc;
+    border-color: #3490dc;
+}
+
+.btn-menu {
+    color: #6c757d;
+    border-color: #6c757d;
+}
+
+.btn-search {
+    color: #000000;
+    background-color: #dddddd;
+    border-color: #bbbbbb;
+}
+
+.btn-back {
+    color: #fff;
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+.links {
+    color: #636b6f;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+.schedule {
+    font-style: normal;
+    font-size: small;
+    text-align: left;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.mine {
+    font-weight: bold;
+}
+
+.others {
+    font-weight: lighter;
+}
+
+.nowrap {
+    white-space: nowrap;
+    
+}
+
+.input_clear_btn {
+    position: absolute;
+    right: 5px;
+    top: 0;
+    bottom: 0;
+    height: 14px;
+    margin: auto;
+    font-size: 14px;
+    cursor: pointer;
+    color: #ccc;
+}
+
+
+.search.icon {
+  color: #000;
+  position: absolute;
+  margin-top: 2px;
+  margin-left: 3px;
+  width: 12px;
+  height: 12px;
+  border: solid 1px currentColor;
+  border-radius: 100%;
+  -webkit-transform: rotate(-45deg);
+          transform: rotate(-45deg);
+}
+
+.search.icon:before {
+  content: '';
+  position: absolute;
+  top: 12px;
+  left: 5px;
+  height: 6px;
+  width: 1px;
+  background-color: currentColor;
+}
+
+.download.icon {
+  color: #000;
+  position: absolute;
+  margin-left: 3px;
+  margin-top: 12px;
+  width: 13px;
+  height: 4px;
+  border-radius: 1px;
+  border: solid 1px currentColor;
+  border-top: none;
+}
+
+.download.icon:before {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: -9px;
+  width: 1px;
+  height: 10px;
+  background-color: currentColor;
+}
+
+.download.icon:after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: -4px;
+  width: 4px;
+  height: 4px;
+  border-top: solid 1px currentColor;
+  border-right: solid 1px currentColor;
+  -webkit-transform: rotate(135deg);
+          transform: rotate(135deg);
+}
+
+.cal_cell_style {
+    min-width:180px;
+    max-width:240px;
+    max-height:200px;
+    min-height:160px;
+}
+
+.cal_cell_header_style {
+    margin-left: -12px;
+    margin-right: -12px;
+    margin-top: -12px;
+    
+    padding-left: 12px;
+    padding-top: 12px;
+    padding-bottom: 12px
+    
+}
+
+.cal_table_style {
+    min-width: 1680px;
+}
+
+.application_style {
+    
+    
+    
+}

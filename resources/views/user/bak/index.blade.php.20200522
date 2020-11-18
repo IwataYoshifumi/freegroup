@@ -1,0 +1,80 @@
+@extends('layouts.app')
+
+@php
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\URL;
+
+use App\User;
+
+#dump( Request::all() );
+#dump( session( 'back_button' ) );
+@endphp
+
+
+@section('content')
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-12">
+            @include( 'user.menu' )
+
+            <div class="card">
+                <div class="card-header">{{ config( Route::currentRouteName() ) }}</div>
+
+                <div class="card-body">
+                    @include( 'layouts.flash_message' )
+                    @include( 'layouts.error' )
+
+                    @include( 'user.find' )
+
+                    <hr>
+
+                    <table class='table table-bordered table-hover'>
+                        <tr class='text-center thead-light'>
+                            <th>アクション</th>
+                            <th>名前</th>
+                            <th>メール</th>
+                            @if( ! empty( $show['retired']         )) <th>退社</th> @endif
+                            @if( ! empty( $show['date_of_retired'] )) <th>退社日</th> @endif
+                        </tr>
+                        @foreach( $users as $user ) 
+                            <tr class="text-center">
+                                <td class="wp-auto">
+                                    @if( Route::currentRouteName() == 'allocate.select' ) 
+                                        {{ Form::checkbox( "users[$id]", $id, old( "user[$id]" ), ['class' => 'user-checkbox' ] ) }}
+                                    @else
+                                        <a class="show-btn btn btn-sm btn-outline-primary text-primary" 
+                                                href="{{ route( 'user.show', [ 'user' => $user->id ] ) }}">詳細</a>
+                                        <a class="show-btn btn btn-sm btn-outline-primary text-primary" 
+                                                href="{{ route( 'user.edit', [ 'user' => $user->id ] ) }}">変更</a>
+                                    @endif
+                                </td>
+                                <td>{{ $user->name  }}</td>
+                                <td>{{ $user->email }}</td>
+                                @if( ! empty( $show['retired']         )) <td>@if( $user->retired ) 退社 @else &nbsp; @endif</td> @endif
+                                @if( ! empty( $show['date_of_retired'] )) <td>{{ $user->date_of_retired }}</td> @endif
+                                
+                            </tr>
+                        @endforeach
+            
+                    </table>
+                    @if( isset( $find['pagination'] )) 
+                        {{ $users->appends( [ 'find' => $find ] )->links() }}
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@php
+@endphp
+
+
+
+
+@endsection
+

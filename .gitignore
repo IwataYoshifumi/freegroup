@@ -1,0 +1,34 @@
+## Composer ##
+conposer.phar
+composer.json
+composer.lock
+/node_modules
+/public/hot
+/public/storage
+/storage/*.key
+/vendor
+
+### PHP Coding Standards Fixer ###
+.php_cs.cache
+
+## Laravel ##
+.env
+.env.example
+.env.backup
+.phpunit.result.cache
+.my.cnf
+/storage
+package.json
+phpunit.xml
+server.php
+webpack.mix.js
+
+## Laravel Homestead ##
+/.vagrant
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+
+## MySQL dumpfile ##
+*.mysqldump

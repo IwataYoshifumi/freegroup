@@ -1,0 +1,293 @@
+<?php 
+
+namespace App\Http\Helpers;
+
+use Illuminate\Support\HtmlString;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Requests;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
+
+use Google_Client;
+use Google_Service_Calendar;
+use Google_Service_Tasks;
+use Google_Service_Calendar_Event;
+use Google_Service_Calendar_EventDateTime;
+use Google_Service_Exception;
+use Spatie\GoogleCalendar\Event;
+
+use App\myHttp\GroupWare\Models\Schedule;
+use App\myHttp\GroupWare\Models\ScheduleType;
+use App\myHttp\GroupWare\Models\User;
+
+class MyGoogleCalendar {
+
+    // Google カレンダー同期情報
+    public $calendar_id;
+    public $private_key;
+    
+    // Google_Calender_Event_ID 変更・削除対象の既存GoogleカレンダーID
+    public $event_id;
+    
+    public $client;  // Google_Client 
+    public $service; // Google_Service_Calendar
+    
+    public $event;   // Google_Calendar_Event
+    public $new_event; // Google_Calendar_Event
+    
+    public $schedule; // Scheduleクラス
+    
+    public $inputs;  // Calendar Data [ start, end, summary, location, description, url ... ]
+
+    //　初期化・Google カレンダーへ接続
+    //
+    
+    //　第一引数　Schedule クラス（必須）
+    //　第２引数　Google Calendar Event ID　（任意）
+    //  第３引数　ScheduleType クラス（Google同期情報、任意）
+    private function init() {
+    
+        $a = func_get_args();
+        $i = func_num_args();
+        // dump( $a, $i );
+        if (method_exists($this,$f='init_'.$i)) {
+            call_user_func_array(array($this,$f),$a);
+        } else {
+            dump( get_class(), 'NULL');
+            return null;
+        }
+        
+        return $this;
+    }
+
+    private function init_1( Schedule $schedule ) {
+        if( ! $schedule instanceof Schedule ) { dd( 'MyGoogleCalendar Error : 第一引数はScheduleクラスでなければなりません。 ', $schedule ); }
+        dump( get_class(), $schedule );
+        $this->schedule = $schedule;
+        $this->calendar_id = $schedule->schedule_type->google_calendar_id;
+        $this->private_key = $schedule->schedule_type->google_private_key_file();
+        if( ! $this->get_client() ) { return null; }
+        
+        // dd( $this);
+
+        return $this;
+    }
+    
+    private function init_2( Schedule $schedule, $google_calendar_event_id ) {
+
+        if( ! $schedule instanceof Schedule ) { dd( 'MyGoogleCalendar Error : 第一引数はScheduleクラスでなければなりません。 ', $schedule, $google_calendar_event_id ); }
+        if( ! is_string( $google_calendar_event_id)) { dd( 'MyGoogleCalendar Error : 第２引数はGoogle Calendar Event IDでなければなりません。', $schedule, $google_calendar_event_id ); }
+
+        $this->schedule = $schedule;
+        $this->event_id = $google_calendar_event_id;
+        $this->calendar_id = $schedule->schedule_type->google_calendar_id;
+        $this->private_key = $schedule->schedule_type->google_private_key_file();
+        if( ! $this->get_client() ) { return null; }
+        
+        $event = $this->service->events->get( $this->calendar_id, $this->event_id );
+        
+        if( empty( $event ) or ( $event->getStatus() == "cancelled" )) {
+            $this->event = null;
+        } else {
+            $this->event = $event;   
+        }
+        
+        return $this;
+        
+    }
+
+    private function init_3( Schedule $schedule,  $google_calendar_event_id, ScheduleType $schedule_type ) {
+        if( ! $schedule instanceof Schedule ) { dd( 'MyGoogleCalendar Error : 第一引数はScheduleクラスでなければなりません。 ', $schedule, $google_calendar_event_id ); }
+        if( ! $schedule_type instanceof ScheduleType ) { dd( 'MyGoogleCalendar Error : 第３引数はScheduleクラスでなければなりません。', $schedule_type ); }
+
+        $this->schedule = $schedule;
+        $this->event_id = $google_calendar_event_id;
+        $this->calendar_id = $schedule_type->google_calendar_id;
+        $this->private_key = $schedule_type->google_private_key_file();
+        if( ! $this->get_client() ) { return null; }
+        
+        $event = $this->service->events->get( $this->calendar_id, $this->event_id );
+        
+        if( empty( $event ) or ( $event->getStatus() == "cancelled" )) {
+            $this->event = null;
+        } else {
+            $this->event = $event;   
+        }
+        
+        return $this;
+    } 
+    
+    // Googleカレンダーへ接続( called from init** )
+    //
+    private function get_client() {
+    
+        $client = new Google_Client();
+        $client->setApplicationName('Network Tokai Groupware');
+        $client->setScopes( Google_Service_Calendar::CALENDAR );
+        $client->setAuthConfig( storage_path( 'app/'. $this->private_key->path ));
+        
+        $this->service = new Google_Service_Calendar( $client );        
+        $this->client = $client;
+
+        return $client;
+    }
+    
+    // Googleカレンダー同期用のデータ作成( called from create/update)
+    //
+    private function init_google_calendar_event_data() {
+        $this->event = self::get_google_event_data( $this->schedule );
+    }
+
+    
+    public function create() {
+        
+        // 引数の初期化
+        $a = func_get_args();
+        $i = func_num_args();
+        if (method_exists($this,$f='init_'.$i)) {
+            call_user_func_array(array($this,$f),$a);
+        } else {
+            dump( get_class(), 'argv NG');
+            return null;
+        }
+        $this->init_google_calendar_event_data();
+        
+        $this->new_event = $this->service->events->insert( $this->calendar_id, $this->event );
+        $this->event_id = $this->new_event->id;
+        return $this->event_id;
+    }
+    
+    public function update() {
+
+        // 引数の初期化
+        $a = func_get_args();
+        $i = func_num_args();
+        if (method_exists($this,$f='init_'.$i)) {
+            call_user_func_array(array($this,$f),$a);
+        } else {
+            dump( get_class(), 'argv NG');
+            return null;
+        }
+        $this->init_google_calendar_event_data();
+
+        try {
+            if( empty( $this->event_id )) {
+                $this->new_event = $this->service->events->insert( $this->calendar_id, $this->event );
+                $this->event_id = $this->new_event->id;
+            } else {
+                $this->new_event = $this->service->events->update( $this->calendar_id, $this->event_id, $this->event );
+                $this->event_id = $this->new_event->id;
+            }
+            // dump( $this->event_id );
+            
+        } catch( Google_Service_Exception $e ) {
+            session::flash( 'info_message', 'Googleカレンダーの同期処理ができませんでした。Googleカレンダーとスケジュール種別　双方の設定を確認してください。');
+            return null;
+            
+        }
+        return $this->event_id;
+        
+    }
+    
+    public function delete() {
+        // 引数の初期化
+        $a = func_get_args();
+        $i = func_num_args();
+        if (method_exists($this,$f='init_'.$i)) {
+            call_user_func_array(array($this,$f),$a);
+        } else {
+            dump( get_class(), 'argv NG');
+            return null;
+        }
+
+        try {
+            $this->service->events->delete( $this->calendar_id, $this->event_id );
+            
+        } catch( Google_Service_Exception $e ) {
+            session::flash( 'info_message', 'Googleカレンダーの同期処理ができませんでした。Googleカレンダーとスケジュール種別　双方の設定を確認してください。');
+            return null;
+        }
+    }
+
+    //
+    // Static 関数
+    //
+    public static function get_google_service( ScheduleType $schedule_type ) {
+
+        $client = new Google_Client();
+        $client->setApplicationName('Network Tokai Groupware');
+        $client->setScopes( Google_Service_Calendar::CALENDAR );
+        $client->setAuthConfig( storage_path( 'app/'. $schedule_type->google_private_key_file()->private_key->path ));
+        $service = new Google_Service_Calendar( $client );        
+
+        return $service;
+        
+    }
+    
+    public static function get_google_event_data( Schedule $schedule ) {
+        
+        $start = new Google_Service_Calendar_EventDateTime();
+        $end   = new Google_Service_Calendar_EventDateTime();
+        $start->setTimeZone( config( 'app.timezone') );
+        $end->setTimeZone( config( 'app.timezone') );
+
+        if( $schedule->period == '時間') {
+            $start->setDateTime( $schedule->start_time );
+            $end->setDateTime( $schedule->end_time );
+        } else {
+            $start->setDate( Carbon::create( $schedule->start_time )->format( 'Y-m-d' ) );
+            $end->setDate( Carbon::create( $schedule->end_time )->format( 'Y-m-d' ) );
+        }
+        $inputs = [   'start'       => $start, 
+                      'end'         => $end,
+                      'summary'     => $schedule->name,
+                      'location'    => $schedule->place,
+                      'description' => $schedule->memo . '\r\n' . route( 'groupware.schedule.show', [ 'schedule' => $schedule->id ] ),
+                    ];
+        
+        $event = new Google_Service_Calendar_Event( $inputs );
+
+        return $event;
+        
+    }
+    
+    public static function insert_event( Google_Service_Calendar $service, Google_Service_Calendar_Event $event, string $calendar_id ) {
+        try {
+            $new_event = $service->events->insert( $calendar_id, $event );
+        } catch( Google_Service_Exception $e ) {
+            session::flash( 'info_message', 'Googleカレンダーの同期処理ができませんでした。Googleカレンダーとスケジュール種別　双方の設定を確認してください。');
+            return null;
+        }
+        return $new_event->event_id;
+    }
+    
+    public static function update_event( Google_Service_Calendar $service, Google_Service_Calendar_Event $event, string $calendar_id, string $event_id ) {
+        try {
+            if( ! is_null( $event_id )) {
+                $new_event = $service->events->update( $calendar_id, $event_id, $event );
+            } else {
+                $new_event = $service->events->insert( $calendar_id, $event );
+            }
+
+        } catch( Google_Service_Exception $e ) {
+            session::flash( 'info_message', 'Googleカレンダーの同期処理ができませんでした。Googleカレンダーとスケジュール種別　双方の設定を確認してください。');
+            return null;
+        }
+        return $new_event->event_id;
+    }
+    
+    public static function delete_event( Google_Service_Calendar $service, string $calendar_id, string $event_id ) {
+        try {
+            $service->events->delete( $calendar_id, $event_id );
+        } catch( Google_Service_Exception $e ) {
+            session::flash( 'info_message', 'Googleカレンダーの同期処理ができませんでした。Googleカレンダーとスケジュール種別　双方の設定を確認してください。');
+            return null;
+        }
+        return true;
+    }
+    
+    
+
+}
+

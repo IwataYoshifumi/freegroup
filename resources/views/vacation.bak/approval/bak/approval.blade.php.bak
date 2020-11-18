@@ -1,0 +1,206 @@
+@extends('layouts.app')
+
+@php
+
+    // Viewの引数
+    // url 
+    // Approvalモデル　approval 
+    //
+
+    use App\Application;
+    use App\User;
+    use App\Dept;
+
+    #$approver      = Auth::user();
+    $approver      = $approval->approver;
+    $application   = $approval->application;
+    $applicant     = $application->user;
+    $current_route = Route::current()->getName();
+    
+    $show_btn = TRUE;
+    
+    
+    
+switch( $current_route ) {
+
+    case "approval.approval"  :
+        $show_btn = TRUE;
+        $approve_btn = [ 'html' => '承認確認', 'class' => '' ];
+        $reject_btn  = [ "html" => "申請却下", "class" => "" ];
+        $method = 'get';
+        $back_btn = [ 'url' => url()->previous(), 'html' => '戻る' ];
+        break;
+
+    case "approval.comfirm" :
+        $show_btn = TRUE;
+        $approve_btn = [ 'html' => '承認実行', 'class' => '' ];
+        $reject_btn  = [ "html" => "申請却下", "class" => "invisible" ];
+        $method = 'post';
+        $back_btn = [ 'url' => url()->previous(), 'html' => '戻る' ];
+        break;
+        
+    case "approval.approve" : 
+        $show_btn = FALSE;
+        $approve_btn = [ 'html' => '承認完了', 'class' => 'invisible' ];
+        $reject_btn  = [ "html" => "申請却下", "class" => "invisible" ];
+        $method = 'post';
+        $show_btn = FALSE;
+        $back_btn = [ 'url' => route( 'home' ), 'html' => 'ホーム' ];
+        break;
+    
+    case "approval.reject" :
+        $show_btn = TRUE;
+        $approve_btn = [ 'html' => '', 'class' => 'invisible' ];
+        $reject_btn = [ "html" => "申請却下実行", "class" => "" ];
+        $method = 'post';
+        $back_btn = [ 'url' => url()->previous(), 'html' => '戻る' ];
+        break;   
+
+    case "approval.rejectDone" :
+        $show_btn = FALSE;
+        $approve_btn = [ 'html' => '', 'class' => 'invisible' ];
+        $reject_btn  = [ "html" => "申請却下実行", "class" => "invisible" ];
+        $method = 'post';
+        $back_btn = [ 'url' => route( 'home' ), 'html' => 'ホーム' ];
+        break;   
+
+
+        
+}
+
+
+@endphp
+
+
+
+@section('content')
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-10">
+            <div class="card">
+                <div class="card-header bg-primary text-white font-wight-bold">休暇承認( ID {{ $approval->id }} ）</div>
+
+                @if(session('flash_message'))
+                    <div class="comfirm_message">
+                        {{ session('flash_message') }}
+                    </div>
+                @endif
+
+
+                <div class="card-body">
+
+                    <div class="border border-dark rounded mb-2">
+                        <h6 class="bg-primary text-white w-100 p-2">承認者( {{ $approver->id }} ）</h6>
+                        <div class="row m-1">
+                            <div class="col-sm-3 m-1 bg-light align-middle">{{ $approver->department->name }}</div>
+                            <div class="col-sm-2 m-1 bg-light align-middle">{{ $approver->grade }}</div>
+                            <div class="col-sm-4 m-1 bg-light align-middle">{{ $approver->name }}</div>
+                        </div>
+                    </div>
+
+
+                            
+                        @php 
+                            $statusClass = ['承認待ち'   => 'alert-primary font-weight-bold text-primary', 
+                                            '却下'     => 'alert-danger font-weight-bold text-danger',
+                                            '取り下げ' => 'alert-warning font-weight-bold',
+                                            '休暇取得完了' => 'alert-success font-weight-bold' ];
+                        @endphp
+                        <div class="border border-dark rounded mb-2">
+                            <h6 class="bg-primary text-white w-100 p-2">申請者( {{ $applicant->id }} ）</h6>
+                            <div>    
+                            <table class='table table-border m-1 w-75'>
+                            <tr class='table table-border'>
+                                <th>部署</th>
+                                <td>{{ $applicant->department->name }}</td>
+                            </tr><tr class='table table-border'>
+                                <th>役職</th>
+                                <td>{{ $applicant->grade }}</td>
+                            </tr><tr class='table table-border'>
+                                <th>申請者</th>
+                                <td>{{ $applicant->name }}</td>
+                            </table>
+                            </div>
+                        </div>      
+                                
+                        <div class="border border-dark rounded mb-2">
+                            <h6 class="bg-primary text-white w-100 p-2">申請内容( {{ $application->id }} ）</h6>
+                        
+                            <div class="row m-1">
+                            <table class='table table-border m-1 w-75'>      
+                                </tr><tr class='table table-border'>
+                                    <th>休暇種別</th>
+                                    <td>{{ $application->type }}</td>
+                                </tr><tr class='table table-border'>
+                                    <th>申請日</th>
+                                    <td>{{ $application->date }}</td>
+                                </tr><tr class='table table-border'>
+                                    <th>休暇期間</th>
+                                    <td>{{ $application->start_date }}～{{ $application->end_date }}</td>
+                                </tr><tr class='table table-border'>
+                                    <th>休暇日数</th>
+                                    <td>{{ $application->num }}</td>
+                                </tr><tr class='table table-border'>
+                                    <th>ステータス</th>
+                                    <td>{{ $application->status }}</td>
+                                </tr><tr class='table table-border'>
+                                    <th>理由</th>
+                                    <td>{{ $application->reason }}</td>
+                                </tr>
+                                
+                                
+                                
+                                <tr>
+                                    <td>
+                                        @if( $show_btn && $approver->id == Auth::user()->id ) 
+                                        //   承認者とログイン者が同じ場合にボタンを表示
+                                        //　承認・却下業務の時のみボタンを表示
+                                            <button class='btn btn-success submit-btn {{ $approve_btn['class'] }}' 
+                                                            data-url='{{ $url['approve'] }}'>{{ $approve_btn['html'] }}</button>
+                                            <button class='btn btn-danger  submit-btn {{ $reject_btn['class'] }}'
+                                                            data-url='{{ $url['reject']   }}'>{{ $reject_btn['html'] }}</button>
+                                        @endif
+                                        
+                                        
+                                    </td>
+                                    <td>
+                                        <a class='btn btn-outline-secondary' href='{{ $back_btn['url'] }}'>{{ $back_btn['html'] }}</a>
+                                    </td>
+                                </tr>
+                                </table>
+
+                                {{ Form::open( [ 'url' => "", 'id' => 'form' ] ) }}
+                                    @csrf
+                                    @method( $method )
+                                {{ Form::close() }}
+                                <script>
+                                    $('.submit-btn').click( function() {
+                                        var url = $(this).data('url'); 
+                                        $('#form').attr( {'action': url } );
+                                        //console.log( url );
+                                        $('#form').submit();
+                                        
+                                    });
+                                </script>
+                        
+
+                                
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@php
+
+@endphp 
+
+@endsection
+

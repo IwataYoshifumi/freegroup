@@ -1,0 +1,4 @@
+
+@php
+    dd( $array );
+@endphp

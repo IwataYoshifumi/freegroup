@@ -1,0 +1,93 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
+
+class User extends Authenticatable
+{
+    use Notifiable;
+    
+    protected $model = "User";
+
+    protected $fillable = [
+        'name', 'email', 'password', 'retired', 'date_of_retired',
+    ];
+
+    protected $hidden = [
+        'password', 'remember_token',
+    ];
+
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+    ];
+    
+    //　ユーザを検索する
+    //
+    public static function search( $find, $sort = null, $asc_desc = null ) {
+        
+        // dump( $find );
+        if( isset( $find['retired'] )) {
+            if( $find['retired'] != 'all' ) {
+                $users = User::where( 'retired', $find['retired'] );
+            } else {
+                $users = User::select( "*" );
+            }
+        } else {
+            $users = User::select( "*" );
+        }
+
+        if( isset( $find['name'])) {
+            $users = $users->where( 'name', 'like', '%'.$find['name'].'%' );
+        }
+        
+        if( isset( $find['email'] )) {
+            $users = $users->where( 'email', 'like', '%'.$find['email'].'%' ); 
+        }
+
+        //  ソート
+        //
+        if( isset( $sort ) && is_array( $sort )) {
+            foreach( $sort as $i => $s ) {
+                if( empty( $s )) { continue; }
+                if( ! empty( $asc_desc[$i]) ) {
+                    $users = $users->orderBy( $s, $asc_desc[$i] );
+                } else {
+                    $users = $users->orderBy( $s );
+                }
+            }
+        }
+        // dump( $users );
+                
+        if( isset( $find['paginate'] )) {
+            return $users->paginate( $find['paginate'] );
+        } else {
+            return $users->get();
+        }
+    }
+    
+    //  管理者かユーザか顧客か
+    //
+    public function is_admin() {
+        return false;
+    }      // false
+    public function is_user() {
+        return true;
+    }       // true
+    public function is_customer() {
+        return false;
+    }   // false
+    
+    // 退職済みか、在任中か
+    //
+    public function is_retired() {
+        if( $this->retired ) { return true; } else { return fales; }
+    }
+    public function is_in_office() {
+        return ! $this->is_retired();
+    }
+    
+}

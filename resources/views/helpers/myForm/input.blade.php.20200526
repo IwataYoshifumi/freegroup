@@ -1,0 +1,73 @@
+@php
+
+use Illuminate\Support\HtmlString;
+
+
+
+@endphp
+
+<div class="container w-100 bg-light border border-dark p-1">
+    @foreach( $names as $name ) 
+        @php
+            $type     = $types[$name];
+            $label    = ( isset( $labels[$name]     )) ? $labels[$name] : $name ;
+            $default  = ( isset( $defauls[$name]    )) ? $defaults[$name] : null ;
+            $confirm  = ( isset( $confirms[$name]   )) ? $confirms[$name] : false ;
+            $w        = ( isset( $widths[$name]     )) ? "w-".$widths[$name]   : null ;
+            $label_class = "m-1 col-11 col-$bk-4 clearfix text-right";
+            $form_class  = "m-1 col-11 col-$bk-7 clearfix";
+            
+            $options = [ 'class' => "$form_class" ];
+        @endphp
+        <div class="container">
+            <div class="row">
+
+                @php
+                    if( $type == "password" ) {
+                        $old = "";
+                    } else {
+                        $old = old( "input[$name]", $default );
+                    }
+                @endphp
+
+                @switch( $type )
+                    @case( "text" )
+                    @case( "password" )
+                    @case( "numeric" )
+                    @case( "email" )
+                    @case( "date" )
+                    @case( "textarea" )
+                        @if( ! $confirm )   
+                            <label class="{{ $label_class }}">{{ $label }}</label>
+                            {{ Form::$type( "input[$name]", $old, $options ) }}
+                        @else 
+                            @php
+                                $class = "col-12 mb-1";
+                            @endphp
+                            <label class="{{ $label_class }}">{{ $label }}<br><div class="m-1">（確認）</div></label>
+                            <div class="{{ $form_class }}">
+                                {{ Form::$type( "input[$name]",                  null, [ 'class' => "$class" ] ) }}
+                                {{ Form::$type( "input[".$name."_confirmation]", null, [ 'class' => "$class" ] ) }}
+                            </div>
+                        @endif
+                        @break
+                        
+                    @case( "checkbox" );
+                    @case( "select" );
+                    @case( "checkboxes" );
+                    @case( "radio" );
+                    @default
+                        <div class="{{ $form_class }} text-danger bg-warning">
+                            未定義フォーム「{{ $name }}」フォームタイプ「{{ $type }}」
+                        </div>
+                        @break
+                @endswitch
+            </div>
+        </div>
+    
+    @endforeach
+</div>
+
+@php
+    #dump( $rows );
+@endphp
