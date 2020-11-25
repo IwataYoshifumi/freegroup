@@ -38,16 +38,25 @@ class User extends OriginalUser {
     //　関連社員として紐づけられたスケジュール・日報
     //
     public function allocated_schedules() {
-        // return $this->hasMany( 'App\myHttp\GroupWare\Models\Schedule' );
-        // return $this->belongsToMany( Schedule::class, 'relations', 'user_id', 'schedule_id' );
         return $this->morphToMany( Schedule::class, 'scheduleable' );
     }
 
     public function allocated_reports() {
         return $this->morphToMany( Report::class, 'reportable' );
     }
-
-
     
+    //  ユーザロール
+    //
+    public function role() {
+        return $this->role_group();
+    }
+
+    public function role_group() {
+        return $this->morphToMany( RoleGroup::class, 'rolegroupable' )->first();
+    }    
+    
+    public function role_groups() {
+        return $this->morphToMany( RoleGroup::class, 'rolegroupable' );
+    }
 
 }

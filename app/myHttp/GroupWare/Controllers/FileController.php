@@ -13,8 +13,11 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 use App\Http\Controllers\Controller;
+
 use DB;
+use Exception;
 
 
 use App\Http\Helpers\BackButton;
@@ -84,10 +87,16 @@ class FileController extends Controller {
     }
 
     public function show( MyFile $file ) {
-        $headers = [ 'Content-Disposition' => 'attachment; filename="'.$file->file_name.'"' ];
-        // return response()->file( storage_path( 'app/' ).$file->path, $headers );
-        return response()->file( storage_path( 'app/' ).$file->path  );
-    }
+        try {
+            // $headers = [ 'Content-Disposition' => 'attachment; filename="'.$file->file_name.'"' ];
+            return response()->file( storage_path( 'app/' ).$file->path  );
+
+        } catch ( Exception $e ) {
+            return response( 'ファイル読込エラーが発生しました', 200 );
+            
+        }
+            
+        }
     
     public function detail( MyFile $file ) {
         $this->authorize( 'view', [ $file, auth( 'user' )->user() ]);
@@ -96,7 +105,11 @@ class FileController extends Controller {
     }
     
     public function download( MyFile $file ) {
-        return response()->download( storage_path( 'app/' ).$file->path, $file->file_name );
+        try {
+            return response()->download( storage_path( 'app/' ).$file->path, $file->file_name );
+        } catch( Exception $e ) {
+            return response( 'ファイル読込エラーが発生しました', 200 );
+        }
     }
 
     public function delete( FileRequest $request ) {

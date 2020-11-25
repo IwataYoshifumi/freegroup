@@ -36,6 +36,8 @@ use App\myHttp\GroupWare\Menu as GroupwareMenu;
                         @if( Route::has( 'admin.index' ))
                             <a class="nav-item nav-link" href="{{ route( 'admin.index' ) }}">管理者管理</a>
                         @endif
+                        
+                        
                         <a class="nav-item nav-link" href="">menu</a>
                         <a class="nav-item nav-link" href="">menu</a>
                     @endif

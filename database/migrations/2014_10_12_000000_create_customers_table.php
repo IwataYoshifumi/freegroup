@@ -17,6 +17,7 @@ class CreateCustomersTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->nullable();
+            
             //$table->timestamp('email_verified_at')->nullable();
             //$table->string('password')->nullable();
             //$table->rememberToken();
@@ -35,10 +36,16 @@ class CreateCustomersTable extends Migration
             $table->date('birth_day')->nullable();
             $table->string('sex')->nullable();
             $table->string('memo')->nullable();
+            
             // セールスフォースＩＤ
             //
             // $table->string( 'salse_force_id')->nullable();
             $table->string( 'salseforce_id')->nullable();
+            
+            //  名刺管理Sansan連携
+            //
+            // $table->string( 'sansan_person_id' )->nullable();
+            // $table->timestamp( 'synced_at' )->nullable();  // Sansanデータ同期日時
             
             $table->softDeletes();
             $table->timestamps();

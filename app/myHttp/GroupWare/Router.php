@@ -28,6 +28,10 @@ class Router {
             self::report_route();
             self::file_route();
         });
+
+        Route::middleware('auth:admin')->group(function () {
+            self::role_group_route();
+        });        
         
         self::customer_route();
         self::user_route();
@@ -71,6 +75,41 @@ class Router {
         config( ['user.home' => '社員ホーム画面' ] );
         
 
+    }
+    
+    //  Role系ルート
+    //
+    static public function role_group_route() {
+
+        Route::prefix( 'groupware/role_group' )->name( 'groupware.role_group.')->namespace( '\App\myHttp\GroupWare\Controllers' )->group( function() {
+            
+            Route::get(  '/index',          'RoleGroupController@index'  )->name( 'index'    );
+            Route::get(  '/create',         'RoleGroupController@create' )->name( 'create'   );
+            Route::post( '/create',         'RoleGroupController@store'  )->name( 'create'   );
+
+            Route::get(  '/show/{role_group}',        'RoleGroupController@show'    )->name( 'show'   )->where( 'role_group', '\d+' );
+            Route::get(  '/update/{role_group}',      'RoleGroupController@edit'    )->name( 'update' )->where( 'role_group', '\d+' );
+            Route::post( '/update/{role_group}',      'RoleGroupController@update'  )->name( 'update' )->where( 'role_group', '\d+' );
+            Route::get(  '/delete/{role_group}',      'RoleGroupController@delete'  )->name( 'delete' )->where( 'role_group', '\d+' );
+            Route::delete(  '/delete/{role_group}',   'RoleGroupController@deleted' )->name( 'delete' )->where( 'role_group', '\d+' );
+
+            Route::get(  '/select_users',   'RoleGroupController@select_users'  )->name( 'select_users' );
+            Route::get(  '/attach_role',    'RoleGroupController@select_role'   )->name( 'attach_role'  );
+            Route::post( '/attach_role',    'RoleGroupController@attach_role'   )->name( 'attach_role'  );
+            
+        });
+        config([
+            'groupware.role_group.index'          => 'ロールグループ一覧',
+            'groupware.role_group.show'           => 'ロールグループ詳細',
+            'groupware.role_group.create'         => 'ロールグループ新規作成',
+            'groupware.role_group.update'         => 'ロールグループ修正',
+            'groupware.role_group.delete'         => 'ロールグループ削除',
+
+            'groupware.role_group.select_users'   => 'ロールグループ割当ユーザ選択',
+            'groupware.role_group.attach_role'    => 'ロールグループ割当',
+            
+        ]);
+        
     }
     
     //　Schedule ルート

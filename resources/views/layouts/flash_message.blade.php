@@ -6,10 +6,16 @@
     <div class="alert alert-warning m-2 p-2">
     {{ session('prepare_validation_message') }}
     </div>
-@endif     
+@endif 
+
+@if( session('error_message'))
+    <div class="alert-danger m-2 p-2">
+    {{ session('error_message') }}
+    </div>
+@endif
 
 @if( session('flash_message'))
-    <div class="comfirm_message m-2 p-2">
+    <div class="alert-info m-2 p-2">
     {{ session('flash_message') }}
     </div>
 @endif

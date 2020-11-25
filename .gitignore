@@ -1,7 +1,5 @@
 ## Composer ##
 conposer.phar
-composer.json
-composer.lock
 /node_modules
 /public/hot
 /public/storage
@@ -17,11 +15,12 @@ composer.lock
 .env.backup
 .phpunit.result.cache
 .my.cnf
-/storage
-package.json
-phpunit.xml
-server.php
-webpack.mix.js
+/storage/app/*
+/storage/framework/app/cache/*
+/storage/framework/cache/data/*
+/storage/framework/sessions/*
+/storage/framework/testing/*
+/storage/framework/views/*
 
 ## Laravel Homestead ##
 /.vagrant

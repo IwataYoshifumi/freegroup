@@ -73,12 +73,15 @@ EOT;
                     1  => route( 'user.index' ),
                     2  => route( 'customer.index' ),
                     3  => route( 'dept.index'),
+                    4  => route( 'groupware.role_group.index' ),
                     ];
 
         $return = <<<EOT
             <a class="nav-item nav-link" href="$route[1]">社員管理</a>
             <a class="nav-item nav-link" href="$route[3]">部署管理</a>
+            <a class="nav-item nav-link" href="$route[4]">ロール設定</a>
             <a class="nav-item nav-link" href="$route[0]">管理者管理</a>
+
 
             <!--
             <a class="nav-item nav-link" href="">休暇検索</a>

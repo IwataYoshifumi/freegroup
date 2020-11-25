@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateFileablesTable extends Migration
+class CreateRoleGroupablesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,11 @@ class CreateFileablesTable extends Migration
      */
     public function up()
     {
-        Schema::create('fileables', function (Blueprint $table) {
-            $table->foreignId( 'file_id' );
-            $table->foreignId( 'fileable_id' );
-            $table->string( 'fileable_type' );
-            $table->timestamps();
+        Schema::create('rolegroupables', function (Blueprint $table) {
+
+            $table->foreignId( 'role_group_id' );
+            $table->foreignId( 'rolegroupable_id' );
+            $table->string( 'rolegroupable_type' );
         });
     }
 
@@ -28,6 +28,6 @@ class CreateFileablesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('fileables');
+        Schema::dropIfExists('rolegroupables');
     }
 }

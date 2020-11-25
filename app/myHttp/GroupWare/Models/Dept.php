@@ -17,7 +17,23 @@ class Dept extends OriginalDept {
         return $this->hasMany( User::class );
     }
     
+    //////////////////////////////////////////////////////////////////////////
+    //
+    //　フォーム用　配列取得関数
+    //
+    //////////////////////////////////////////////////////////////////////////
     
-    
+    //　セレクトフォーム用配列
+    //
+    public static function get_array_for_select() {
+        
+        $depts = Dept::all();
+        
+        $array = [ '' ];
+        foreach( $depts as $d ) {
+            $array[ $d->id ] = $d->name;
+        }
+        return $array;        
+    }
 
 }

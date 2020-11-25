@@ -31,8 +31,5 @@ $factory->define( App\Models\Customer::class, function (Faker $faker) {
         'birth_day' => $faker->dateTimeBetween( '-90 years', '-5years' )->format( 'Y-m-d' ),
         
         'email' => $faker->unique()->safeEmail,
-        'email_verified_at' => now(),
-        'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
-        'remember_token' => Str::random(10),
     ];
 });
