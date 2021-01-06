@@ -1,0 +1,25 @@
+LOCK TABLES `admins` WRITE;
+/*!40000 ALTER TABLE `admins` DISABLE KEYS */;
+INSERT INTO `admins` VALUES 
+(1,'岩田','iwata@network-tokai.jp',NULL,'$2y$10$YOAzicP9380Vgyq9g5WlUenJ83pxWV6YIUkEJti.kxmU/l9i9j2U6',0,NULL,NULL,NULL,NULL);
+/*!40000 ALTER TABLE `admins` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+LOCK TABLES `depts` WRITE;
+/*!40000 ALTER TABLE `depts` DISABLE KEYS */;
+INSERT INTO `depts` VALUES 
+(1,'営業部',NULL,NULL),
+(2,'企画部',NULL,NULL),
+(3,'総務部',NULL,NULL),
+(4,'東京支店',NULL,NULL);
+/*!40000 ALTER TABLE `depts` ENABLE KEYS */;
+UNLOCK TABLES;
+
+LOCK TABLES `users` WRITE;
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` VALUES 
+(1,'岩田好史','iwata@network-tokai.jp',NULL,'$2y$10$LR/jC2l4EcPlOldDFgZPIuGSLRYkegg1L99k1vPFtEHrPLvSKRY.6',0,NULL,1,'社員',NULL,NULL,NULL);
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+UNLOCK TABLES;
+

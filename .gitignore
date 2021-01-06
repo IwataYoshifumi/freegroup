@@ -15,12 +15,7 @@ conposer.phar
 .env.backup
 .phpunit.result.cache
 .my.cnf
-/storage/app/*
-/storage/framework/app/cache/*
-/storage/framework/cache/data/*
-/storage/framework/sessions/*
-/storage/framework/testing/*
-/storage/framework/views/*
+/storage
 
 ## Laravel Homestead ##
 /.vagrant
@@ -31,3 +26,10 @@ yarn-error.log
 
 ## MySQL dumpfile ##
 *.mysqldump
+.gitignore.swp
+
+## Other File ##
+
+package.json
+phpunit.xml
+
