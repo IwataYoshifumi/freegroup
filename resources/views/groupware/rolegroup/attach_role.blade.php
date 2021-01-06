@@ -13,9 +13,10 @@ use App\Http\Helpers\BackButton;
 
 
 $users = User::whereIn( 'id', request()->input('users') )->get();
-$role_groups = RoleGroup::get_array_for_select();
+$role_groups = toArrayWithNull( RoleGroup::all() );
 
-dump( $users, $role_groups );
+
+#dump( $users, $role_groups, 'aaa' );
 
 
 @endphp

@@ -14,6 +14,13 @@ return [
                             'memo'       => '備考', 
                             'notice'     => '通知',
                         ],
+                        
+    'permissions' => [ 'creator' => '作成者', 'attendees' => '作成者・参加者', 'writers' => '作成者・参加者・カレンダー編集者全員' ],
+    
+    
+    //　メタ文字は区切り文字として使用不可
+    //
+    'google_description_separator' => '－－－ Following was Prepended by FreeGroup －－－'
 
 ];
 

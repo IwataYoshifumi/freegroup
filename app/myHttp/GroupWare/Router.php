@@ -23,10 +23,18 @@ class Router {
     static public function route() {
         
         Route::middleware('auth:user')->prefix( 'groupware' )->name( 'groupware.' )->group(function () {
-            self::schedule_route();
+            
+            // self::schedule_route();
+            self::schedule2_route();
             self::schedule_type_route();
             self::report_route();
             self::file_route();
+            self::accesslist_route();
+            self::group_route();
+            self::calendar_route();
+            self::calprop_route();
+            
+            self::route_json();
         });
 
         Route::middleware('auth:admin')->group(function () {
@@ -35,6 +43,9 @@ class Router {
         
         self::customer_route();
         self::user_route();
+        self::dept_route();
+        
+        self::exception_route();
         
     }
 
@@ -60,21 +71,66 @@ class Router {
     // User ルート（オーバーライド）
     //
     static public function user_route() {
-        Route::namespace( '\App\myHttp\GroupWare\Controllers' )->group( function() {
-            Route::middleware( 'auth:user' )->group( function() {
-                Route::get( '/user/home',          'UserController@mySelf' )->name( 'user.home' );
-                Route::get( '/user/myself',        'UserController@mySelf' )->name( 'user.mySelf' );
-                Route::get( '/user/detail/{user}', 'UserController@detail' )->name( 'user.detail' )->where( 'user', '\d*+' );     
+        Route::namespace( '\App\myHttp\GroupWare\Controllers' )->name( 'groupware.user.' )->prefix( '/groupware/user/' )->group( function() {
+            Route::middleware( 'auth:user,admin' )->group( function() {
+                Route::get( 'home',          'UserController@mySelf' )->name( 'home' );
+                Route::get( 'myself',        'UserController@mySelf' )->name( 'mySelf' );
+                Route::get( 'detail/{user}', 'UserController@detail' )->name( 'detail' )->where( 'user', '\d*+' );     
             });
             
+            Route::middleware( 'auth:user,admin' )->group( function() {
+                Route::get(   '{user}',        'UserController@show'            )->name('show'  )->where( 'user', '\d+' );
+                Route::get(   'index',         'UserController@index'           )->name('index' );
+            });
+
             Route::middleware( 'auth:admin' )->group( function() {
-                Route::get(    '/user/{user}/delete',  'UserController@delete'     )->name('user.delete' )->where( 'user', '\d+' );
-                Route::delete( '/user/{user}/delete',  'UserController@deleted'    )->name('user.deleted')->where( 'user', '\d+' );
+                Route::get(   'create',        'UserController@create'  )->name('create');
+                Route::post(  'create',         'UserController@store'  )->name('store' );
+                Route::get(   '{user}/update', 'UserController@edit'    )->name('edit'   )->where( 'user', '\d+' );
+                Route::post(  '{user}/update', 'UserController@update'  )->name('update' )->where( 'user', '\d+' );
+                Route::get(    '{user}/delete',  'UserController@delete'     )->name('delete' )->where( 'user', '\d+' );
+                Route::delete( '{user}/delete',  'UserController@deleted'    )->name('deleted' )->where( 'user', '\d+' );
             });
         });
-        config( ['user.home' => '社員ホーム画面' ] );
+        config(['groupware.user.index'    => '社員一覧',
+                'groupware.user.create'   => '新規　社員登録',
+                'groupware.user.store'    => '新規　社員登録完了',
+                'groupware.user.show'     => '社員情報',
+                'groupware.user.detail'   => '社員情報（詳細）',
+                'groupware.user.edit'     => '社員情報　変更',
+                'groupware.user.home'     => '社員ホーム',
+                ]);
         
 
+    }
+    
+    static public function dept_route() {
+        // Deptモデル（部署モデル）
+        
+        Route::namespace( '\App\myHttp\GroupWare\Controllers' )->group( function() {
+            Route::middleware([ 'auth:user,admin' ])->group(function () {
+                Route::get( '/dept/index',          'DeptController@index'    )->name('dept.index'    );
+                Route::get( '/dept/{dept}',         'DeptController@show'     )->name('dept.show'     )->where( 'dept', '[0-9]+' );
+            });
+            Route::middleware([ 'auth:admin' ])->group(function () {
+                Route::get( '/dept/create',         'DeptController@create'   )->name('dept.create'   );
+                Route::post('/dept/store',          'DeptController@store'    )->name('dept.store'    );
+                Route::get( '/dept/{dept}/edit',    'DeptController@edit'     )->name('dept.edit'     )->where( 'dept', '[0-9]+' );
+                Route::post( '/dept/{dept}',        'DeptController@update'   )->name('dept.update'   )->where( 'dept', '[0-9]+' );
+                Route::get( '/dept/{dept}/destroy', 'DeptController@destroy'  )->name('dept.destory'  )->where( 'dept', '[0-9]+' );
+                Route::post( '/dept/{dept}/destroy','DeptController@destroyed')->name('dept.destoryed')->where( 'dept', '[0-9]+' );
+            });
+        });
+    
+        config(['dept.index'    => '部署一覧',
+                'dept.create'   => '新規　部署登録',
+                'dept.store'    => '新規　部署登録完了',
+                'dept.show'     => '部署情報',
+                'dept.edit'     => '部署情報　変更',
+                'dept.update'   => '部署情報　変更完了',
+                'dept.destory'  => '部署　削除',
+                'dest.destorid' => '部署　削除実行',
+            ]);
     }
     
     //  Role系ルート
@@ -155,7 +211,51 @@ class Router {
         });
     }
     
+        //　Schedule2 ルート
+    //
+    static public function schedule2_route() {
+        
+        Route::prefix( 'schedule')->name( 'schedule.')->namespace( '\App\myHttp\GroupWare\Controllers' )->group( function() {
+            
+            Route::get(   '/index',      'Schedule2Controller@index'    )->name('index'       );
+            Route::get(   '/monthly',    'Schedule2Controller@monthly'  )->name('monthly'     );
+            Route::get(   '/weekly',     'Schedule2Controller@weekly'   )->name('weekly'      );
+            Route::get(   '/daily',      'Schedule2Controller@daily'    )->name('daily'       );
+            Route::get(   '/json_search','Schedule2Controller@json_search'    )->name('json_search' );
+            
+            Route::get(   '/create',     'Schedule2Controller@create'          )->name('create');
+            Route::post(  '/create',     'Schedule2Controller@store'           )->name('store' );
+            
+            Route::get(   '/show/{schedule}',     'Schedule2Controller@show'   )->name('show'  )->where( 'schedule', '\d+' );
+            Route::get(   '/show',                'Schedule2Controller@show_m' )->name('show_m');
+            
+            Route::get(   '/edit/{schedule}',     'Schedule2Controller@edit'   )->name('edit'   )->where( 'schedule', '\d+' );
+            Route::post(  '/edit/{schedule}',     'Schedule2Controller@update' )->name('update' )->where( 'schedule', '\d+' );
+    
+            Route::get(     '/delete/{schedule}',     'Schedule2Controller@delete'  )->name('delete' )->where( 'schedule', '\d+' );
+            Route::delete(  '/delete/{schedule}',     'Schedule2Controller@deleted' )->name('deleted')->where( 'schedule', '\d+' );
+    
+    
+            config(['groupware.schedule.index'    => '予定一覧',
+            
+                    'groupware.schedule.monthly'  => '月次表示',
+                    'groupware.schedule.weekly'   => '週次表示',
+                    'groupware.schedule.daily'    => '日次表示',
+                    'groupware.schedule.create'   => '新規　予定登録',
+                    'groupware.schedule.store'    => '新規　予定登録完了',
+                    'groupware.schedule.show'     => '予定内容',
+                    'groupware.schedule.detail'   => '予定詳細',
+                    'groupware.schedule.edit'     => '予定　変更',
+                    'groupware.schedule.update'   => '予定　変更完了',
+                    'groupware.schedule.delete'   => '予定　削除',
+                    'groupware.schedule.deleted'  => '予定　削除完了',
+                    'groupware.schedule.select'   => '予定　選択',
+                    ]);
+        });
+    }
+    
     //  ScheduleType ルート
+    //
     static public function schedule_type_route() {
         Route::prefix( 'schedule.type')->name( 'schedule.type.')->namespace( '\App\myHttp\GroupWare\Controllers' )->group( function() {
         
@@ -173,7 +273,6 @@ class Router {
         });
     
     }
-    
 
     //  Report ルート
     //
@@ -239,10 +338,128 @@ class Router {
                     'groupware.file.deleted'  => 'ファイル　削除完了',
                     ]);
         });
-        
-        
     }
     
+    //  AccessList ルート
+    //
+    static public function accesslist_route() {
+        Route::prefix( 'accesslist/' )->name( 'access_list.')->namespace( '\App\myHttp\GroupWare\Controllers' )->group( function() {
             
+            Route::get(  '/index',          'AccessListController@index'          )->name('index'   );
+            Route::get(  '/create',         'AccessListController@create' )->name( 'create'   );
+            Route::post( '/create',         'AccessListController@store'  )->name( 'create'   );
+
+            Route::get(  '/show/{access_list}',        'AccessListController@show'    )->name( 'show'   )->where( 'access_list', '\d+' );
+            Route::get(  '/update/{access_list}',      'AccessListController@edit'    )->name( 'update' )->where( 'access_list', '\d+' );
+            Route::post( '/update/{access_list}',      'AccessListController@update'  )->name( 'update' )->where( 'access_list', '\d+' );
+            Route::get(  '/delete/{access_list}',      'AccessListController@delete'  )->name( 'delete' )->where( 'access_list', '\d+' );
+            Route::delete(  '/delete/{access_list}',   'AccessListController@deleted' )->name( 'delete' )->where( 'access_list', '\d+' );
+
+            config([
+                'groupware.access_list.index'          => 'アクセスリスト一覧',
+                'groupware.access_list.show'           => 'アクセスリスト詳細',
+                'groupware.access_list.create'         => 'アクセスリスト新規作成',
+                'groupware.access_list.update'         => 'アクセスリスト修正',
+                'groupware.access_list.delete'         => 'アクセスリスト削除',
+            ]);
+        });
+    }
+    
+    //  Group ルート
+    //
+    static public function group_route() {
+        Route::prefix( 'group/' )->name( 'group.')->namespace( '\App\myHttp\GroupWare\Controllers' )->group( function() {
             
+            Route::get(  '/index',          'GroupController@index'          )->name('index'   );
+            Route::get(  '/create',         'GroupController@create' )->name( 'create'   );
+            Route::post( '/create',         'GroupController@store'  )->name( 'create'   );
+
+            Route::get(  '/show/{group}',        'GroupController@show'    )->name( 'show'   )->where( 'group', '\d+' );
+            Route::get(  '/update/{group}',      'GroupController@edit'    )->name( 'update' )->where( 'group', '\d+' );
+            Route::post( '/update/{group}',      'GroupController@update'  )->name( 'update' )->where( 'group', '\d+' );
+            Route::get(  '/delete/{group}',      'GroupController@delete'  )->name( 'delete' )->where( 'group', '\d+' );
+            Route::delete(  '/delete/{group}',   'GroupController@deleted' )->name( 'delete' )->where( 'group', '\d+' );
+
+            config([
+                'groupware.group.index'          => 'グループ一覧',
+                'groupware.group.show'           => 'グループ詳細',
+                'groupware.group.create'         => 'グループ新規作成',
+                'groupware.group.update'         => 'グループ修正',
+                'groupware.group.delete'         => 'グループ削除',
+            ]);
+        });
+    }
+    
+    //  Calendar ルート
+    //
+    static public function calendar_route() {
+        Route::prefix( 'calendar/' )->name( 'calendar.')->namespace( '\App\myHttp\GroupWare\Controllers' )->group( function() {
+            
+            Route::get(  '/index',          'CalendarController@index'  )->name('index'   );
+            Route::get(  '/create',         'CalendarController@create' )->name( 'create'   );
+            Route::post( '/create',         'CalendarController@store'  )->name( 'create'   );
+
+            Route::get(  '/show/{calendar}',        'CalendarController@show'    )->name( 'show'   )->where( 'calendar', '\d+' );
+            Route::get(  '/update/{calendar}',      'CalendarController@edit'    )->name( 'update' )->where( 'calendar', '\d+' );
+            Route::post( '/update/{calendar}',      'CalendarController@update'  )->name( 'update' )->where( 'calendar', '\d+' );
+            Route::get(  '/delete/{calendar}',      'CalendarController@delete'  )->name( 'delete' )->where( 'calendar', '\d+' );
+            Route::delete(  '/delete/{calendar}',   'CalendarController@deleted' )->name( 'delete' )->where( 'calendar', '\d+' );
+
+            config([
+                'groupware.calendar.index'          => 'カレンダー一覧',
+                'groupware.calendar.show'           => 'カレンダー管理者設定',
+                'groupware.calendar.create'         => 'カレンダー新規作成',
+                'groupware.calendar.update'         => 'カレンダー管理者設定修正',
+                'groupware.calendar.delete'         => 'カレンダー削除',
+            ]);
+        });
+    }
+
+    //  CalProp ルート
+    //
+    static public function calprop_route() {
+        Route::prefix( 'calprop/' )->name( 'calprop.')->namespace( '\App\myHttp\GroupWare\Controllers' )->group( function() {
+            
+            Route::get(  '/index',                 'CalPropController@index'  )->name('index'   );
+
+            Route::get(  '/show/{calprop}',        'CalPropController@show'    )->name( 'show'   )->where( 'calprop', '\d+' );
+            Route::get(  '/update/{calprop}',      'CalPropController@edit'    )->name( 'update' )->where( 'calprop', '\d+' );
+            Route::post( '/update/{calprop}',      'CalPropController@update'  )->name( 'update' )->where( 'calprop', '\d+' );
+
+            Route::get(  '/gsync_all',             'CalPropController@gsyncAll'   )->name( 'gsync_all'   );
+            Route::get(  '/gsync/{calprop}',       'CalPropController@gsync'      )->name( 'gsync'       )->where( 'calprop', '\d+' );
+            Route::get(  '/gsync_on/{calprop}',    'CalPropController@gsyncOn'    )->name( 'gsync_on'    )->where( 'calprop', '\d+' );
+            Route::get(  '/gsync_check/{calprop}', 'CalPropController@gsyncCheck' )->name( 'gsync_check' )->where( 'calprop', '\d+' );
+            
+
+            config([
+                'groupware.calprop.index'          => 'カレンダー表示設定・Google同期設定一覧',
+                'groupware.calprop.show'           => 'カレンダー表示設定・Google同期設定',
+                'groupware.calprop.update'         => 'カレンダー表示設定・Google同期設定　変更',
+                'groupware.calprop.gsync_all'      => 'カレンダーGoogle手動全同期',
+                'groupware.calprop.gsync'          => 'カレンダーGoogle手動同期',
+                'groupware.calprop.gsync_check'    => 'カレンダーGoogle同期チェック',
+            ]);
+        });
+    }
+    
+    
+    //  JSONルート
+    // 
+    static public function route_json() {
+        Route::namespace( '\App\myHttp\GroupWare\Controllers' )->group( function() {
+            Route::get('/json/getUsers',            'JsonController@getUsers'  )->name( 'json.getUsers'  );
+            Route::get('/json/getUsersBlongsTo',    'JsonController@getUsersBlongsTo'  )->name( 'json.getUsersBlongsTo'  );
+            Route::get('/json/getApprovalMaster',   'JsonController@getApprovalMaster' )->name( 'json.getApprovalMaster' );
+        });
+    }
+    
+    //  例外処理関係のルート
+    //
+    static public function exception_route() {
+        Route::namespace( '\App\myHttp\GroupWare\Controllers' )->group( function() {
+            Route::get( '/groupware/noauth',    'ExceptionController@noAuthRoute' )->name( 'groupware.noarth'  );
+        });
+            
+    }
 }

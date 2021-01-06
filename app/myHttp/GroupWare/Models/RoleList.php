@@ -33,7 +33,7 @@ class RoleList extends Model {
     //
     //////////////////////////////////////////////////////////////////////////
     
-    static public function get_array_role_lists() {
+    static public function getRoles() {
         return config( 'groupware.rolelist' );
     }
     

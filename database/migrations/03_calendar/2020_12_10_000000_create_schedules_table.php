@@ -17,18 +17,23 @@ class CreateSchedulesTable extends Migration
             $table->id();
             $table->timestamps();
             
-            $table->foreignId( 'user_id' );
+            $table->foreignId( 'user_id' );   // creator
+            $table->foreignId( 'updator_id'); // updator
+            $table->foreignId( 'calendar_id' );
             
             $table->string('name');
             $table->string('place')->nullable();
-            $table->dateTimeTz( 'start_time' );
-            $table->dateTimeTz( 'end_time' )->nullable();
-            $table->string( 'period' )->nullable();
-            $table->string( 'notice' )->nullable();
             $table->longtext( 'memo' )->nullable();
+
+            $table->date( 'start_date' );
+            $table->date( 'end_date' );
+            $table->dateTimeTz( 'start' )->nullable();
+            $table->dateTimeTz( 'end'   )->nullable();
+            $table->boolean( 'all_day' )->nullable();
+
+            $table->string( 'permission' ); // creator, attendees, writer
+            // $table->string( 'delete_permission' ); // creator, permission // 作成者のみ、permissionと同じのどちらか
             
-            $table->foreignId( 'schedule_type_id' );
-            $table->string( 'google_calendar_event_id')->nullable();
         });
     }
 

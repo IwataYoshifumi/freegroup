@@ -13,6 +13,7 @@ use App\myHttp\GroupWare\View\Components\InputSchedulesComponent;
 
 use App\myHttp\GroupWare\View\Components\FindDeptComponent;
 use App\myHttp\GroupWare\View\Components\FindUserComponent;
+use App\myHttp\GroupWare\View\Components\SelectUserComponent;
 
 class MyServiceProvider extends ServiceProvider
 {
@@ -23,7 +24,6 @@ class MyServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        // dd( app_path().'Http/Myclass/BackButtonClass.php' );
         require_once( app_path().'/Http/Helpers/BackButton.php' );
         require_once( app_path().'/Http/Helpers/MyForm.php' );
     }
@@ -44,5 +44,12 @@ class MyServiceProvider extends ServiceProvider
         
         Blade::component( 'find_dept',          FindDeptComponent::class     );
         Blade::component( 'find_user',          FindUserComponent::class     );
+
+        // 2020.11.28 追加
+        Blade::component( 'select_user',        SelectUserComponent::class     );   // view groupware.access_list.input で使用
+
+        
+        
+        
     }
 }

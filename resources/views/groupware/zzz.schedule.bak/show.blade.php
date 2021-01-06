@@ -42,7 +42,6 @@ $reports   = $schedule->reports;
                         
                         <div class="col-12">
                             {{ BackButton::form() }}
-
                         </div>
                     {{ Form::close() }}
                 </div>

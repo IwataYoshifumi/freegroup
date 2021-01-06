@@ -14,7 +14,7 @@ class InputUsersComponent extends Component
      * @return void
      */
     
-    public $users;  // Customerクラスのコレクション
+    public $users;  // Userクラスのコレクション
     
     //
     public function __construct( $users ) {

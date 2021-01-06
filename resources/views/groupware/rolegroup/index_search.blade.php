@@ -31,7 +31,7 @@ $lists = ( is_array( optional( $find )['list'] )) ? $find['list'] : [];
         </div>
         
         <div class="m-2 collapse" id="role_list">
-            @foreach( RoleList::get_array_role_lists() as $role => $memo ) 
+            @foreach( RoleList::getRoles() as $role => $memo ) 
                 <div>
                     
                     {{ Form::checkbox( 'find[list][]', $role, in_array( $role, $lists )) }}

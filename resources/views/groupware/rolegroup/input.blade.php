@@ -51,7 +51,7 @@ use App\Http\Helpers\BackButton;
                             <label for="dept_id" class="col-md-4 col-form-label text-md-right m-1">ロール設定</label>
                             <div class="col-md-6">
                                 <div class="row">
-                                    @foreach( RoleList::get_array_role_lists() as $role => $memo )
+                                    @foreach( RoleList::getRoles() as $role => $memo )
                                         <div class="col-md-1 m-1">
                                             {{ Form::checkbox( 'lists[]', $role, in_array( $role, $lists, 1 ) , [ 'class' => '' ] ) }}
                                         </div>

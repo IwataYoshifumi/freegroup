@@ -25,6 +25,8 @@ class CreateReportsTable extends Migration
             $table->dateTimeTz( 'start_time' );
             $table->dateTimeTz( 'end_time' )->nullable();
             $table->longtext( 'memo' )->nullable();
+            
+            $table->softDeletes();
 
         });
     }

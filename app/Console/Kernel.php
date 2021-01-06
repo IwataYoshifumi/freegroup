@@ -5,7 +5,9 @@ namespace App\Console;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
-use App\Http\Controllers\Vacation\VacationSchedules;
+// use App\Http\Controllers\Vacation\VacationSchedules;
+
+use App\myHttp\GroupWare\ScheduledJobs\CalPropsGsyncScheduledJob;
 
 class Kernel extends ConsoleKernel
 {
@@ -26,9 +28,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
-        
-        VacationSchedules::schedule( $schedule );
+        $schedule->job( new CalPropsGsyncScheduledJob )->everyMinute()->withoutOverlapping( 5 );
         
     }
 

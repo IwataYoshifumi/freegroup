@@ -7,7 +7,10 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
 
 use App\Models\Dept as OriginalDept;
-use User;
+use App\myHttp\GroupWare\Models\User;
+use App\myHttp\GroupWare\Models\Group;
+use App\myHttp\GroupWare\Models\AccessList;
+use App\myHttp\GroupWare\Models\ACL;
 
 class Dept extends OriginalDept {
 
@@ -15,6 +18,10 @@ class Dept extends OriginalDept {
     //
     public function users() {
         return $this->hasMany( User::class );
+    }
+    
+    public function acls() {
+        return $this->morphMany( ACL::class, 'aclable' );
     }
     
     //////////////////////////////////////////////////////////////////////////
@@ -28,12 +35,22 @@ class Dept extends OriginalDept {
     public static function get_array_for_select() {
         
         $depts = Dept::all();
-        
-        $array = [ '' ];
+        $array = [ '' => '' ];
         foreach( $depts as $d ) {
             $array[ $d->id ] = $d->name;
         }
         return $array;        
+    }
+    
+    public function getUserIDs() {
+        
+        $array = [];
+        foreach( $this->users as $i => $user ) {
+            $array[$i] = $user->id;
+        }
+        return $array;
+        
+        
     }
 
 }

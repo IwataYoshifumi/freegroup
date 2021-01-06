@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use App\myHttp\GroupWare\Models\User;
 use App\myHttp\GroupWare\Models\Schedule;
 use App\myHttp\GroupWare\Models\ScheduleType;
+use App\myHttp\GroupWare\Models\CalProp;
 use App\myHttp\GroupWare\Models\Report;
 
 class File extends Model {
@@ -43,6 +44,22 @@ class File extends Model {
     public function schedule_types() {
         return $this->morphedByMany( ScheduleType::class, 'fileable' );
     }
+
+    public function calprops() {
+        // 添付ファイルはGoogleの秘密鍵（添付は１つのみ）
+        return $this->morphedByMany( ScheduleType::class, 'fileable' );
+    }
+    //////////////////////////////////////////////////////////////////////////
+    //
+    //  値取得メソッド
+    //
+    //////////////////////////////////////////////////////////////////////////
+
+    public function calprop() {
+        // 添付ファイルはGoogleの秘密鍵（添付は１つのみ）
+        return $this->calprops->first();
+    }
+
     
     //////////////////////////////////////////////////////////////////////////
     //
@@ -52,7 +69,6 @@ class File extends Model {
 
     public function p_created_at() {
         return Carbon::parse( $this->created_at )->format( 'Y年n月j日 H:i');
-        
     }
     
     //////////////////////////////////////////////////////////////////////////

@@ -1,0 +1,119 @@
+@extends('layouts.app')
+
+@php
+
+
+use App\myHttp\GroupWare\Models\User;
+use App\myHttp\GroupWare\Models\Dept;
+use App\myHttp\GroupWare\Models\Group;
+use App\myHttp\GroupWare\Models\AccessList;
+use App\myHttp\GroupWare\Models\ACL;
+
+use App\Http\Helpers\BackButton;
+
+// $acls = $access_list->acls;
+$acls = ACL::with([ 'aclable' ])->where( 'access_list_id', $access_list->id )->get();
+$roles = ACL::get_array_roles_for_select();
+
+#dump( $access_list, $acls );
+#dump( $access_list, $lists, $users, $access_list->users );
+@endphp
+
+@section('content')
+
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            @include( 'groupware.access_list.menu' )
+            <div class="card">
+                <div class="card-header">{{ config( Route::currentRouteName() ) }}</div>
+
+                <div class="card-body">
+                        @if( Route::currentRouteName() == "groupware.access_list.show" )
+                            <a class="btn btn-warning text-dark" href="{{ route( 'groupware.access_list.update', [ 'access_list' => $access_list ] ) }}">アクセスリストの修正</a>
+                            @if( ! $access_list->default )
+                                <a class="btn btn-danger text-white" href="{{ route( 'groupware.access_list.delete', [ 'access_list' => $access_list ] ) }}">アクセスリスト削除</a>
+                            @endif
+                        @endif
+                        
+                        
+                        @include( 'layouts.error' )
+                        @include( 'layouts.flash_message' )
+
+                        <div class="col-12 m-1"></div>
+                        <div class="form-group row">
+                            <label for="dept_id" class="col-md-4 col-form-label text-md-right m-1">アクセスリスト名</label>
+                            <div class="col-md-6 m-1">
+                                {{ $access_list->name }}
+                            </div>
+                            
+                            <label for="dept_id" class="col-md-4 col-form-label text-md-right m-1">備考</label>
+                            <div class="col-md-6 m-1">
+                                {{ $access_list->memo }}
+                            </div>
+                            
+                            @if( $access_list->default )
+                                <label for="dept_id" class="col-md-4 col-form-label text-md-right m-1">デフォルト</label>
+                                <div class="col-md-6 m-1">
+                                    <b>レ</b>
+                                    <span class="alert-warning m-1">初期設定値は削除できません。</span>
+                                </div>
+                            @endif
+
+                            <hr>
+                            <table class="table table-striped col-11 m-3 p-1">
+                                <tr>
+                                    <th>順序</th>
+                                    <th>権限</th>
+                                    <th>種別</th>
+                                    <th colspan=2>社員・部署・グループ</th>
+                                </tr>
+                                @foreach( $acls as $acl )
+                                    <tr>
+                                        <td>{{ $acl->order            }}</td>
+                                        <td>{{ $roles[ $acl->role ]   }}</td>
+                                        <td>{{ $acl->p_type()         }}</td>
+                                        <td>{{ $acl->p_aclable_name() }}</td>
+                                        <td>
+                                            <a class="btn btn-sm btn-outline-secondary" href="{{ $acl->aclable_url() }}">詳細</a>
+                                        </td>
+                                        
+                                    </tr>
+                                @endforeach
+                            </table>
+                                
+                                
+                            
+                            
+                        </div>
+
+                        <div class="form-group row mb-0">
+                            @if( Route::currentRouteName() == "groupware.access_list.delete" )
+                                <form id="delete_form" method="POST" action="{{ url()->current() }}" class="col-12">
+                                    @method( 'DELETE' )
+                                    @csrf
+                                    <div class="row p-1">
+                                        {{ Form::checkbox( 'comfirm', 1, 0, [ 'class' => 'col-1 m-1' ] ) }} <div class=" col-4 text-danger font-weight-bold m-1">削除確認</div>
+                                        <div class="col-12"></div>
+                                    </div>
+                                    <br>
+                                </form>
+                                <script>
+                                    function submit_button() {
+                                        $('#delete_form').submit();
+                                    }
+                                </script>
+                                <a class="btn btn-danger text-white ml-5" onClick="submit_button();">アクセスリスト削除</a>
+                            @endif
+                            {{ BackButton::form() }}
+
+                        </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@endsection

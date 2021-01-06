@@ -2,8 +2,9 @@
 
 use Carbon\Carbon;
 use App\myHttp\GroupWare\Models\Schedule;
+use App\myHttp\GroupWare\Models\Dept;
+
 use App\myHttp\GroupWare\View\FindDeptsComponent;
-use App\Models\GroupWare\Models\Dept;
 
 
 $today = new Carbon( 'today' );

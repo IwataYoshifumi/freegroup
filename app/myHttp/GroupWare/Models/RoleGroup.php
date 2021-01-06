@@ -35,6 +35,17 @@ class RoleGroup extends Model {
     
     //////////////////////////////////////////////////////////////////////////
     //
+    //　検索メソッド
+    //
+    //////////////////////////////////////////////////////////////////////////
+    public static function getDefault() {
+        return RoleGroup::where( 'default', 1 )->first();
+    }
+    
+    
+    
+    //////////////////////////////////////////////////////////////////////////
+    //
     //　リレーションに対するアクション
     //
     //////////////////////////////////////////////////////////////////////////
@@ -117,45 +128,6 @@ class RoleGroup extends Model {
         
     }
     
-    //////////////////////////////////////////////////////////////////////////
-    //
-    //　フォーム用　配列取得関数
-    //
-    //////////////////////////////////////////////////////////////////////////
-    
-    //　グループ内のロールを配列を返す
-    //
-    public function get_array_role_lists() {
-        $role_lists = $this->lists;
-        
-        $lists = [];
-        foreach( $role_group->role_lists as $list ) {
-            array_push( $lists, $list->role );
-        } 
-        return $lists;
-        
-    }
-    
-    //　ロールグループ選択用セレクトフォーム用配列出力
-    //
-    public static function get_array_for_select() {
-        
-        $role_groups = RoleGroup::all();
-        
-        $array = [ '' ];
-        foreach( $role_groups as $role_group ) {
-            $array[ $role_group->id ] = $role_group->name;
-        }
-        return $array;        
-    }
-    
-    public static function get_default_id() {
-        $role_group = RoleGroup::where( 'default', 1 )->first();
 
-        dump( $role_group );        
-        
-        return $role_group->id;
-        
-    }
 
 }

@@ -40,6 +40,7 @@ Route::namespace('User')->prefix('user')->name('user.')->group(function () {
     });
 });
 
+/*
 // Userモデル
 Route::middleware('auth:admin')->namespace( 'User' )->prefix( 'user' )->name( 'user.' )->group(function () {
 
@@ -62,7 +63,9 @@ Route::middleware('auth:admin')->namespace( 'User' )->prefix( 'user' )->name( 'u
                 'user.home'     => '社員ホーム',
                 ]);
 });
+*/
 
+/*
 // Deptモデル（部署モデル）
 Route::middleware([ 'auth:admin' ])->group(function () {
     Route::get( '/dept/index',          'DeptController@index'    )->name('dept.index'    );
@@ -84,6 +87,8 @@ Route::middleware([ 'auth:admin' ])->group(function () {
             'dest.destorid' => '部署　削除実行',
         ]);
 });
+*/
+
 
 // Admin　認証系
 Route::namespace('Admin')->prefix('admin')->name('admin.')->group(function () {
@@ -161,12 +166,7 @@ Route::middleware('auth:user')->namespace( 'Customer' )->prefix( 'customer' )->n
 //
 GroupWareRouter::route();
 
-// テストルート
 //
-// Route::prefix('/')->group( function() {
-
-// });
-
 //　戻るボタンのルート
 //
 BackButton::route();

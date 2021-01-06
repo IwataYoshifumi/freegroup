@@ -9,16 +9,12 @@ use App\myHttp\GroupWare\Models\RoleGroup;
 use App\myHttp\GroupWare\Models\RoleList;
 
 use App\Http\Helpers\BackButton;
+use App\Http\Helpers\MyHelpler;
 
-$lists = [];
-foreach( $role_group->lists as $l ) {
-    array_push( $lists, $l->role );
-}
+$lists = toArrayKeyIncremental( $role_group->lists, 'role' );
+$users = $role_group->users()->with(['dept'])->get();
+$array_role_list = RoleList::getRoles();
 
-$users = User::whereHas( 'role_groups', function( $q ) use( $role_group ) { $q->where( 'id', $role_group->id ); })->with( ['dept'] )->get();
-
-#$users = $role_group->users;
-#dump( $role_group, $lists, $users, $role_group->users );
 @endphp
 
 @section('content')
@@ -66,7 +62,7 @@ $users = User::whereHas( 'role_groups', function( $q ) use( $role_group ) { $q->
                             <label for="dept_id" class="col-md-4 col-form-label text-md-right m-1">ロール設定</label>
                             <div class="col-md-6">
                                 <div class="row">
-                                    @foreach( RoleList::get_array_role_lists() as $role => $memo )
+                                    @foreach( $array_role_list as $role => $memo )
                                         <div class="col-md-1 m-1">
                                             @if( in_array( $role, $lists, 1 ))
                                                 ■

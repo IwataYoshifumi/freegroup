@@ -1,0 +1,70 @@
+<?php
+namespace App\myHttp\GroupWare\Models\Search;
+
+use DB;
+use App\myHttp\GroupWare\Models\User;
+use App\myHttp\GroupWare\Models\AccessList;
+use App\myHttp\GroupWare\Models\AccessListUserRole;
+
+// access_list_user_role データベースを検索して、user_id と access_list の検索をする
+//
+class CheckAccessList {
+
+    public static function getRole( $user_id, $access_list_id ) {
+        self::check_input( $user_id, $access_list_id );
+        $role = AccessListUserRole::where( 'user_id', $user_id )->where( 'access_list_id', $access_list_id )->first();
+        return optional( $role )->role;
+    }
+
+    public static function isOwner( $user_id, $access_list_id ) {
+
+        $result = AccessListUserRole::where( 'user_id', $user_id )
+                                    ->where( 'role', 'owner' )
+                                    ->where( 'access_list_id', $access_list_id )->count();
+        return $result == 1;
+    }   
+
+    public static function isWriter( $user_id, $access_list_id ) {
+        $result = AccessListUserRole::where( 'user_id', $user_id )
+                                    ->where( 'role', 'writer' )
+                                    ->where( 'access_list_id', $access_list_id )->count();
+        return $result == 1;
+    }
+    
+    public static function isReader( $user_id, $access_list_id ) {
+        $result = AccessListUserRole::where( 'user_id', $user_id )
+                                    ->where( 'role', 'reader' )
+                                    ->where( 'access_list_id', $access_list_id )->count();
+        return $result == 1;
+    }
+    
+    public static function isFreeBusyReader( $user_id, $access_list_id ) {
+        $result = AccessListUserRole::where( 'user_id', $user_id )
+                                    ->where( 'role', 'freeBusyReader' )
+                                    ->where( 'access_list_id', $access_list_id )->count();
+        return $result == 1;
+    }
+
+    public static function canWrite( $user_id, $access_list_id ) {
+        $result = AccessListUserRole::where(   'user_id', $user_id )
+                                    ->whereIn( 'role', [ 'owner', 'writer' ] )
+                                    ->where(   'access_list_id', $access_list_id )->count();
+        return $result == 1;
+    }   
+
+    public static function canRead( $user_id, $access_list_id ) {
+        $result = AccessListUserRole::where(   'user_id', $user_id )
+                                    ->whereIn( 'role', [ 'owner', 'writer', 'reader' ] )
+                                    ->where(   'access_list_id', $access_list_id )->count();
+        return $result == 1;
+    }
+
+    private static function check_input( $user_id, $access_list_id ) {
+        if( empty( $user_id        )) { throw new Exception( "checkAccessList : Error 1"); }
+        if( empty( $access_list_id )) { throw new Exception( "checkAccessList : Error 2"); }
+        return true;
+    }
+    
+    
+}
+    

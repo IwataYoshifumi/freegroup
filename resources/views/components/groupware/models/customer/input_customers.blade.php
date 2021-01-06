@@ -3,6 +3,7 @@
 
 @endphp
 
+
 <div class="clearfix">
     <!-- The only way to do great work is to love what you do. - Steve Jobs -->
     <div class="row">
@@ -34,6 +35,7 @@
     </div>
 </div>
 
+@once
 <script language='JavaScript'>
     //　検索クリアーボタン
     //
@@ -125,3 +127,4 @@
     });
         
 </script>
+@endonce

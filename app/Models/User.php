@@ -52,7 +52,7 @@ class User extends Authenticatable
                 $users = self::select( "*" );
             }
         } else {
-            $users = self::select( "*" );
+            $users = self::select( "*" )->where( 'retired', false );
         }
 
         if( isset( $find['name'])) {
@@ -102,12 +102,9 @@ class User extends Authenticatable
     // 退職済みか、在任中か
     //
     public function is_retired() {
-        if( $this->retired ) { return true; } else { return fales; }
+        return ! empty( $this->retired );
     }
-    
-    public function is_in_office() {
-        return ! $this->is_retired();
-    }
+
     
     // ロックＩＤか( update, delete ができないＩＤ) middleware ( is_lockedで使用)
     //

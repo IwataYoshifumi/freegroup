@@ -34,13 +34,18 @@ class Schedule extends Model {
     const SEARCH_MODE = [ 0 => '作成者ベースで検索' , 1 =>  '関連社員で検索' , 2 => '作成者・関連社員　両方で検索' ];
     
     protected $fillable = [
-        'name', 'place', 'start_time', 'end_time', 'period', 'memo', 'notice', 'schedule_type_id', 'user_id'
+        'user_id', 'calendar_id',
+        'name', 'place', 
+        'start_time', 'end_time', 'period', 
+        'memo', 
+        'notice', 
+        'permission',
  
     ];
 
     // protected $hidden = [];
 
-    protected $dates = [ 'start_time', 'end_time' ];
+    protected $dates = [ 'start', 'end' ];
     
     /////////////////////////////////////////////////////////////////////////////////////////////
     //
@@ -51,18 +56,28 @@ class Schedule extends Model {
     public function user() {
         return $this->belongsTo( User::class, 'user_id' );
     }
-    
-    public function schedule_type() {
-        return $this->belongsTo( ScheduleType::class, 'schedule_type_id' );
+    public function creator() {
+        return $this->user();
+    }
+    public function updator() {
+        return $this->belongsTo( User::class, 'updator_id' );
     }
     
-    public function type() {
-        return $this->schedule_type();
+    public function calendar() {
+        return $this->belongsTo( Calendar::class, 'calendar_id' );
+    }
+
+    public function gcal_syncs() {
+        return $this->hasMany( GCalSync::class, 'schedule_id' );
     }
     
     //　関連社員
     public function users() {
-        return $this->morphedByMany( User::class, 'scheduleable' )->withPivot( 'google_calendar_event_id' );
+        // return $this->morphedByMany( User::class, 'scheduleable' )->withPivot( 'google_calendar_event_id' );
+        return $this->morphedByMany( User::class, 'scheduleable' );
+    }
+    public function attendees() {
+        return $this->users();
     }
     
     public function customers() {
@@ -79,89 +94,91 @@ class Schedule extends Model {
     
     /////////////////////////////////////////////////////////////////////////////////////////////
     //
+    //  値取得メソッド
+    //
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    public function calprop( $user = null ) {
+        $user    = ( empty( $user )) ? user_id() : $user ;
+        $user_id = ( $user instanceof User ) ? $user->id : $user;
+        return $this->calendar->calprops()->where( 'user_id', $user_id )->first();
+    }
+
+    public function my_calprop() {
+        return $this->calprop( user_id() );
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    //
     //  確認メソッド
     //
     /////////////////////////////////////////////////////////////////////////////////////////////
-    public function isset_google_calendar() {
-        return $this->schedule_type->isset_google_calendar();
+    public function isAttendee( $user ) {
+        $user_id = ( $user instanceof User ) ? $user->id : $user; 
+        return $this->users()->where( 'id', $user_id )->count() === 1;
+    }
+
+    public function isCreator( $user ) {
+        $user_id = ( $user instanceof User ) ? $user->id : $user; 
+        return $this->creator->id === $user_id;
+    }
+
+    public function isUpdator( $user ) {
+        $user_id = ( $user instanceof User ) ? $user->id : $user; 
+        return $this->updator->id === $user_id;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    //
+    //  定数取得メソッド
+    //
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    public static function getPermissions() {
+        return config( 'groupware.schedule.permissions' );
     }
     
     /////////////////////////////////////////////////////////////////////////////////////////////
     //
-    //  表示用関数
+    //  表示用関数( 主に View ファイルで使用 )
     //
     /////////////////////////////////////////////////////////////////////////////////////////////
+    public function start_time() {
+        if( $this->all_day ) { return "【終日】"; }
+        return $this->start->format( 'H:i' );
+    }
+
+    public function end_time() {
+        if( $this->all_day ) { return null; }
+        return "～ ". $this->end_time( 'H:i' );
+    }
+
+    public function p_dateTime() {
+        if( $this->all_day ) { 
+            if( $this->start->eq( $this->end )) { 
+                return $this->start->format( 'Y-m-d' );
+            } else {
+                return $this->start->format( 'Y-m-d' ) . ' ～ ' . $this->end->format( 'Y-m-d' );
+            }
+        } else {
+            if( $this->start->eq( $this->end )) { 
+                return $this->start->format( 'Y-m-d H:i' );
+            } else {
+                return $this->start->format( 'Y-m-d H:i' ) . ' ～ ' . $this->end->format( 'Y-m-d H:i' );
+            }
+        }
+    }
+
     public function p_time() {
-        if( $this->period == "時間" ) {
-            $print = $this->user->name.": ".$this->start_time->format('H:i')." ".$this->name;
-        } else {
-            $print = $this->user->name.":終日 ".$this->name;
-        }
-        return $print;
+        return $this->p_dateTime();
     }
-    
+
     public function print_time() {
-        $start_time = $this->start_time;
-        $end_time   = $this->end_time;
-        
-        if( $this->period == "時間" ) {
-            if( $start_time->diffInMinutes( $end_time ) == 0 ) {
-                $print = $start_time->format( 'Y-m-d H:i' );
-            } else {
-                $diff = $start_time->diffInHours( $end_time );
-                if( $diff >= 1 ) {
-                    $diff .= "時間";
-                } else {
-                    $diff = $start_time->diffInMinutes( $end_time )."分";
-                }
-                $print = $start_time->format( 'Y-m-d' )."  ".$start_time->format('H:i')."～".$end_time->format('H:i')."　（".$diff."）";
-            }
-            
-        } elseif( $this->period == "終日" ) {
-            if( ! $start_time->diffInMinutes( $end_time )) {
-                $print = $start_time->format( 'Y-m-d H:i' )."  （終日）";
-            } else {
-                $print = $start_time->format( 'Y-m-d H:i' )."～".$end_time->format( 'H:i' )." （終日）";
-            }
-            
-        } elseif( $this->period == "複数日") {
-            $diff = $start_time->diffInDays( $end_time );
-            if( $diff >= 1 ) { 
-                $print = $start_time->format('Y-m-d H:i')."～".$end_time->format('Y-m-d H:i')."  （".$diff." 日間）";
-            } else {
-                $print = $start_time->format('Y-m-d H:i')."～".$end_time->format('Y-m-d H:i');
-            }
-        } else {
-            abort( 500, "Schedule:print_time Error 1");
-        }
-        return $print;
+        return $this->start_time();        
     }
-    
+
     public function print_start_time() {
-        
-        $start_time = $this->start_time;
-        $end_time   = $this->end_time;
-
-        if( $this->period == "時間" ) {
-            $print = $start_time->format( 'Y-m-d H:i' );
-
-        } elseif( $this->period == "終日" ) {
-            $print = $start_time->format( 'Y-m-d' )."  （終日）";
-
-        } elseif( $this->period == "複数日") {
-            $print = $start_time->format('Y-m-d H:i')."～".$end_time->format('Y-m-d');
-        } else {
-            abort( 500, "Schedule:print_start_time Error 1");
-        }
-        return $print;
-
+        return $this->start_time();
     }
     
-    /////////////////////////////////////////////////////////////////////////////////////////////
-    //    
-    //　出力用関数（ブラウザの入力フォーム(datetime-local)に値が渡せる日付フォーマットを出力
-    //
-    /////////////////////////////////////////////////////////////////////////////////////////////
     public function o_start_time() {
         if( ! $this->start_time ) { return null; }
         
@@ -328,38 +345,38 @@ class Schedule extends Model {
         return $returns;
     }
     
-    /////////////////////////////////////////////////////////////////////////////////////////////
-    //    
-    //　スケジュールのコレクションから、キーが日付、値がID、の配列を作る（カレンダー表示で使うためのデータ）
-    //
-    /////////////////////////////////////////////////////////////////////////////////////////////
-    static public function get_array_dates_schedule_id( $schedules ) {
+    // /////////////////////////////////////////////////////////////////////////////////////////////
+    // //    
+    // //　スケジュールのコレクションから、キーが日付、値がID、の配列を作る（カレンダー表示で使うためのデータ）
+    // //
+    // /////////////////////////////////////////////////////////////////////////////////////////////
+    // static public function get_array_dates_schedule_id( $schedules ) {
         
-        $dates = [];
-        $i = 1;
-        foreach( $schedules as $schedule ) {
-            $start_date = Carbon::createFromFormat( 'Y-m-d H:i', $schedule->start_time->format( 'Y-m-d 00:00' ));
-            $end_date   = Carbon::createFromFormat( 'Y-m-d H:i', $schedule->end_time->format(   'Y-m-d 23:59' ));
+    //     $dates = [];
+    //     $i = 1;
+    //     foreach( $schedules as $schedule ) {
+    //         $start_date = Carbon::createFromFormat( 'Y-m-d H:i', $schedule->start_time->format( 'Y-m-d 00:00' ));
+    //         $end_date   = Carbon::createFromFormat( 'Y-m-d H:i', $schedule->end_time->format(   'Y-m-d 23:59' ));
             
-            for( $date = $start_date->copy(); $date->lte( $end_date ); $date->addDay() ) {
+    //         for( $date = $start_date->copy(); $date->lte( $end_date ); $date->addDay() ) {
                 
-                $d = $date->format( 'Y-m-d' );
-                if( array_key_exists( $d, $dates )) {
-                    array_push( $dates[$d], $schedule->id );
-                } else {
-                    $dates[$d] = [ $schedule->id ];
-                }
-                // dump( 'ID:'.$schedule->id."  date:".$date->format( 'Y-m-d')."   start:".$start_date->format( 'Y-m-d')."   end_date:".$end_date->format( 'Y-m-d') );
-                if( $i >= 100 ) { break; }
-                $i++;
-            }
-            if( $i >= 100 ) { break; }
+    //             $d = $date->format( 'Y-m-d' );
+    //             if( array_key_exists( $d, $dates )) {
+    //                 array_push( $dates[$d], $schedule->id );
+    //             } else {
+    //                 $dates[$d] = [ $schedule->id ];
+    //             }
+    //             // dump( 'ID:'.$schedule->id."  date:".$date->format( 'Y-m-d')."   start:".$start_date->format( 'Y-m-d')."   end_date:".$end_date->format( 'Y-m-d') );
+    //             if( $i >= 100 ) { break; }
+    //             $i++;
+    //         }
+    //         if( $i >= 100 ) { break; }
 
-        }
-        // dump( $dates );
-        return $dates;        
+    //     }
+    //     // dump( $dates );
+    //     return $dates;        
         
-    }
+    // }
     
     static public function get_array_for_search_mode() {
         return self::SEARCH_MODE;

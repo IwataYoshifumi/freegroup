@@ -72,5 +72,10 @@ class Kernel extends HttpKernel
         'checkRetired'        => \App\Http\Controllers\Vacation\Middleware\checkRetired::class,        // 退職済み社員の確認
         'access_application'  => \App\Http\Controllers\Vacation\Middleware\access_application::class,  // 休暇申請データへアクセスできる人
         'access_approval'     => \App\Http\Controllers\Vacation\Middleware\access_approval::class,     // 休暇承認データへアクセスできる人
+        
+        //　グループウエアのミドルウエア
+        //
+        // 'auth_user_or_admin'    => 
+        
     ];
 }

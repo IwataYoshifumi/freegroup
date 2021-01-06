@@ -1,0 +1,79 @@
+<?php
+
+namespace App\myHttp\GroupWare\Models\Traits;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
+use DB;
+use Carbon\Carbon;
+use Exception;
+
+trait ModelRouteTrait {
+
+    
+    // モデルのCRUDルート名　
+    // 継承先クラスのコンストラクター内で定義すること
+    //
+    private $set_route_id_name;
+    private $set_route_names;
+    // private static $set_route_index_name;
+    // private static $set_route_create_name;
+    
+    /* 
+    // モデルのコンストラクター定義例
+    
+    public function __construct( array $attributes = [] ) {
+        parent::__construct($attributes);
+
+        // ModelRouteTraitで利用する変数
+        //
+        $route_names = [ 'index'  => "groupware.group.index",
+                        'show'   => "groupware.group.show",
+                        'create' => "groupware.group.create",
+                        'store'  => "groupware.group.store",
+                        'edit'   => "groupware.group.edit",
+                        'update' => "groupware.group.update",
+                        'delete' => "groupware.group.delete",
+        ];
+        $this->initModelRouteTrait( 'group', $route_names );
+    }
+    */
+    private function initModelRouteTrait( $id_name, array $route_names ) {
+        $this->set_route_id_name = $id_name;
+        $this->set_route_names   = $route_names;
+    }
+
+    
+    
+
+    public static function route_index() {
+        return route( self::set_route_index_name );
+    }
+    public static function route_create() {
+        return route( self::set_route_create_name );
+    }
+    public static function route_store() {
+        return route( $self::$set_route_store_name );
+    }
+    
+    
+    
+    
+    public function route_with_id( $action ) {
+        return route( $this->set_route_names[$action], [ "$this->set_route_id_name" => $this->id ]);
+    }
+    public function route_show() {
+        return $this->route_with_id( 'show' );
+    }
+    public function route_edit() {
+        return $this->route_with_id( 'edit' );
+    }
+    public function route_update() {
+        return $this->route_with_id( 'update' );
+    }
+    public function route_delete() {
+        return $this->route_with_id( 'delete' );
+    }
+    
+    
+}

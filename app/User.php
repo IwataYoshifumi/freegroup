@@ -61,6 +61,9 @@ class User extends Authenticatable
         if( isset( $find['email'] )) {
             $users = $users->where( 'email', 'like', '%'.$find['email'].'%' ); 
         }
+        if( isset( $find['user_id'])) {
+            $users = $users->where( 'id', $find['user_id']);
+        }
 
         //  ソート
         //
