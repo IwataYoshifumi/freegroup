@@ -1,0 +1,1 @@
+<x-input_files2 :component_input_files="$compnent_input_files" />

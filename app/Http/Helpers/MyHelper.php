@@ -18,8 +18,6 @@ if (! function_exists('if_debug_log')) {
     }
 }
 
-
-
 if (! function_exists('if_debug_dd')) {
     function if_debug_dd( ...$values ) {
         if( is_debug() ) { dd( $values ); }

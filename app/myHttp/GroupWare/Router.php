@@ -33,7 +33,8 @@ class Router {
             self::group_route();
             self::calendar_route();
             self::calprop_route();
-            
+
+            self::test_route();            
             self::route_json();
         });
 
@@ -321,14 +322,26 @@ class Router {
             Route::get(   '/index',             'FileController@index'          )->name('index'   );
             Route::get(   '/show/{file}',       'FileController@show'           )->name('show'    )->where( 'file', '\d+' );
             Route::get(   '/detail/{file}',     'FileController@detail'         )->name('detail'  )->where( 'file', '\d+' );
-            Route::get(   '/download/{file}',   'FileController@download'       )->name('download')->where( 'file', '\d+' );
-
             Route::get(   '/select',            'FileController@select'    )->name('select'  );
             Route::get(   '/delete',            'FileController@delete'    )->name('delete'  );
             Route::delete('/delete',            'FileController@deleted'   )->name('deleted' );
 
-            Route::get(   '/json/file_search',   'FileController@json_search'  )->name('json_search');
+            Route::get(   '/download/myfile/{file}',   'FileController@downloadMyFile' )->name('downloadMyFile')
+                                                                                        ->where( 'file',  '\d+' );
+            Route::get(   '/download/{file}/{class}/{model}',   'FileController@download' )->name('download')
+                                                                                           ->where( 'file',  '\d+' )
+                                                                                           ->where( 'model', '\d+' )
+                                                                                           ->where( 'class', '\w+' );
 
+            Route::get( '/json/file_search',   'FileController@json_search'  )->name('json_search');
+            
+            Route::post(   '/api/upload', 'FileController@uploadAPI' )->name( 'api.upload' );
+            Route::post(   '/api/delete', 'FileController@deleteAPI' )->name( 'api.delete' );
+
+            if( is_debug() ) {
+
+                Route::get( '/deleteAllUntachedFiles',  'FileController@deleteAllUntachedFiles'   )->name('deleteAllUntachedFiles');
+            }
 
             config(['groupware.file.index'    => 'ファイル一覧',
                     'groupware.file.show'     => 'ファイル内容',
@@ -339,6 +352,9 @@ class Router {
                     ]);
         });
     }
+    
+
+    
     
     //  AccessList ルート
     //
@@ -430,6 +446,8 @@ class Router {
             Route::get(  '/gsync/{calprop}',       'CalPropController@gsync'      )->name( 'gsync'       )->where( 'calprop', '\d+' );
             Route::get(  '/gsync_on/{calprop}',    'CalPropController@gsyncOn'    )->name( 'gsync_on'    )->where( 'calprop', '\d+' );
             Route::get(  '/gsync_check/{calprop}', 'CalPropController@gsyncCheck' )->name( 'gsync_check' )->where( 'calprop', '\d+' );
+
+            
             
 
             config([
@@ -443,6 +461,24 @@ class Router {
         });
     }
     
+    //  開発用ルート（ TEST　）
+    //
+    static public function test_route() {
+        Route::name( 'test.' )->namespace( '\App\myHttp\GroupWare\Controllers' )->group( function() {
+
+            //　File Component 開発用
+            //
+            if( is_debug() ) {
+                Route::get(  '/files',  'TestController@files'        )->name('files');
+                Route::post( '/files',  'TestController@filesUpdate'  )->name('files');
+            }
+
+            config([
+                    'groupware.test.files'     => 'ファイルテスト',
+            ]);
+        });
+    }
+
     
     //  JSONルート
     // 

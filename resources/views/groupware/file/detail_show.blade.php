@@ -1,7 +1,7 @@
 <div class="row m-2 border border-dark">
     @php
-        $route_show     = route( 'groupware.file.show',     [ 'file' => $file->id ] );
-        $route_download = route( 'groupware.file.download', [ 'file' => $file->id ] );
+        $route_show     = route( 'groupware.file.show',           [ 'file' => $file->id ] );
+        $route_download = route( 'groupware.file.downloadMyFile', [ 'file' => $file->id ] );
     @endphp
     
     <div class="col-12 col-lg-4">ファイル名</div>
@@ -25,7 +25,7 @@
                 @endphp
                 <div class="row">
                     <div class="col-3">{{ $s->name }}</div>
-                    <div class="col-3">{{ $s->start_time }}</div>
+                    <div class="col-3">{{ $s->created_at }}</div>
                     <div class="col-2 mtb-1">
                         <a class="btn btn-sm btn-outline-secondary" href="{{ $href }}">詳細</a>
                     </div>
@@ -43,7 +43,7 @@
                 @endphp
                 <div class="row">
                     <div class="col-3">{{ $r->name }}</div>
-                    <div class="col-3">{{ $r->start_time }}</div>
+                    <div class="col-3"></div>
                     <div class="col-2 mtb-1">
                         <a class="btn btn-sm btn-outline-secondary" href="{{ $href }}">詳細</a>
                     </div>
@@ -52,15 +52,15 @@
         </div>
     @endif
     
-    @if( count( $file->schedule_types )) 
-        <div class="col-12 col-lg-4">添付先（スケジュール種別）</div>
+    @if( count( $file->calprops )) 
+        <div class="col-12 col-lg-4">添付先（カレンダー）</div>
         <div class="col-12 col-lg-8">
-            @foreach( $file->schedule_types as $type )
+            @foreach( $file->calprops as $calprop )
                 @php
-                    $href = "";
+                    $href = route( 'groupware.calprop.show', [ 'calprop' => $calprop->id ] );
                 @endphp
                 <div class="row">
-                    <div class="col-3">{{ $type->name }}</div>
+                    <div class="col-3">{{ $calprop->name }}</div>
                     <div class="col-2 mtb-1">
                         <a class="btn btn-sm btn-outline-secondary" href="{{ $href }}">詳細</a>
                     </div>

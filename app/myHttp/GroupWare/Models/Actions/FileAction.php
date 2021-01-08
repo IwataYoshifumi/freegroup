@@ -13,8 +13,6 @@ use App\myHttp\GroupWare\Models\Dept;
 use App\myHttp\GroupWare\Models\File as MyFile;
 use App\myHttp\GroupWare\Models\AccessList;
 
-
-
 class FileAction  {
     
     public static function save( $upload_file, $file_name = null ) {
@@ -49,10 +47,31 @@ class FileAction  {
         
         DB::table( 'fileables' )->where( 'file_id', $file->id )->delete();
         Storage::delete( $file->path );
-        $file->delete();
-        
+        return $file->delete();
     }
-    
+
+    /*
+     *
+     *　アッタッチされていないファイルを全て削除する
+     *
+     */
+    public static function delete_all_detached_files() {
+        
+        
+        $files = new MyFile;
+        $files = $files->doesntHave( 'fileables' )->get();
+        
+        if_debug( __METHOD__, $files, $files->pluck( 'path' )->toArray() );
+
+        if( count( $files ) == 0 ) { return 0; }
+                
+        try {
+            Storage::delete( $files->pluck( 'path' )->toArray() );
+        } catch( Exception $e ) {
+            throw new Exception( 'File Delete Error ');
+        }
+        return $files->toQuery()->delete();
+    }    
     
 }
 

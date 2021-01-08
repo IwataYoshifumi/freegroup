@@ -134,6 +134,7 @@ class CalPropController extends Controller {
             $schedule->memo       = "memo";
             $event  = $client->create( $schedule );
             $return = $client->delete( $calprop->google_calendar_id, $event->id );
+
         } catch( Exception $e ) {
             $calprop->set_google_sync_check_NG();
             session()->flash( 'error_message', "Googleへの書き込みができませんでした。Googleカレンダーの共有設定が「予定の変更」になっているか確認してください。" );

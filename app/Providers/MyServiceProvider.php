@@ -9,6 +9,7 @@ use App\myHttp\GroupWare\View\Components\InputCustomersComponent;
 use App\myHttp\GroupWare\View\Components\InputUsersComponent;
 // use App\myHttp\GroupWare\View\Components\InputUserssComponent;
 use App\myHttp\GroupWare\View\Components\InputFilesComponent;
+use App\myHttp\GroupWare\View\Components\InputFilesComponent2;
 use App\myHttp\GroupWare\View\Components\InputSchedulesComponent;
 
 use App\myHttp\GroupWare\View\Components\FindDeptComponent;
@@ -47,6 +48,10 @@ class MyServiceProvider extends ServiceProvider
 
         // 2020.11.28 追加
         Blade::component( 'select_user',        SelectUserComponent::class     );   // view groupware.access_list.input で使用
+        
+        // 2021.01.07 追加（Fileのアップロード、アッタッチ・デタッチフォーム）
+        Blade::component( 'input_files2',       InputFilesComponent2::class     );
+        
 
         
         

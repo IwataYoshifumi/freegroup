@@ -49,13 +49,13 @@ use App\myHttp\GroupWare\Models\Actions\ScheduleAction;
 use App\myHttp\GroupWare\Controllers\Search\GetCalendarForScheduleInput;
 use App\myHttp\GroupWare\Controllers\Search\SearchSchedule;
 
+use App\myHttp\GroupWare\Models\SubClass\ComponentInputFilesClass;
+
 class Schedule2Controller extends Controller {
     
     // 　ルーティングコントローラー
     //
     public function index( Request $request ) {
-
-        
         
         GetCalendarForScheduleInput::user( user_id() );
         
@@ -104,6 +104,7 @@ class Schedule2Controller extends Controller {
             $schedule->permission = $calprop->default_permission;
         }
         
+        $component_input_files = new ComponentInputFilesClass( 'attach_files'  );
         
         
         $input    = new DateTimeInput( );
@@ -111,7 +112,8 @@ class Schedule2Controller extends Controller {
         // return view( 'groupware.schedule2.create' )->with( 'defaults', $defaults );
         BackButton::stackHere( $request );
         return view( 'groupware.schedule2.input' )->with( 'schedule', $schedule )
-                                                  ->with( 'input',    $input    );
+                                                  ->with( 'input',    $input    )
+                                                  ->with( 'component_input_files', $component_input_files );
     }
     
     public function store( Schedule2Request $request ) {
@@ -143,11 +145,14 @@ class Schedule2Controller extends Controller {
         
         $this->authorize( 'update', $schedule );
         
+        
         $input    = new DateTimeInput( $schedule );
+        $component_input_files = new ComponentInputFilesClass( 'attach_files', $schedule->files  );
         
         BackButton::stackHere( request() );
         return view( 'groupware.schedule2.input' )->with( 'schedule', $schedule )
-                                                  ->with( 'input',    $input    );
+                                                  ->with( 'input',    $input    )
+                                                  ->with( 'component_input_files', $component_input_files );;
     }
     
     public function update( Schedule $schedule, Schedule2Request $request ) {

@@ -37,8 +37,12 @@ use App\myHttp\GroupWare\Controllers\ScheduleController;
     <a class="btn btn-menu col-2 col-lg-2 m-1" href="{{ route( 'groupware.schedule.weekly', $args   ) }}">
         <div class="d-block d-lg-none">週次</div><div class="d-none d-lg-block">週次表示</div>
     </a>
+    
+    <a class="btn btn-menu col-2 col-lg-2 m-1" href="{{ route( 'groupware.calendar.index') }}">
+        <div>カレンダー設定</div>
+    </a>
         
-    <a class="btn col-1 m-1 ml-auto" href="{{ route( 'groupware.schedule.type.index'    ) }}">
+    <a class="btn col-1 m-1 ml-auto" href="{{ route( 'groupware.calendar.index'    ) }}">
         <i class="fas fa-cog" style="font-size: 21px; color: black;"></i>
     </a>
     

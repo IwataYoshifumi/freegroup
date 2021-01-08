@@ -6,7 +6,7 @@ use App\myHttp\GroupWare\Menu as GroupwareMenu;
 <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
     <div class="container">
         <a class="navbar-brand" href="@auth( 'user' ) {{ route( 'user.home' ) }} @endauth @guest( 'user' ) {{ route( 'user.home' ) }} @endguest">
-            {{ config('app.name', 'Laravel') }}
+        @if( is_debug() ) 【開発モード中】 @endif {{ config('app.name', 'Laravel') }} 
         </a>
 
         @if( 1 )

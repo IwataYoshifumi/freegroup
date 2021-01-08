@@ -127,6 +127,26 @@ class Schedule extends Model {
         return $this->updator->id === $user_id;
     }
 
+    public function canRead( $user ) {
+        $user = ( $user instanceof User ) ? $user : User::find( $user ); 
+
+        if( $user->id == $this->user_id or
+            $this->isAttendee( $user ) or 
+            $this->calendar->canRead( $user->id ) ) {
+            return true;
+        }
+        return false;
+    }
+    
+    public function canUpdate( $user ) {
+        die( __METHOD__. ' Undefine ');
+    }
+    
+    public function canDelete( $user ) {
+        
+    }
+
+
     /////////////////////////////////////////////////////////////////////////////////////////////
     //
     //  定数取得メソッド

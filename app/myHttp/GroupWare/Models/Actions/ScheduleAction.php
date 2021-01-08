@@ -48,17 +48,17 @@ class ScheduleAction  {
             $schedule->customers()->sync( $request->customers );
             $schedule->users()->sync( $request->users );
             
-            //　ファイル保存
-            //
-            $files = [];
-            foreach( ( $request->file('upload_files')) ? $request->file('upload_files') : [] as $i => $file ) {
-                // dump( "aaa", $i, $file );
-                $path = $file->store('');
-                $value = [ 'file_name' => $file->getClientOriginalName(), 'path' => $path, 'user_id' => auth('user')->user()->id ];
-                $f = MyFile::create( $value );
-                $files[$i] = $f->id;
-            }
-            $schedule->files()->sync( $files );
+            // //　ファイル保存
+            // //
+            // $files = [];
+            // foreach( ( $request->file('upload_files')) ? $request->file('upload_files') : [] as $i => $file ) {
+            //     // dump( "aaa", $i, $file );
+            //     $path = $file->store('');
+            //     $value = [ 'file_name' => $file->getClientOriginalName(), 'path' => $path, 'user_id' => auth('user')->user()->id ];
+            //     $f = MyFile::create( $value );
+            //     $files[$i] = $f->id;
+            // }
+            $schedule->files()->sync( $request->attach_files );
 
             return $schedule;
 
@@ -101,18 +101,19 @@ class ScheduleAction  {
             
             //　アップロードファイル
             //
-            $files = ( ! empty( $request->attached_files )) ? $request->attached_files : [] ;
-            // dd( $request->file( 'upload_files' ));
-            foreach( ( $request->file('upload_files')) ? $request->file('upload_files') : [] as $i => $file ) {
-                // dump( "aaa", $i, $file );
-                $path = $file->store('');
-                $value = [ 'file_name' => $file->getClientOriginalName(), 'path' => $path, 'user_id' => auth('user')->user()->id ];
-                $f = MyFile::create( $value );
-                // $files[$i] = $f->id;
-                array_push( $files, $f->id );
-            }
-            // dd( $files );
-            $schedule->files()->sync( $files );
+            // $files = ( ! empty( $request->attached_files )) ? $request->attached_files : [] ;
+            // // dd( $request->file( 'upload_files' ));
+            // foreach( ( $request->file('upload_files')) ? $request->file('upload_files') : [] as $i => $file ) {
+            //     // dump( "aaa", $i, $file );
+            //     $path = $file->store('');
+            //     $value = [ 'file_name' => $file->getClientOriginalName(), 'path' => $path, 'user_id' => auth('user')->user()->id ];
+            //     $f = MyFile::create( $value );
+            //     // $files[$i] = $f->id;
+            //     array_push( $files, $f->id );
+            // }
+            // // dd( $files );
+            // $schedule->files()->sync( $files );
+            $schedule->files()->sync( $request->attach_files );
 
             return $schedule;
         });    

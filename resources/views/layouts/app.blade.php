@@ -50,6 +50,6 @@
 
 </head>
     
-    @include( 'layouts.groupware.app' )
+@include( 'layouts.groupware.app' )
 
 </html>

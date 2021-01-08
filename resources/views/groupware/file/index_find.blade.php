@@ -29,7 +29,7 @@ $button['今日']['end']   = $today->format('Y-m-d');
 @endphp
 
 {{ Form::open( ['url' => url()->current(), 'method' => 'get', 'id' => 'index.form' ] ) }}
-    {{ Form::hidden( 'SearchQuery', 1 ) }}
+    {{ Form::hidden( 'find', 1 ) }}
     @csrf
 
     <div class="container border border-dark p-1 w-95 m-1 p-1">
@@ -41,11 +41,9 @@ $button['今日']['end']   = $today->format('Y-m-d');
             <div class="col-12 d-lg-none p-1">アップロード期間</div>
             <div class="col-lg-8 clearfix">
                 <div class="row p-1">
-                {{ Form::date( 'find[start_date]', old( 'find[start_date]', optional($find)['start_date'] ), 
-                                ['class' => 'form-control col-8 col-lg-5 clearfix', 'id' => 'start_date' ] ) }}
+                {{ Form::date( 'start_date', op( $request )->start_date, ['class' => 'form-control col-8 col-lg-5 clearfix', 'id' => 'start_date' ] ) }}
                 <div class="col-1 m-1">～</div>
-                {{ Form::date( 'find[end_date]', old( 'find[end_date]', optional($find)['end_date'] ), 
-                                ['class' => 'form-control col-8 col-lg-5 clearfix', 'id' => 'end_date' ] ) }}
+                {{ Form::date( 'end_date',   op( $request )->end_date,   ['class' => 'form-control col-8 col-lg-5 clearfix', 'id' => 'end_date'   ] ) }}
                 </div>
                 <div class="col-lg-12">
                     @foreach( $button as $key => $date ) 
@@ -62,8 +60,7 @@ $button['今日']['end']   = $today->format('Y-m-d');
             
             <div class="col-12 d-lg-none p-1">表示数</div>
             <div class="col-lg-4 clearfix">
-                {{ Form::select( 'find[pagination]', config( 'constant.pagination' ), old( 'find[pagination]', $find['pagination'] ), [ 'class' => 'form-control' ] ) }}
-            
+                {{ Form::select( 'pagination', config( 'constant.pagination' ), op( $request )->pagination, [ 'class' => 'form-control' ] ) }}
             </div>
             
         </div>
@@ -75,7 +72,7 @@ $button['今日']['end']   = $today->format('Y-m-d');
         <div class="row p-1 container m-1">
             <div class="col-12 d-lg-none p-1">ファイル名</div>
             <div class="col-lg-4 p-1 clearfix">
-                {{ Form::text( 'find[file_name]', optional( $find )['file_name'] , [ 'class' => 'form-control' ] ) }}
+                {{ Form::text( 'file_name', op( $request )->file_name , [ 'class' => 'form-control' ] ) }}
             </div>
 
             <div class="col-12 d-lg-none p-1">添付有無</div>
@@ -83,21 +80,20 @@ $button['今日']['end']   = $today->format('Y-m-d');
                 @php
                     $attached = [ '' => '',  1 => '添付あり', -1 => '添付なし' ];
                 @endphp
-                
-                {{ Form::select( 'find[attached]', $attached, optional( $find )['attached'] , [ 'class' => 'form-control col-6' ] ) }}
+                {{ Form::select( 'attached', $attached, op( $request )->attached , [ 'class' => 'form-control col-6' ] ) }}
             </div>
 
-            
-            <div class="col-12 d-lg-none p-1">アップロード社員</div>
+            <div class="col-12 d-lg-none p-1">アップロード者</div>
             <div class="col-lg-4 p-1 clearfix">
-                @php
-                    #dd( $find );
-                    $users = ( isset( optional($find)['users'] )) ? $find['users'] : [];
-                    # $users = ( is_array( $request->users )) ? $request->users : $defaults_users ;
-                    #dd( $users );
-                @endphp
-                
-                <x-input_users :users="$users"/>
+                @if( is_debug() )
+                    @php
+                        $users = ( isset( $request->users )) ? $request->users : [];
+                    @endphp
+                    <x-input_users :users="$users"/>
+                @else 
+                    <input type='hidden' name='users[]' value="{{ user_id() }}">
+                    自分のアップロードファイルが検索対象
+                @endif
             </div>
         </div>
 
@@ -106,7 +102,5 @@ $button['今日']['end']   = $today->format('Y-m-d');
                 <button class="btn btn-search col-6 col-lg-3 m-1 p-1">検索</button>
             </div>
         </div>
-    
-    
     </div>
 {{ Form::close() }}

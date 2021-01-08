@@ -211,7 +211,9 @@ $is_invalid['calendar_id'] = ( $errors->has( 'calendar_id'         ) ) ? 'is-inv
                             <label for="mobile" class="col-md-4 col-form-label text-md-right">添付ファイル</label>
                             <div class="col-md-8">
                                 <!--- コンポーネント InputFilesComponent --->                                
-                                <x-input_files :attached_files="$attached_files" />
+                                {{--<x-input_files :attached_files="$attached_files" />--}}
+                                
+                                <x-input_files2 :input="$component_input_files" />
                             </div>
                         </div>
 

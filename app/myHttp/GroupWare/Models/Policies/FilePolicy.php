@@ -6,6 +6,9 @@ use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Auth\Access\Response;
 
 use App\myHttp\GroupWare\Models\User;
+use App\myHttp\GroupWare\Models\Schedule;
+use App\myHttp\GroupWare\Models\Report;
+use App\myHttp\GroupWare\Models\Calprop;
 use App\myHttp\GroupWare\Models\File as MyFile;
 
 
@@ -18,34 +21,33 @@ class FilePolicy
     }
 
     public function view(User $user, MyFile $file) {
-        //
-        // return $user->id == $file->user->id;
-        return TRUE;
+        if( $user->id == $file->user_id ) { return Response::allow(); }
+        return Response::deny();
     }
 
-    public function create(User $user) {
-        //
-        // dump( 'MyFilePolicy@create', $user->is_user(), $user->is_admin() ) ;
-        return $user->is_user();
-    }
-
-    public function update(User $user, MyFile $file ) {
-        return $user->id == $file->user->id;
+    // ファイルのダウンロードはアップロード者 or 各モデルのリーダーしかアクセス出来ない
+    //
+    public function download( User $user, MyFile $file, $class_name, $model_id ) {
+        
+        if( $class_name == 'schedule' ) { $model = Schedule::find( $model_id ); } 
+        if( $class_name == 'report'   ) { $model = Report::find(   $model_id ); }
+        if( $class_name == 'calprop'  ) { $model = CalProp::find(  $model_id ); }
+        if( ! $model instanceof Schedule and 
+            ! $model instanceof Report   and
+            ! $model instanceof Calprop       ) { die( __METHOD__ . 'Invalid Input' ); } 
+        
+        if( $user->id == $file->user_id ) { return Response::allow(); }
+        if( $model->canRead( $user )) { return Response::allow(); }
+        // if( $user->can( 'view', $model )) { return Response::allow(); }
+        
+        return Response::deny( 'FilePolicy@download : Invalid Access');
     }
 
     public function delete( User $user, MyFile $file ) {
-        
-        return ( $user->id == $file->user_id )
-                    ? Response::allow()
-                    // : Response::deny( redirect( url()->previous() )->with( 'flush_message', '他者が');
-                    : Response::deny( '他者がアップロードしたファイルは削除できません');
-    }
-
-    public function restore(User $user, MyFile $file) {
-        return false;
+        return $this->view( $user, $file );
     }
 
     public function forceDelete(User $user, MyFile $file) {
-        return false;
+        return $this->view( $user, $file );
     }
 }

@@ -19,12 +19,13 @@ class SchedulePolicy
 
     public function view(User $user, Schedule $schedule) {
         //
-        // dd( $schedule->calendar, $schedule->calendar->canRead( $user->id ) );
-        if( $user->id == $schedule->user_id or
-            $schedule->isAttendee( $user ) or 
-            $schedule->calendar->canRead( $user->id ) ) {
-            return Response::allow();
-        }
+
+        if( $schedule->canRead( $user )) { return Response::allow(); }        
+        // if( $user->id == $schedule->user_id or
+        //     $schedule->isAttendee( $user ) or 
+        //     $schedule->calendar->canRead( $user->id ) ) {
+        //     return Response::allow();
+        // }
         return Response::deny( 'SchedulePolicy@view : deny 1 ');
     }
 

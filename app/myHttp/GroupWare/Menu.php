@@ -36,43 +36,41 @@ class Menu
                     13 => route( 'dept.index'),
                     14 => route( 'groupware.calendar.index'),
                     15 => route( 'groupware.calprop.index'),
-                    
-                    
+
+                    //
+                    //　開発用ルート
+                    //
+                    99 => route( 'groupware.test.files'),
+                    98 => route( 'groupware.file.deleteAllUntachedFiles'),
                     ];
+
 
         $return = <<<EOT
             <a class="nav-item nav-link" href="$route[1]">顧客管理</a> 
             <a class="nav-item nav-link" href="$route[2]">スケジュール</a>
-            <a class="nav-item nav-link" href="$route[14]">Calendar</a> 
-
-            <!--
-            <a class="nav-item nav-link" href="$route[15]">Cal prop</a> 
             <a class="nav-item nav-link" href="$route[3]">日報</a>
-            <a class="nav-item nav-link" href="$route[5]">ファイル</a>
-            -->
 
             <a class="nav-item nav-link" href="$route[10]">ACL</a>
             <a class="nav-item nav-link" href="$route[11]">Group</a>
-
+            
             <!--
             <a class="nav-item nav-link" href="$route[0]">【ホーム】</a> 
             <a class="nav-item nav-link" href="$route[4]">【ToDo】</a>
             <a class="nav-item nav-link" href="$route[5]">【稟議/決裁】</a>
             <a class="nav-item nav-link" href="$route[5]">【施設備品/予約】</a>
             -->
+            
             <div class="dropdown">
                 <a id="dropdownMenuButton1"
                         class="nav-item nav-link dropdown-toggle"
 	                    data-toggle="dropdown"
                         aria-haspopup="true"
-	                    aria-expanded="false">その他</a>
+	                    aria-expanded="false">開発用</a>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1" style="z-index:9999;">
-                        <a class="dropdown-item" href="$route[3]">日報</a>
-                        <a class="dropdown-item" href="$route[5]">ファイル</a>
+                        <a class="dropdown-item" href="$route[99]">ファイル入力コンポーネント</a>
+                        <a class="dropdown-item" href="$route[98]">無添付ファイル一括削除</a>
                 </div>
             </div>
-            
-            
             
             <div class="dropdown">
                 <a id="dropdownMenuButton"

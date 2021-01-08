@@ -70,8 +70,7 @@ $route_name = Route::currentRouteName();
                             <div class="row mt-1">
                                 @php
                                     $route_show   = route( 'groupware.file.show',   [ 'file' => $file->id ] );
-                                    $route_detail = route( 'groupware.file.detail', [ 'file' => $file->id ] );
-                                    if( count( $file->schedules ) or count( $file->reports ) or count( $file->schedule_types )) {
+                                    if( count( $file->schedules ) or count( $file->reports ) or count( $file->calprops )) {
                                         $attached = "有";
                                     } else {
                                         $attached = "";
@@ -80,7 +79,7 @@ $route_name = Route::currentRouteName();
                                 
                                 <div class="col-12 col-lg-1 d-none d-lg-block">
                                     @if( $route_name == "groupware.file.index" )
-                                        <a class="btn btn-sm btn-outline-secondary" href="{{ $route_detail }}">詳細</a>
+                                        <a class="btn btn-sm btn-outline-secondary" href="{{ $route_show }}">詳細</a>
                                     @elseif( $route_name == "groupware.file.select" )
                                         {{ Form::checkbox( 'files[]', $file->id, "", [ 'class' => 'delete_checkboxes' ] ) }}
                                     @endif
@@ -91,8 +90,7 @@ $route_name = Route::currentRouteName();
                                     <div class="row">
                                         <div class="col-4 d-block d-lg-none">ファイル名</div>
                                         <div class="col-7 col-lg-12">
-                                            {{ $file->file_name     }}
-                                            <a href="{{ $route_show }}" target="_blank"><i class="fas fa-search"></i></a> 
+                                            {{ $file->file_name }}
                                         </div>
                                     </div>
                                 </div>
@@ -153,10 +151,9 @@ $route_name = Route::currentRouteName();
 
                     @endif
 
-
                     <div class="w-100">
                         @if( count( $files )) 
-                            {{ $files->appends( [ 'find' => $find, 'pagination' => $request->pagination ] )->links() }}
+                            {{ $files->appends( $request->all() )->links() }}
                         @endif
                     </div>
                    

@@ -82,7 +82,7 @@ use App\myHttp\GroupWare\Models\User;
                             <a href="{{ route('groupware.file.show',     [ 'file' => $file->id ] ) }}" target="_blank"><span class='search icon'></span></a>
                         </div>
                         <div class="col-1">
-                            <a href="{{ route('groupware.file.download', [ 'file' => $file->id ] ) }}"><span class='download icon'></span></a>
+                            <a href="{{ route('groupware.file.download', [ 'file' => $file->id, 'class' => 'schedule', 'model' => $schedule->id ] ) }}"><span class='download icon'></span></a>
                         </div>
                         <div class="col">{{ $file->file_name }}</div> 
                     </div>

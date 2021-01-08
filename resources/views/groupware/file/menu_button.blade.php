@@ -14,5 +14,12 @@
         <div class="d-block d-lg-none">削除</div>
         <div class="d-none d-lg-block">ファイル削除</div>
     </a>
+
+    @if( is_debug() )
+        <a class="btn btn-danger border-dark col-2 col-lg-2 m-1 " href="{{ route( 'groupware.file.deleteAllUntachedFiles' ) }}">
+            <div>無添付ファイル全削除</div>
+        </a>
+
+    @endif
         
 </div>
