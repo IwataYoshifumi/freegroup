@@ -9,8 +9,8 @@ use App\myHttp\GroupWare\Models\User;
 use App\myHttp\GroupWare\Models\Schedule;
 use App\myHttp\GroupWare\Models\Report;
 
-$schedules = $customer->schedules;
-$reports   = $customer->reports;
+$schedules = $customer->schedules()->orderBy( 'start_date' )->get();
+$reports   = $customer->reports()->orderBy( 'start_date' )->get();
 
 # dump( $schedules, $reports );
 

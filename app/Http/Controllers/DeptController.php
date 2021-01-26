@@ -18,7 +18,6 @@ class DeptController extends Controller {
 
         BackButton::setHere( $request );
         $find = optional( $request )->find;
-        // dump( optional( $request )->find );
         $depts = Dept::search( $find );
         
         // return view( 'vacation.dept.index' )->with( 'depts', $depts );

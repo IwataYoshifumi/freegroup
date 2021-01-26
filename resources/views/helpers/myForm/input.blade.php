@@ -87,7 +87,7 @@ use Illuminate\Support\HtmlString;
                                     @php
                                         $old = old( "input[$name][$key]", ( isset( $default[$key] )) ? $default[$key] : null );
                                         if( is_numeric( $key )) { $key = $value; }
-                                        #dump( $defaults,$old, $checked );
+                                        #if_debug( $defaults,$old, $checked );
                                     @endphp
                                     <div class="col-4">
                                         <div class="row p-1">
@@ -116,8 +116,3 @@ use Illuminate\Support\HtmlString;
     
     @endforeach
 </div>
-
-@php
-    dump( [ 'types' => $types, 'names' => $names, 'values' => $values, ] );
-    dump( Request::all(), Request::session() );
-@endphp

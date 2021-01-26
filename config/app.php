@@ -184,6 +184,7 @@ return [
          * My Custom Service Providers...
          */
         App\Providers\MyServiceProvider::class,
+        App\Providers\MyCustomDirectiveProvider::class,
     ],
 
     /*

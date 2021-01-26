@@ -117,7 +117,7 @@ class UserController extends Controller
 
     public function edit(UserRequest $request, User $user) {
         //
-        // dump( 'user.edit');
+        // if_debug( 'user.edit');
         return view( 'user.edit' )->with( 'user', $user );
 
     }
@@ -188,7 +188,7 @@ class UserController extends Controller
     public function json( Request $request ) {
         $name    = $request->name;
         $dept_id = $request->dept_id;
-        // dump( $request->all() );
+        // if_debug( $request->all() );
         
         if( is_null( $name ) and empty( $dept_id )) { return response()->json( [] ); }
         
@@ -202,9 +202,9 @@ class UserController extends Controller
         }
         $users = $users->where( 'retired', false );
 
-        // dump( 'aa', $request->dept_id );
+        // if_debug( 'aa', $request->dept_id );
         $users = $users->get();
-        // dump( $users );
+        // if_debug( $users );
         $array = [];
         foreach( $users as $user ) {
 

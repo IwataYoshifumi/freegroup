@@ -40,7 +40,7 @@ class CustomerRequest extends FormRequest
             $trim = [ '-', ' ','－', '―', '‐' ]; // スペース・ハイフンを除去
             $hyphen = [ '-', '－', '―', '－', 'ー' ];  // 全角ハイフン
             $values = $this->all();
-            // dump( $route_name,$values );
+            // if_debug( $route_name,$values );
             // $values = self::adjust_input( $this->all() );
             $values = array_merge( $values, [
                 'kana'     => str_replace( $hyphen, "ー", mb_convert_kana( $this->kana, 'KCVS' )),
@@ -54,7 +54,7 @@ class CustomerRequest extends FormRequest
             $this->merge( $values );
             
             // $this->flash( '_old_input', $values );
-            // dump( $values, $this );
+            // if_debug( $values, $this );
         }
     }
     

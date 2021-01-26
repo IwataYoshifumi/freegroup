@@ -56,7 +56,6 @@ class DeptController extends Controller {
 
     public function show(Dept $dept) {
         //
-        dump( __METHOD__ );
         BackButton::stackHere( request() );
         return view( 'groupware.dept.show' )->with( 'dept', $dept );
     }
@@ -65,7 +64,6 @@ class DeptController extends Controller {
         //
         $this->authorize( 'update', $dept );
         
-        dump( __METHOD__ );
         BackButton::stackHere( request() );
         return view( 'groupware.dept.edit' )->with( 'dept', $dept );
     }
@@ -119,5 +117,7 @@ class DeptController extends Controller {
         return redirect()->route( 'dept.index' );
 
     }
+    
+    
     
 }

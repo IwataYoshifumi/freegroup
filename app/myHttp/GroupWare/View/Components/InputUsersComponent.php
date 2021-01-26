@@ -24,7 +24,7 @@ class InputUsersComponent extends Component
         } else {
             $this->users = $users;
         }
-        // dump( $users, $this->users, User::find( $users ) );
+        // if_debug( $users, $this->users, User::find( $users ) );
     }
     
 

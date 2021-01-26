@@ -26,13 +26,16 @@ class Router {
             
             // self::schedule_route();
             self::schedule2_route();
-            self::schedule_type_route();
-            self::report_route();
+            // self::schedule_type_route();
             self::file_route();
             self::accesslist_route();
             self::group_route();
             self::calendar_route();
             self::calprop_route();
+
+            self::report_route();
+            self::report_list_route();
+            self::report_prop_route();
 
             self::test_route();            
             self::route_json();
@@ -40,7 +43,11 @@ class Router {
 
         Route::middleware('auth:admin')->group(function () {
             self::role_group_route();
-        });        
+        });
+        
+        Route::middleware( 'auth:user,admin' )->group( function() {
+            self::route_ajax(); 
+        });
         
         self::customer_route();
         self::user_route();
@@ -171,46 +178,46 @@ class Router {
     
     //　Schedule ルート
     //
-    static public function schedule_route() {
+    // static public function schedule_route() {
         
-        Route::prefix( 'schedule')->name( 'schedule.')->namespace( '\App\myHttp\GroupWare\Controllers' )->group( function() {
+    //     Route::prefix( 'schedule')->name( 'schedule.')->namespace( '\App\myHttp\GroupWare\Controllers' )->group( function() {
             
-            Route::get(   '/index',      'ScheduleController@index'          )->name('index'       );
-            Route::get(   '/monthly',    'ScheduleController@index_monthly'  )->name('monthly'     );
-            Route::get(   '/weekly',     'ScheduleController@index_weekly'   )->name('weekly'      );
-            Route::get(   '/daily',      'ScheduleController@index_daily'    )->name('daily'       );
-            Route::get(   '/json_search','ScheduleController@json_search'    )->name('json_search' );
+    //         Route::get(   '/index',      'ScheduleController@index'          )->name('index'       );
+    //         Route::get(   '/monthly',    'ScheduleController@index_monthly'  )->name('monthly'     );
+    //         Route::get(   '/weekly',     'ScheduleController@index_weekly'   )->name('weekly'      );
+    //         Route::get(   '/daily',      'ScheduleController@index_daily'    )->name('daily'       );
+    //         Route::get(   '/json_search','ScheduleController@json_search'    )->name('json_search' );
             
-            Route::get(   '/create',     'ScheduleController@create'          )->name('create');
-            Route::post(  '/create',     'ScheduleController@store'           )->name('store' );
+    //         Route::get(   '/create',     'ScheduleController@create'          )->name('create');
+    //         Route::post(  '/create',     'ScheduleController@store'           )->name('store' );
             
-            Route::get(   '/show/{schedule}',     'ScheduleController@show'   )->name('show'  )->where( 'schedule', '\d+' );
-            Route::get(   '/show',                'ScheduleController@show_m' )->name('show_m');
+    //         Route::get(   '/show/{schedule}',     'ScheduleController@show'   )->name('show'  )->where( 'schedule', '\d+' );
+    //         Route::get(   '/show',                'ScheduleController@show_m' )->name('show_m');
             
-            Route::get(   '/edit/{schedule}',     'ScheduleController@edit'   )->name('edit'   )->where( 'schedule', '\d+' );
-            Route::post(  '/edit/{schedule}',     'ScheduleController@update' )->name('update' )->where( 'schedule', '\d+' );
+    //         Route::get(   '/edit/{schedule}',     'ScheduleController@edit'   )->name('edit'   )->where( 'schedule', '\d+' );
+    //         Route::post(  '/edit/{schedule}',     'ScheduleController@update' )->name('update' )->where( 'schedule', '\d+' );
     
-            Route::get(     '/delete/{schedule}',     'ScheduleController@delete'  )->name('delete' )->where( 'schedule', '\d+' );
-            Route::delete(  '/delete/{schedule}',     'ScheduleController@deleted' )->name('deleted')->where( 'schedule', '\d+' );
+    //         Route::get(     '/delete/{schedule}',     'ScheduleController@delete'  )->name('delete' )->where( 'schedule', '\d+' );
+    //         Route::delete(  '/delete/{schedule}',     'ScheduleController@deleted' )->name('deleted')->where( 'schedule', '\d+' );
     
     
-            config(['groupware.schedule.index'    => '予定一覧',
+    //         config(['groupware.schedule.index'    => '予定一覧',
             
-                    'groupware.schedule.monthly'  => '月次表示',
-                    'groupware.schedule.weekly'   => '週次表示',
-                    'groupware.schedule.daily'    => '日次表示',
-                    'groupware.schedule.create'   => '新規　予定登録',
-                    'groupware.schedule.store'    => '新規　予定登録完了',
-                    'groupware.schedule.show'     => '予定内容',
-                    'groupware.schedule.detail'   => '予定詳細',
-                    'groupware.schedule.edit'     => '予定　変更',
-                    'groupware.schedule.update'   => '予定　変更完了',
-                    'groupware.schedule.delete'   => '予定　削除',
-                    'groupware.schedule.deleted'  => '予定　削除完了',
-                    'groupware.schedule.select'   => '予定　選択',
-                    ]);
-        });
-    }
+    //                 'groupware.schedule.monthly'  => '月次表示',
+    //                 'groupware.schedule.weekly'   => '週次表示',
+    //                 'groupware.schedule.daily'    => '日次表示',
+    //                 'groupware.schedule.create'   => '新規　予定登録',
+    //                 'groupware.schedule.store'    => '新規　予定登録完了',
+    //                 'groupware.schedule.show'     => '予定内容',
+    //                 'groupware.schedule.detail'   => '予定詳細',
+    //                 'groupware.schedule.edit'     => '予定　変更',
+    //                 'groupware.schedule.update'   => '予定　変更完了',
+    //                 'groupware.schedule.delete'   => '予定　削除',
+    //                 'groupware.schedule.deleted'  => '予定　削除完了',
+    //                 'groupware.schedule.select'   => '予定　選択',
+    //                 ]);
+    //     });
+    // }
     
         //　Schedule2 ルート
     //
@@ -218,24 +225,37 @@ class Router {
         
         Route::prefix( 'schedule')->name( 'schedule.')->namespace( '\App\myHttp\GroupWare\Controllers' )->group( function() {
             
-            Route::get(   '/index',      'Schedule2Controller@index'    )->name('index'       );
-            Route::get(   '/monthly',    'Schedule2Controller@monthly'  )->name('monthly'     );
-            Route::get(   '/weekly',     'Schedule2Controller@weekly'   )->name('weekly'      );
-            Route::get(   '/daily',      'Schedule2Controller@daily'    )->name('daily'       );
+            // Route::get(   '/index',      'Schedule2Controller@index'    )->name('index'       );
+            // Route::get(   '/monthly',    'Schedule2Controller@monthly'  )->name('monthly'     );
+            // Route::get(   '/weekly',     'Schedule2Controller@weekly'   )->name('weekly'      );
+            // Route::get(   '/daily',      'Schedule2Controller@daily'    )->name('daily'       );
+
+            // ScheduleIndexController
+            //
+            Route::get(   '/index',      'Schedule2IndexController@index'    )->name('index'       );
+            Route::get(   '/monthly',    'Schedule2IndexController@monthly'  )->name('monthly'     );
+            Route::get(   '/weekly',     'Schedule2IndexController@weekly'   )->name('weekly'      );
+            Route::get(   '/daily',      'Schedule2IndexController@daily'    )->name('daily'       );
+            Route::get(   '/show_modal/{schedule}',  'Schedule2IndexController@showModal' )->name('show_modal')->where( 'schedule', '\d+' );;
+
+
+            // ScheduleController
+            //
+
+            Route::get(   '/show/{schedule}',        'Schedule2Controller@show'      )->name('show'  )->where( 'schedule', '\d+' );
+            Route::get(   '/show',                   'Schedule2Controller@show_m'    )->name('show_m');
+
+            Route::get(   '/weekly_by_user',  'Schedule2Controller@weeklyByUser'    )->name('weekly_by_user'  );
+            Route::get(   '/monthly_by_user', 'Schedule2Controller@monthlyByUser'   )->name('monthly_by_user' );
+
             Route::get(   '/json_search','Schedule2Controller@json_search'    )->name('json_search' );
             
-            Route::get(   '/create',     'Schedule2Controller@create'          )->name('create');
-            Route::post(  '/create',     'Schedule2Controller@store'           )->name('store' );
-            
-            Route::get(   '/show/{schedule}',     'Schedule2Controller@show'   )->name('show'  )->where( 'schedule', '\d+' );
-            Route::get(   '/show',                'Schedule2Controller@show_m' )->name('show_m');
-            
-            Route::get(   '/edit/{schedule}',     'Schedule2Controller@edit'   )->name('edit'   )->where( 'schedule', '\d+' );
-            Route::post(  '/edit/{schedule}',     'Schedule2Controller@update' )->name('update' )->where( 'schedule', '\d+' );
-    
-            Route::get(     '/delete/{schedule}',     'Schedule2Controller@delete'  )->name('delete' )->where( 'schedule', '\d+' );
-            Route::delete(  '/delete/{schedule}',     'Schedule2Controller@deleted' )->name('deleted')->where( 'schedule', '\d+' );
-    
+            Route::get(   '/create',                'Schedule2Controller@create'    )->name('create' );
+            Route::post(  '/create',                'Schedule2Controller@store'     )->name('store'  );
+            Route::get(   '/edit/{schedule}',       'Schedule2Controller@edit'      )->name('edit'   )->where( 'schedule', '\d+' );
+            Route::post(  '/edit/{schedule}',       'Schedule2Controller@update'    )->name('update' )->where( 'schedule', '\d+' );
+            Route::get(     '/delete/{schedule}',   'Schedule2Controller@delete'    )->name('delete' )->where( 'schedule', '\d+' );
+            Route::delete(  '/delete/{schedule}',   'Schedule2Controller@deleted'   )->name('deleted')->where( 'schedule', '\d+' );
     
             config(['groupware.schedule.index'    => '予定一覧',
             
@@ -257,23 +277,23 @@ class Router {
     
     //  ScheduleType ルート
     //
-    static public function schedule_type_route() {
-        Route::prefix( 'schedule.type')->name( 'schedule.type.')->namespace( '\App\myHttp\GroupWare\Controllers' )->group( function() {
+    // static public function schedule_type_route() {
+    //     Route::prefix( 'schedule.type')->name( 'schedule.type.')->namespace( '\App\myHttp\GroupWare\Controllers' )->group( function() {
         
-            Route::get(   '/index',                 'ScheduleTypeController@index'      )->name('index'       );
-            Route::get(   '/create',                'ScheduleTypeController@create'     )->name('create');
-            Route::post(  '/create',                'ScheduleTypeController@store'      )->name('store' );
-            Route::get(   '/edit/{schedule_type}',   'ScheduleTypeController@edit'       )->name('edit'   )->where( 'schedule_type', '\d+' );
-            Route::post(  '/edit/{schedule_type}',   'ScheduleTypeController@update'     )->name('update' )->where( 'schedule_type', '\d+' );
+    //         Route::get(   '/index',                 'ScheduleTypeController@index'      )->name('index'       );
+    //         Route::get(   '/create',                'ScheduleTypeController@create'     )->name('create');
+    //         Route::post(  '/create',                'ScheduleTypeController@store'      )->name('store' );
+    //         Route::get(   '/edit/{schedule_type}',   'ScheduleTypeController@edit'       )->name('edit'   )->where( 'schedule_type', '\d+' );
+    //         Route::post(  '/edit/{schedule_type}',   'ScheduleTypeController@update'     )->name('update' )->where( 'schedule_type', '\d+' );
 
-            config(['groupware.schedule.type.index'    => 'スケジュール種別',
-                    'groupware.schedule.type.create'    => '新規スケジュール種別',
-                    'groupware.schedule.type.edit'      => 'スケジュール種別 変更',
+    //         config(['groupware.schedule.type.index'    => 'スケジュール種別',
+    //                 'groupware.schedule.type.create'    => '新規スケジュール種別',
+    //                 'groupware.schedule.type.edit'      => 'スケジュール種別 変更',
             
-                    ]);
-        });
+    //                 ]);
+    //     });
     
-    }
+    // }
 
     //  Report ルート
     //
@@ -313,6 +333,52 @@ class Router {
     
     }
     
+    //  Report List ルート
+    //
+    static public function report_list_route() {
+        Route::prefix( 'report_list/' )->name( 'report_list.')->namespace( '\App\myHttp\GroupWare\Controllers' )->group( function() {
+            
+            Route::get(  '/index',          'ReportListController@index'  )->name('index'   );
+            Route::get(  '/create',         'ReportListController@create' )->name( 'create'   );
+            Route::post( '/create',         'ReportListController@store'  )->name( 'create'   );
+
+            Route::get(  '/show/{report_list}',        'ReportListController@show'    )->name( 'show'   )->where( 'report_list', '\d+' );
+            Route::get(  '/update/{report_list}',      'ReportListController@edit'    )->name( 'update' )->where( 'report_list', '\d+' );
+            Route::post( '/update/{report_list}',      'ReportListController@update'  )->name( 'update' )->where( 'report_list', '\d+' );
+            Route::get(  '/delete/{report_list}',      'ReportListController@delete'  )->name( 'delete' )->where( 'report_list', '\d+' );
+            Route::delete(  '/delete/{report_list}',   'ReportListController@deleted' )->name( 'delete' )->where( 'report_list', '\d+' );
+
+            config([
+                'groupware.report_list.index'          => '日報リスト一覧',
+                'groupware.report_list.show'           => '日報リスト管理者設定',
+                'groupware.report_list.create'         => '日報リスト新規作成',
+                'groupware.report_list.update'         => '日報リスト管理者設定修正',
+                'groupware.report_list.delete'         => '日報リスト削除',
+            ]);
+        });
+    }
+    
+    //  Report Prop ルート
+    //
+    static public function report_prop_route() {
+        Route::prefix( 'report_prop/' )->name( 'report_prop.')->namespace( '\App\myHttp\GroupWare\Controllers' )->group( function() {
+            
+            Route::get(  '/index',                 'ReportPropController@index'  )->name('index'   );
+
+            Route::get(  '/show/{report_prop}',        'ReportPropController@show'    )->name( 'show'   )->where( 'report_prop', '\d+' );
+            Route::get(  '/update/{report_prop}',      'ReportPropController@edit'    )->name( 'update' )->where( 'report_prop', '\d+' );
+            Route::post( '/update/{report_prop}',      'ReportPropController@update'  )->name( 'update' )->where( 'report_prop', '\d+' );
+
+            config([
+                'groupware.report_prop.index'          => '【個人設定】日報リスト設定　一覧',
+                'groupware.report_prop.show'           => '【個人設定】日報リスト設定',
+                'groupware.report_prop.update'         => '【個人設定】日報リスト設定　変更',
+            ]);
+        });
+    }
+    
+    
+    
     //  File ルート
     //
     static public function file_route() {
@@ -329,6 +395,10 @@ class Router {
             Route::get(   '/download/myfile/{file}',   'FileController@downloadMyFile' )->name('downloadMyFile')
                                                                                         ->where( 'file',  '\d+' );
             Route::get(   '/download/{file}/{class}/{model}',   'FileController@download' )->name('download')
+                                                                                           ->where( 'file',  '\d+' )
+                                                                                           ->where( 'model', '\d+' )
+                                                                                           ->where( 'class', '\w+' );
+            Route::get(   '/viewInBrowser/{file}/{class}/{model}',   'FileController@viewInBrowser' )->name('view')
                                                                                            ->where( 'file',  '\d+' )
                                                                                            ->where( 'model', '\d+' )
                                                                                            ->where( 'class', '\w+' );
@@ -447,13 +517,10 @@ class Router {
             Route::get(  '/gsync_on/{calprop}',    'CalPropController@gsyncOn'    )->name( 'gsync_on'    )->where( 'calprop', '\d+' );
             Route::get(  '/gsync_check/{calprop}', 'CalPropController@gsyncCheck' )->name( 'gsync_check' )->where( 'calprop', '\d+' );
 
-            
-            
-
             config([
-                'groupware.calprop.index'          => 'カレンダー表示設定・Google同期設定一覧',
-                'groupware.calprop.show'           => 'カレンダー表示設定・Google同期設定',
-                'groupware.calprop.update'         => 'カレンダー表示設定・Google同期設定　変更',
+                'groupware.calprop.index'          => '【個人設定】カレンダー表示・初期値・Google同期設定　一覧',
+                'groupware.calprop.show'           => '【個人設定】カレンダー表示・初期値・Google同期設定',
+                'groupware.calprop.update'         => '【個人設定】カレンダー表示・初期値・Google同期設定　変更',
                 'groupware.calprop.gsync_all'      => 'カレンダーGoogle手動全同期',
                 'groupware.calprop.gsync'          => 'カレンダーGoogle手動同期',
                 'groupware.calprop.gsync_check'    => 'カレンダーGoogle同期チェック',
@@ -469,6 +536,20 @@ class Router {
             //　File Component 開発用
             //
             if( is_debug() ) {
+                
+                //　テンプレートルートをコピーして使う
+                //
+                Route::get( '/template', 'TestController@template' )->name( 'template' );
+                Route::get( '/depts_users_customers', 'TestController@testDeptUserCustomer' )->name( 'depts_users_customers' );
+                
+                
+                //　カスタムBlade iconのテスト
+                //
+                Route::get( '/custome_blade_icons',  'TestController@icons'    )->name( 'custome_blade_icons' );
+                
+                
+                Route::get( '/test',     'TestController@test'     )->name( 'test' );
+                Route::get( '/delete_files', 'TestController@deleteFiles' )->name( 'delete_files' );
                 Route::get(  '/files',  'TestController@files'        )->name('files');
                 Route::post( '/files',  'TestController@filesUpdate'  )->name('files');
             }
@@ -480,7 +561,7 @@ class Router {
     }
 
     
-    //  JSONルート
+    //  JSONルート AJAX
     // 
     static public function route_json() {
         Route::namespace( '\App\myHttp\GroupWare\Controllers' )->group( function() {
@@ -490,6 +571,17 @@ class Router {
         });
     }
     
+    static public function route_ajax() {
+        Route::namespace( '\App\myHttp\GroupWare\Controllers\AJAX' )->group( function() {
+            
+            Route::get('/ajax/dept/search',       'DeptController@search'      )->name( 'ajax.dept.search'     );
+            Route::get('/ajax/user/search',       'UserController@search'      )->name( 'ajax.user.search'     );
+            Route::get('/ajax/customer/search',   'CustomerController@search'  )->name( 'ajax.customer.search' );
+        });
+    }
+
+
+
     //  例外処理関係のルート
     //
     static public function exception_route() {

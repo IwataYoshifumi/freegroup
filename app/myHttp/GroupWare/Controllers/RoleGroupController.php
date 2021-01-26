@@ -69,7 +69,7 @@ class RoleGroupController extends Controller {
     public function edit( RoleGroup $role_group ) {
         
         $lists = [];
-        // dump( $role_group );
+        // if_debug( $role_group );
         foreach( $role_group->role_lists as $list ) {
             array_push( $lists, $list->role );
         }
@@ -83,7 +83,7 @@ class RoleGroupController extends Controller {
 
         $role_group->updates( $request );
     
-        // dump( $role_group);
+        // if_debug( $role_group);
     
         session()->regenerateToken();
         session()->flash( 'flash_message', "ロールグループ「". $request->name. "」を修正しました。" );
@@ -119,7 +119,7 @@ class RoleGroupController extends Controller {
 
     public function select_users( Request $request ) {
         
-        // dump( $request );
+        // if_debug( $request );
         $find = ( isset( $request->find )) ? $request->find : [ 'pagination' => 10 ];
         $show = [];
         

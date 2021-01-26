@@ -3,6 +3,7 @@
 namespace App\myHttp\GroupWare\Controllers\Search;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use DB;
 use Carbon\Carbon;
 
@@ -14,219 +15,197 @@ use App\myHttp\GroupWare\Models\AccessListUserRole;
 use App\myHttp\GroupWare\Models\Actions\AccessListAction;
 use App\myHttp\GroupWare\Models\ACL;
 use App\myHttp\GroupWare\Models\Schedule;
+use App\myHttp\GroupWare\Models\Calendar;
+use App\myHttp\GroupWare\Models\CalProp;
+
 
 
 class SearchSchedule {
-    
-    
+
+    const NULL_RETURN = [ 
+            'user_ids'  => [],
+            'users'     => [],
+            'depts'     => [],
+            'schedules' => [],
+            'calendars' => [],
+            'calprops'  => [] 
+            ];
+
+    /*
+     *
+     *
+     */
     static public function search( Request $request ) {
         
-        $find = new valuesForSearchingSchedules( $request );
-        
-        //　期間の検索（月、週、日）
+        //　検索条件のチェック
         //
-        $schedules = Schedule
-            //->selectRaw(  ' \'作成者\' as tag ,  id, start_time, end_time, user_id, name' )
-            // ->where( 'user_id', 2 )
-            ::where( function( $sub_query ) use ( $find ) {
-                        $sub_query->where( function( $query ) use ( $find ) {
-                                    $query->where( 'start_date', '>=', $find->start_date )
-                                          ->where( 'start_date', '<=', $find->end_date   );
-                                    });
-                        $sub_query->orWhere( function( $query ) use( $find ) {
-                                    $query->where( 'end_date', '>=', $find->start_date )
-                                          ->where( 'end_date', '<=', $find->end_date   );
-                                    });
-                        $sub_query->orWhere( function( $query ) use( $find ) {
-                                    $query->where( 'start_date', '<', $find->start_date )
-                                          ->where( 'end_date',   '>', $find->end_date   );
-                                    });
-            });
-
+        if( ! isset( $request->start_date ) and ! isset( $request->end_date )) { return self::NULL_RETURN; }
+        if( ! isset( $request->depts      ) and ! isset( $request->users    )) { return self::NULL_RETURN; }
         
-        // dump( $find, $schedules->get()->toArray() );
-
-        return $schedules->get();
-    }
-    /*
-    /////////////////////////////////////////////////////////////////////////////////////////////
-    //
-    //　検索する
-    //
-    /////////////////////////////////////////////////////////////////////////////////////////////
-    
-    //　作成した人、関連者をまとめて検索
-    //
-    //  $search_mode = 0  スケジュール作成者のみを検索
-    //  $search_mode = 1  スケジュール関連者のみを検索
-    //  $search_mode = 2  スケジュール作成者・関連者を検索（関連者は重複削除）
-    //  
-    //  $schedules :: 作成者を検索
-    //  $schedules :: 関連者を検索
-    
-    static public function search_1( $find, $search_mode = null, $sort = null, $asc_desc = null ) {
-        // dump( $find );
-        $start_date = Carbon::parse( $find['start_date'] )->format( 'Y-m-d 00:00:00' );
-        $end_date   = Carbon::parse( $find['end_date']   )->format( 'Y-m-d 23:59:59' );
-        
-        $schedules = Schedule
-                    //->selectRaw(  ' \'作成者\' as tag ,  id, start_time, end_time, user_id, name' )
-                    // ->where( 'user_id', 2 )
-                    ::where( function( $sub_query ) use ( $start_date, $end_date ) {
-                                $sub_query->where( function( $query ) use ( $start_date, $end_date ) {
-                                            $query->where( 'start_time', '>=', $start_date )
-                                                  ->where( 'start_time', '<=', $end_date   );
-                                            });
-                                $sub_query->orWhere( function( $query ) use( $start_date, $end_date ) {
-                                            $query->where( 'end_time', '>=', $start_date )
-                                                  ->where( 'end_time', '<=', $end_date   );
-                                            });
-                                $sub_query->orWhere( function( $query ) use( $start_date, $end_date) {
-                                            $query->where( 'start_time', '<', $start_date )
-                                                  ->where( 'end_time',   '>', $end_date   );
-                                            });
-                    });
-
-        $schedules2 = clone $schedules;
-
-        // 件名検索
-        if( ! empty( optional( $find )['name'] )) {
-            $find_name = "%".$find['name']."%";
-            $schedules  = $schedules ->where( 'name', 'like', $find_name );
-            $schedules2 = $schedules2->where( 'name', 'like', $find_name );
-        }
-
-        //  日報　あり・なし
+        //　期間の検索
         //
-        // dump( $find );
-        if( ! empty( $find['has_reports'])) {
-            // dump( $find );
-            if( $find['has_reports'] == 1 ) {
-                //　日報あり
-                //
-                $schedules = $schedules->has( 'reports' );
-                $schedules2= $schedules2->has( 'reports');
-            } elseif( $find['has_reports'] == -1 ) {
-                //  日報なし
-                //
-                $schedules = $schedules->doesntHave( 'reports' );
-                $schedules2= $schedules2->doesntHave( 'reports');
-            }
-        }
+        // if_debug( __METHOD__, $request->start_date, $request->end_date );
+        // if_debug( __METHOD__, $request->input('start_date'), $request->input('end_date') );
+        // dd( $request->all() );
 
-        //　社員検索
-        //
-        if( array_key_exists( 'users', $find ) and is_array( $find['users'] ) and ! empty( $find['users'][0] )) {
-            $schedules  = $schedules ->whereIn( 'user_id', $find['users']);
-            
-            $schedules2 = $schedules2->whereHas( 'users', function( $query ) use ( $find ) {
-                                // $query->whereIn( 'user_id', $find['users'] );
-                                $query->whereIn( 'scheduleable_id', $find['users'] );
-                            });
-            // dump( $schedules, $schedules2 );
-        } else {
-            //　部署検索
-            //
-            if( ! empty( $find['dept_id'] )) {
-                //  dump( 'dept_id', $find['dept_id'] );
-                
-                $sub_query = DB::table( 'users' )->select( 'id' )->where( 'dept_id', $find['dept_id'] );
-    
-                $schedules  = $schedules ->whereIn( 'user_id', $sub_query );
-                $schedules2 = $schedules2->whereHas( 'users', function( $query ) use ( $sub_query ) {
-                        // $query->whereIn( 'user_id', $sub_query );
-                        $query->whereIn( 'scheduleable_id', $sub_query );
-
-                    });
-                
-            } else {
-                
-                //　部署検索もなければ、ログインＩＤで検索
-                //
-                $schedules  = $schedules ->where( 'user_id', auth('user')->id() );
-                
-                $schedules2 = $schedules2->whereHas( 'users', function( $query ) {
-                                    // $query->where( 'user_id', auth('user')->id() );
-                                        $query->where( 'scheduleable_id', auth('user')->id() );
-
+        $schedules = Schedule::where( function( $sub_query ) use ( $request ) {
+                    $sub_query->where( function( $query ) use ( $request ) {
+                                $query->where( 'start_date', '>=', $request->start_date )
+                                      ->where( 'start_date', '<=', $request->end_date   );
                                 });
-                // dump( 'search login ID', auth('user')->id());
-                // dump( 'search login ID', auth('user')->id(), $schedules, $schedules2 );
+                    $sub_query->orWhere( function( $query ) use( $request ) {
+                                $query->where( 'end_date', '>=', $request->start_date )
+                                      ->where( 'end_date', '<=', $request->end_date   );
+                                });
+                    $sub_query->orWhere( function( $query ) use( $request ) {
+                                $query->where( 'start_date', '<', $request->start_date )
+                                      ->where( 'end_date',   '>', $request->end_date   );
+                                });
+                });
 
+        $schedules_1 = clone $schedules;  // 予定作成者用
+        $schedules_2 = clone $schedules;  // 関係者検索用
+
+        //　社員、部署検索
+        //
+        $users = User::select( 'id' );
+        
+        //　退社社員の予定は検索対象外
+        //
+        if( ! $request->show_retired_users ) { $users->where( 'retired', 0 ); }
+
+        //　検索対象の社員ＩＤｓのクエリー作成
+        //
+        if( is_array( $request->depts ) and is_array( $request->users )) {
+                $users->where( function( $query ) use ( $request ) {
+                                $query->whereIn( 'dept_id', $request->depts )
+                                      ->orWhereIn( 'id'   , $request->users );
+                } );   
+        } elseif( is_array( $request->depts ) and ! is_array( $request->users )) {
+            $users->whereIn( 'dept_id', $request->depts ); 
+        
+        
+        } elseif( ! is_array( $request->depts ) and is_array( $request->users )) {
+            $users->whereIn( 'id',      $request->users ); 
+        }
+
+        // if( ! empty( $request->user_name )) { $users->where( 'name', 'like', '%'. $request->user_name . '%');  }
+        // if_debug( $users, $users->get()->toArray() );
+
+        //　作成者で検索
+        //
+        $schedules_1->whereIn( 'user_id', $users );
+        
+        //　関連社員の検索
+        //
+        $schedules_2->whereHas( 'users', function( $query ) use ( $users ) {
+            $query->whereIn( 'id', $users );
+        });
+        
+        //　アクセス権限で権限のあるカレンダーを検索
+        //
+        if( $request->calendar_auth == 'owner' ) {
+            $calendars = Calendar::getOwner( user_id() );
+        } elseif( $request->calendar_auth == 'writer' ) {
+            $calendars = Calendar::getCanWrite( user_id() );
+        } elseif( $request->calendar_auth == 'reader' ) {
+            $calendars = Calendar::getCanRead( user_id() );
+        }
+        $calendars = $calendars->toQuery();
+        if( is_array( $request->calendar_types )) {
+            $calendars->whereIn( 'type', $request->calendar_types );
+        }
+        
+        //　CalPropでhide にしているカレンダーは検索対象外
+        //
+        if( ! $request->show_hidden_calendar ) {
+            $calendars->whereHas( 'calprops', function( $query ) {
+                $query->where( 'user_id', user_id() )->where( 'hide', 0 ); 
+            });
+        }
+
+        //　アクセス権限のあるカレンダーに登録された予定を検索
+        //
+        $calendars->select( 'id' );
+        $schedules_1->whereIn( 'calendar_id', $calendars );
+        $schedules_2->whereIn( 'calendar_id', $calendars );
+        $ids_1 = $schedules_1->get()->pluck( 'id', 'id' );
+        $ids_2 = $schedules_2->get()->pluck( 'id', 'id' );
+        $schedule_ids = $ids_1->union( $ids_2 )->toArray();
+        // if_debug( $ids_1, $ids_2, $ids_1->union( $ids_2 ) );
+
+        //
+        //
+        $schedules = Schedule::whereIn( 'id', $schedule_ids );
+        
+
+        // 予定作成者・関連社員のロード
+        //
+        $schedules->with( ['creator', 'updator'] );
+        if( $request->search_condition == 'only_creator' ) {
+            // $schedules->with( 'user' );
+            $schedules->with( [ 'user' => function( $query ) use ( $users ) { $query->whereIn( 'id', $users ); } ]);
+            $schedules->with( ['users' => function( $query ) use ( $users ) { $query->where( 'id', 0 ); } ]);     // 関連社員はロードしない
+
+        } else {
+            $schedules->with( [ 'user' => function( $query ) use ( $users ) { $query->whereIn( 'id', $users ); } ]); 
+            $schedules->with( ['users' => function( $query ) use ( $users ) { $query->whereIn( 'id', $users ); } ]);
+        } 
+
+        $schedules = $schedules->get();
+        
+        //　対象のカレンダーとCalpropを検索
+        //
+        $calendars = Calendar::whereIn( 'id', $schedules->pluck( 'calendar_id' )->toArray() )
+                             ->with( [ 'calprops' => function( $query ) { 
+                                       $query->where( 'user_id', user_id() ); 
+                                    }
+                              ])->get();
+                              
+        // キーは calendar_id, 値は calpropのインスタンス
+        //
+        $calprops = $calendars->pluck( 'calprops.0', 'id' ); 
+        // if_debug( $calendars, $calprops );
+        
+        //　予定で検索されたユーザのみ改めて検索
+        //
+        $user_ids = [];
+        foreach( $schedules as $s ) {
+            if( $s->user ) { $user_ids[ $s->user->id ] = $s->user->id; }
+            if( ! empty( $s->users ) and count( $s->users ) ) {
+                foreach( $s->users as $attendee ) {
+                    $user_ids[ $attendee->id ] = $attendee->id;
+                }
             }
         }
-        
-        // dump( $schedules, $schedules2 );
-        
-        //　検索実行
+        // $user_ids = $users->get()->pluck('id', 'id');
+        $users    = User::whereIn( 'id', $user_ids )->with( 'dept' )->get();
+
+        //　予定で検索された社員の所属部署を検索
         //
-        if( empty( $search_mode )) {
-            //
-            //　作成者ベースで検索
-            //
-            $returns = $schedules->selectRaw(  ' \'作成者\' as tag ,  id, name, place, start_time, end_time, period, notice, memo, user_id, schedule_type_id' )
-                                 ->with(['user', 'schedule_type' ])->orderBy( 'start_time' )->get();
-            // dump( 'search_mode 0');
-        } elseif( $search_mode == 1 ) {
-            //
-            //  関連者ベースで検索
-            //
-            $returns = $schedules2->selectRaw(  ' \'関連者\' as tag ,  id, name, place, start_time, end_time, period, notice, memo, user_id, schedule_type_id' )
-                                  ->with([ 'users', 'user', 'schedule_type' ])->orderBy( 'start_time' )->get();
-            // dump( 'search_mode 1');
-            // dump( $schedules2 );
-        } elseif( $search_mode == 2 ) {
-            //
-            //  作成者・関連者両方で検索（関連者は重複削除）
-            //
-            // dump( 'search_mode 2 ');
-            $sub_query = clone $schedules;
+        $depts = Dept::whereHas( 'users', function( $query ) use( $user_ids ) {
+                                    $query->whereIn( 'id', $user_ids ); })
+                     ->with( ['users' => function( $query ) use( $user_ids ) { 
+                            $query->whereIn( 'id', $user_ids ); 
+                     }])->get();
 
-            $schedules2= $schedules2->selectRaw(  ' \'関連者\' as tag ,  id, name, place, start_time, end_time, period, notice, memo, user_id, schedule_type_id' )
-                                    ->whereNotIn( 'id', $sub_query->select( 'id' ) )
-                                    ->with(['users', 'user', 'schedule_type' ]);
-
-            $schedules = $schedules ->selectRaw(  ' \'作成者\' as tag ,  id, name, place, start_time, end_time, period, notice, memo, user_id, schedule_type_id' )
-                                    ->with([ 'user', 'schedule_type' ]);
-                                    
-            $returns = $schedules->union( $schedules2 )->orderBy( 'start_time' )->get();        
-
-            // $schedules = $schedules->with( 'user' )
-            //                       ->union( $schedules2 )
-            //                       ->with( 'users' )
-            //                       ->orderBy( 'start_time' )->get();
-        }
-
-        // dump( $returns->all() );
-        return $returns;
-    }
-    */
-    
-}
-
-class valuesForSearchingSchedules {
-    
-    public $base_date;  // Cabon
-    public $date_span;  // monthly, weekly, dayly
-    
-    public $start_date;  // string 
-    public $start_time;  // Carbon 
-    public $end_date;    // string
-    public $end_time;   // Carbon
-
-    
-    public function __construct( Request $request ) {
-
-        $this->date_span = ( isset( $request->date_span  )) ? $request->date_span : 'monthly';
-        $this->base_date = ( isset( $request->base_date  )) ? new Carbon( $request->base_date ) : Carbon::today();
         
-        if( $this->date_span == 'monthly' ) {
-            $this->start_time = new Carbon('first day of ' . $this->base_date->format('Y-m'));
-            $this->end_time   = new Carbon('last day of '  . $this->base_date->format('Y-m'));
-            $this->start_date = $this->start_time->format( 'Y-m-d' );
-            $this->end_date   = $this->end_time->format( 'Y-m-d' );
-        }        
-
+        // if_debug( $users, $user_ids );
+        
+        $return = [ 
+                    'user_ids'  => $user_ids,
+                    'users'     => $users,
+                    'depts'     => $depts,
+                    'schedules' => $schedules,
+                    'calendars' => $calendars,
+                    'calprops'  => $calprops
+                    ];
+        
+        return $return;
+        
+        
     }
-    
+
+
 }
+

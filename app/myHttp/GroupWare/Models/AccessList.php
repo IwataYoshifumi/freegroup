@@ -323,10 +323,10 @@ class AccessList extends Model {
         $depts  = [ "" => "" ];
         $groups = [ "" => "" ];
         
-        // dump( $this->acls );
+        // if_debug( $this->acls );
         foreach( $this->acls as $acl ) {
 
-            // dump( "$acl->order, $acl->role, $acl->type, $acl->aclable_type, $acl->aclable_id" );
+            // if_debug( "$acl->order, $acl->role, $acl->type, $acl->aclable_type, $acl->aclable_id" );
             $order = $acl->order;
             $type  = $acl->aclable_type;
 

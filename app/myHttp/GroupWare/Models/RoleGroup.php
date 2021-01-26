@@ -105,7 +105,7 @@ class RoleGroup extends Model {
             $this->memo    = $request->memo;
             $this->default = ( $request->default ) ? 1 : 0 ;
             $this->save();
-            // dump( $request->input(), $this );
+            // if_debug( $request->input(), $this );
             
             $this->update_lists( $request->lists );
             return $this;

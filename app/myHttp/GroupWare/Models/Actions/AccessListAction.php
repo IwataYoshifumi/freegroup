@@ -63,7 +63,7 @@ class AccessListAction  {
     public static function deletes( $access_list ) { 
 
         $access_list = DB::transaction( function() use ( $access_list ) {
-                // dump( $request->input() );
+                // if_debug( $request->input() );
 
                 // ACL DBの削除                
                 ACL::where( 'access_list_id', $access_list->id )->delete();
@@ -99,7 +99,7 @@ class AccessListAction  {
         // 順序入れ替えのための処理
         // foreach( $orders as $j => $i ) {
         foreach( $roles as $i => $role ) {
-            // dump( "$i, $role, $types[$i], $users[$i], $groups[$i], $depts[$i]" );
+            // if_debug( "$i, $role, $types[$i], $users[$i], $groups[$i], $depts[$i]" );
             $acl = new ACL;
             
             if( empty( $role )) { continue; }

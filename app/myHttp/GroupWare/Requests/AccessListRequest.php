@@ -47,11 +47,11 @@ class AccessListRequest extends FormRequest
         $groups = $this->groups;
         $users  = $this->users;
 
-        // dump( $orders, $roles, $types );
+        // if_debug( $orders, $roles, $types );
         
         $owners = [];
         foreach( $orders as $j => $i ) {
-            // dump( "$j, $i, $roles[$i], $types[$i], $depts[$i], $groups[$i], $users[$i]", $rules);
+            // if_debug( "$j, $i, $roles[$i], $types[$i], $depts[$i], $groups[$i], $users[$i]", $rules);
             
             // 最初のロールは writer で入力されていなければならない。
             if( $j === 0 ) {
@@ -96,15 +96,15 @@ class AccessListRequest extends FormRequest
                 }
             } 
         }
-        // dump( $owners );
+        // if_debug( $owners );
 
         // オーナーに編集者が含まれているかチェック
         //
         $owners = Arr::collapse( $owners );
-        // dump( $owners );
+        // if_debug( $owners );
         
         if( ! in_array( $auth->id, $owners )) {
-            dump( 'editor is not owner');
+            // if_debug( 'editor is not owner');
             $rules['IacceptNotOwner'] = 'accepted';
         }
         // dd( $orders, $roles, $types );

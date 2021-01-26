@@ -35,16 +35,16 @@ class SyncRelatedScheduleToGoogleCalendarListener // implements ShouldQueue
     //
     public function handle( SyncRelatedScheduleToGoogleCalendarEvent $event ) {
         //
-        // dump( $event );
+        // if_debug( $event );
         
         $schedule = $event->schedule;
         $user = $schedule->user;
         $users = $schedule->users;
 
-        // dump( $users->count() );
+        // if_debug( $users->count() );
         
         foreach( $users as $u ) {
-            // dump( "$u->id, $u->name" );
+            // if_debug( "$u->id, $u->name" );
             if( $u->id != $user->id ) { // 関係者と作成者が同じ場合はGoogle同期しない
 
                 $type = ScheduleType::where( 'user_id', $u->id)->where( 'class', 'relation' )
@@ -54,14 +54,14 @@ class SyncRelatedScheduleToGoogleCalendarListener // implements ShouldQueue
                                     // ->whereNotNull( 'google_private_key_file')
                                     ->first();
                                     
-                // dump( $type );
+                // if_debug( $type );
                 if( ! is_null( $type )) {
-                    dump( "OK, $u->id, $u->name, $type->relation, $type->color, $type->text_color"  );
+                    #if_debug( "OK, $u->id, $u->name, $type->relation, $type->color, $type->text_color"  );
                     $this->sync_google( $type, $schedule );
                     
                     
                 } else {
-                    dump( "null $u->name" );
+                    #if_debug( "null $u->name" );
                 }
             }
         }

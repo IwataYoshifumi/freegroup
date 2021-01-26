@@ -16,6 +16,7 @@ $users     = $schedule->users;
 $user      = $schedule->user;
 $files     = $schedule->files;
 $reports   = $schedule->reports;
+$calendar  = $schedule->calendar;
 
 $route_name = Route::currentRouteName();
 

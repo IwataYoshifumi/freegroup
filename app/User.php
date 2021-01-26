@@ -43,7 +43,7 @@ class User extends Authenticatable
     //
     public static function search( $find, $sort = null, $asc_desc = null ) {
         
-        // dump( $find );
+        // if_debug( $find );
         if( isset( $find['retired'] )) {
             if( $find['retired'] != 'all' ) {
                 $users = User::where( 'retired', $find['retired'] );
@@ -77,7 +77,7 @@ class User extends Authenticatable
                 }
             }
         }
-        // dump( $users );
+        // if_debug( $users );
                 
         if( isset( $find['paginate'] )) {
             return $users->paginate( $find['paginate'] );

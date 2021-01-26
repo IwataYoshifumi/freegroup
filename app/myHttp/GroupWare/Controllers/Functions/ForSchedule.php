@@ -2,7 +2,7 @@
 namespace App\myHttp\GroupWare\Controllers\Functions\ForSchedule;
 
     function test_function() {
-        dump( __FILE__);
+        if_debug( __FILE__);
     }
 
 // //　カレンダー月表示用の日付データの生成
@@ -36,7 +36,7 @@ namespace App\myHttp\GroupWare\Controllers\Functions\ForSchedule;
 // //　キーが日付、値がscheuled_idの配列を作る（カレンダー表示で使うためのデータ）
 // //
 // function get_array_dates_schedule_id( $schedules ) {
-//         dump( $schedules );
+//         if_debug( $schedules );
 //     $dates = [];
 //     $i = 1;
 //     foreach( $schedules as $schedule ) {
@@ -51,13 +51,13 @@ namespace App\myHttp\GroupWare\Controllers\Functions\ForSchedule;
 //             } else {
 //                 $dates[$d] = [ $schedule->id ];
 //             }
-//             // dump( 'ID:'.$schedule->id."  date:".$date->format( 'Y-m-d')."   start:".$start_date->format( 'Y-m-d')."   end_date:".$end_date->format( 'Y-m-d') );
+//             // if_debug( 'ID:'.$schedule->id."  date:".$date->format( 'Y-m-d')."   start:".$start_date->format( 'Y-m-d')."   end_date:".$end_date->format( 'Y-m-d') );
 //             if( $i >= 100 ) { break; }
 //             $i++;
 //         }
 //         if( $i >= 100 ) { break; }
 
 //     }
-//     // dump( $dates );
+//     // if_debug( $dates );
 //     return $dates;        
 // }

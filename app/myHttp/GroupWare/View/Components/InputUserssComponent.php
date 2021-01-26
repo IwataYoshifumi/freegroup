@@ -30,8 +30,6 @@ class InputUserssComponent extends Component
         } else {
             $this->name = $name;
         }
-        
-        // dump( $users, $this->users );
     }
     
 

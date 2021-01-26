@@ -78,4 +78,10 @@ class LoginController extends Controller
         
         return redirect()->intended($this->redirectPath());
     }
+    
+    // ログインＩＤの設定、デフォルトはemail、ログインＩＤを変えたい場合はこれを設定
+    //
+    // public function username() {
+    //     return 'code';
+    // }
 }

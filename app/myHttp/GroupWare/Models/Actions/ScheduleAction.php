@@ -15,6 +15,8 @@ use App\myHttp\GroupWare\Models\Schedule;
 use App\myHttp\GroupWare\Models\AccessList;
 use App\myHttp\GroupWare\Models\File as MyFile;
 
+use App\myHttp\GroupWare\Models\Actions\FileAction;
+
 class ScheduleAction  {
     
     // Scheduleの新規作成
@@ -52,7 +54,7 @@ class ScheduleAction  {
             // //
             // $files = [];
             // foreach( ( $request->file('upload_files')) ? $request->file('upload_files') : [] as $i => $file ) {
-            //     // dump( "aaa", $i, $file );
+            //     // if_debug( "aaa", $i, $file );
             //     $path = $file->store('');
             //     $value = [ 'file_name' => $file->getClientOriginalName(), 'path' => $path, 'user_id' => auth('user')->user()->id ];
             //     $f = MyFile::create( $value );
@@ -104,7 +106,7 @@ class ScheduleAction  {
             // $files = ( ! empty( $request->attached_files )) ? $request->attached_files : [] ;
             // // dd( $request->file( 'upload_files' ));
             // foreach( ( $request->file('upload_files')) ? $request->file('upload_files') : [] as $i => $file ) {
-            //     // dump( "aaa", $i, $file );
+            //     // if_debug( "aaa", $i, $file );
             //     $path = $file->store('');
             //     $value = [ 'file_name' => $file->getClientOriginalName(), 'path' => $path, 'user_id' => auth('user')->user()->id ];
             //     $f = MyFile::create( $value );
@@ -123,18 +125,26 @@ class ScheduleAction  {
     // Scheduleの削除
     public static function deletes( $schedule ) { 
 
-        $return = DB::transaction( function() use ( $schedule ) {
-            dump( __METHOD__, $schedule );
+        $files = DB::transaction( function() use ( $schedule ) {
+            // if_debug( __METHOD__, $schedule );
             
             $schedule->attendees()->detach();
             $schedule->customers()->detach();
             $schedule->reports()->detach();
+            $files = $schedule->files;
             $schedule->files()->detach();
+            $schedule->delete();
             
-            return $schedule->delete();
+            return $files;
         });
         
-        return $return;
+        //　関連ファイルを削除
+        //
+        foreach( $files as $file ) {
+            FileAction::force_delete( $file );
+        }
+        
+        return true;
     }
     
 }

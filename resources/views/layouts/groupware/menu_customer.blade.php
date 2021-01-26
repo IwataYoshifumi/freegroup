@@ -6,7 +6,7 @@ use App\Http\Controllers\Vacation\VacationMenu;
 <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
     <div class="container">
         <a class="navbar-brand" href="@auth('customer') {{ route( 'customer.home' ) }} @endauth @guest {{ route( 'customer.home' ) }} @endguest">
-        @if( is_debug() ) 【開発モード中】 @endif {{ config('app.name', 'myApp') }} Customer  
+        @if( is_debug() ) @icon( debug ) @endif {{ config('app.name', 'myApp') }} Customer  
 
         </a>
 

@@ -28,7 +28,7 @@ class CustomerController extends Controller
     public function index( Request $request ) {
         //  初期値の設定
         //
-        // dump( $request->all() );
+        // if_debug( $request->all() );
         if( isset( $request['find'] )) {
             $find = $request['find'];
             $sort = $request['sort'];
@@ -128,8 +128,8 @@ class CustomerController extends Controller
 
     public function edit( Customer $customer) {
         // public function edit( CustomerRequest $request, Customer $customer) {
-        // dump( 'EDIT ');
-        // dump( $customer );
+        // if_debug( 'EDIT ');
+        // if_debug( $customer );
         BackButton::stackHere( request() );
         return view( 'customer.input' )->with( 'customer', $customer );
 
@@ -187,7 +187,7 @@ class CustomerController extends Controller
         if( preg_match( '/^[ア-ヾ]+$/', $name ) ) {
             $customers = $customers->orWhere( 'kana', 'like', '%'.$name.'%' );
         }
-        // dump( $customers );
+        // if_debug( $customers );
         $customers = $customers->get();
         
         $array = [];
@@ -195,7 +195,7 @@ class CustomerController extends Controller
             $address = $c->city.$c->street;
             if( ! empty( $c->building )) { $address .= " ( ".$c->building." )"; }
             $age = ( $c->age() ) ? $c->age()  : "";
-            // dump( $c->age() );
+            // if_debug( $c->age() );
             array_push( $array, [   'id' => $c->id, 
                                     'name' => $c->name, 
                                     'kana' => $c->kana, 

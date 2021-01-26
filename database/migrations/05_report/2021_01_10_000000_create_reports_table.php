@@ -17,17 +17,21 @@ class CreateReportsTable extends Migration
             $table->id();
             $table->timestamps();
             
-            $table->foreignId( 'user_id' );
-            $table->foreignId( 'schedule_id' )->nullable();
+            $table->foreignId( 'user_id' );   // creator
+            $table->foreignId( 'updator_id'); // updator
+            $table->foreignId( 'report_list_id' );
             
-            $table->string('name')->nullable();
+            $table->string('name');
             $table->string('place')->nullable();
-            $table->dateTimeTz( 'start_time' );
-            $table->dateTimeTz( 'end_time' )->nullable();
             $table->longtext( 'memo' )->nullable();
-            
-            $table->softDeletes();
 
+            $table->date( 'start_date' );
+            $table->date( 'end_date' );
+            $table->dateTimeTz( 'start' )->nullable();
+            $table->dateTimeTz( 'end'   )->nullable();
+            $table->boolean( 'all_day' )->nullable();
+
+            $table->string( 'permission' ); // creator, attendees, writer
         });
     }
 

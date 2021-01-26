@@ -39,7 +39,7 @@ class UserEventSubscriber // implements ShouldQueue
     
     public function created( UserCreateEvent $event ) {
         $user = $event->user;
-        dump( 'created', $user );
+        // if_debug( 'created', $user );
         
         $user->init();
         
@@ -47,7 +47,7 @@ class UserEventSubscriber // implements ShouldQueue
     }
     
     public function transfer_department( UserTransferDeptEvent $event ) {
-        dump( 'transfer_department', $this, $event);
+        // if_debug( 'transfer_department', $this, $event);
         
     }
     

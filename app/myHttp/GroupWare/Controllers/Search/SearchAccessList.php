@@ -45,7 +45,7 @@ class SearchAccessList {
         // dd( $access_lists );
         // foreach( $access_lists as $i => $list ) {
         //     $name = $list->name;
-        //     dump( "$list->user_id, $list->role, $list->access_list_id, $name" );
+        //     if_debug( "$list->user_id, $list->role, $list->access_list_id, $name" );
         // }
         return $access_lists;
     }

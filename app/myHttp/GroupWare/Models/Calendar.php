@@ -33,8 +33,6 @@ class Calendar extends Model {
     ];
     // protected $hidden = [];
 
-    const CALENDAR_TYPES = [ 'public', 'private', 'company-wide' ];
-
     /////////////////////////////////////////////////////////////////////////////////////////////
     //
     //  リレーションの定義
@@ -62,7 +60,7 @@ class Calendar extends Model {
         
         $user    = ( empty( $user )) ? user_id() : $user ;
         $user_id = ( $user instanceof User ) ? $user->id : $user;
-        // dump( $this->calendar()->calprop->where( 'user_id', $user_id )->first() );
+        // if_debug( $this->calendar()->calprop->where( 'user_id', $user_id )->first() );
         return $this->calprops()->where( 'user_id', $user_id )->first();
     }
 
@@ -76,7 +74,7 @@ class Calendar extends Model {
 
         $access_lists = $access_lists->pluck( 'id' )->toArray();
         $subquery = DB::table( 'accesslistables' )->select('accesslistable_id' )->whereIn( 'access_list_id', $access_lists )->where( 'accesslistable_type', Calendar::class );
-        // dump( 'getOwner', $subquery, $subquery->get() );
+        // if_debug( 'getOwner', $subquery, $subquery->get() );
         return self::whereIn( 'id', $subquery )->get();
     }
 
@@ -85,7 +83,7 @@ class Calendar extends Model {
 
         $access_lists = $access_lists->pluck( 'id' )->toArray();
         $subquery = DB::table( 'accesslistables' )->select('accesslistable_id' )->whereIn( 'access_list_id', $access_lists )->where( 'accesslistable_type', Calendar::class );
-        // dump( 'getCanWrite', $subquery, $subquery->get() );
+        // if_debug( 'getCanWrite', $subquery, $subquery->get() );
         return self::whereIn( 'id', $subquery )->get();
     }
     
@@ -94,9 +92,10 @@ class Calendar extends Model {
 
         $access_lists = $access_lists->pluck( 'id' )->toArray();
         $subquery = DB::table( 'accesslistables' )->select('accesslistable_id' )->whereIn( 'access_list_id', $access_lists )->where( 'accesslistable_type', Calendar::class );
-        // dump( 'getCanRead', $subquery, $subquery->get() );
+        // if_debug( 'getCanRead', $subquery, $subquery->get() );
         return self::whereIn( 'id', $subquery )->get();
     }
+    
     
 
     /////////////////////////////////////////////////////////////////////////////////////////////
@@ -129,6 +128,32 @@ class Calendar extends Model {
         return $this->access_list()->canRead( $user_id );
     }
     
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    //
+    //  状態確認メソッド
+    //
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    public function is_disabled() {
+        return $this->disabled == 1;
+    }
+    
+    public function isDisabled() {
+        return $this->is_disabled();
+    }
+
+    public function isNotDisabled() {
+        return ! $this->is_disabled();
+    }
+    
+    
+    public function is_not_use() {
+        return $this->not_use == 1 or $this->disabled == 1;
+    }
+    
+    public function isInUse() {
+        return ! $this->is_not_use();
+    }
+    
 
     /////////////////////////////////////////////////////////////////////////////////////////////
     //
@@ -141,9 +166,13 @@ class Calendar extends Model {
     }
     
     public static function getTypes() {
-        // return self::CALENDAR_TYPES;
         return config( 'groupware.calendar.types' );
     }
+    
+    public static function getDefaultPermissions() {
+        return config( 'groupware.schedule.permissions' );
+    }
+    
 
 
 }

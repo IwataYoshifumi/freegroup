@@ -39,7 +39,7 @@ class ListOfUsersInTheAccessList {
         $this->access_list = $access_list;
         $this->all = $this->make_all_list_first();
         $this->create_user_lists_by_roles();
-        // dump( $this );
+        // if_debug( $this );
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -82,7 +82,7 @@ class ListOfUsersInTheAccessList {
                     ->where( 'acls.access_list_id', $access_list->id )
                     ->where( 'users.retired', 0 );
 
-        // dump( $users, $depts, $groups );
+        // if_debug( $users, $depts, $groups );
         $all = $users->union( $depts )->union( $groups )->orderBy( 'order_index' )->get();
 
         return $all;
@@ -99,7 +99,7 @@ class ListOfUsersInTheAccessList {
         $freeBusyReaders = [];
         
         foreach( $this->all as $i => $row ) {
-            // dump( $row );
+            // if_debug( $row );
 
             if( in_array( $row->user_id, $users  )) { continue; }
 
@@ -109,7 +109,7 @@ class ListOfUsersInTheAccessList {
             $user_name = $row->user_name;
             array_push( $users, $user_id );
 
-            #dump( "$i, $order, $r, $user_id, $user_name" );
+            #if_debug( "$i, $order, $r, $user_id, $user_name" );
 
             $r = $user_role."s";
             array_push( $$r, $user_id );

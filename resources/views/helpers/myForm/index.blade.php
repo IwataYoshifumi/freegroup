@@ -2,7 +2,7 @@
 
 use Illuminate\Support\HtmlString;
 
-//dump( $rows );
+//if_debug( $rows );
 
 
 foreach( $columns as $column ) { 
@@ -68,5 +68,5 @@ foreach( $columns as $column ) {
 </div>
 
 @php
-    #dump( $rows );
+    #if_debug( $rows );
 @endphp

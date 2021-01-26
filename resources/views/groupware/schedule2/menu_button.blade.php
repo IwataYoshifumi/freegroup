@@ -1,20 +1,19 @@
 @php
 use Carbon\Carbon;
 
-use App\myHttp\GroupWare\Controllers\ScheduleController;
+use App\myHttp\GroupWare\Controllers\Schedule2IndexController;
 
 @endphp
 
 <div class="row m-1 w-100 container">
 
-    <a class="btn btn-primary col-2 col-lg-2 m-1" href="{{ route( 'groupware.schedule.create'   ) }}">
-        <div class="d-block d-lg-none">新規</div>
-        <div class="d-none d-lg-block">新規予定作成</div>
+    <a class="btn btn-primary col-2 col-lg-1 m-1" href="{{ route( 'groupware.schedule.create'   ) }}">
+        <div class="">新規予定</div>
     </a>
     @php
         if( isset( $request )) {
             #dump( $request->all() );
-            $args = ScheduleController::get_argv_for_forms( $request, $request->base_date );
+            $args = Schedule2IndexController::get_argv_for_forms( $request, $request->base_date );
         } else {
             $args = [];
         }
@@ -23,28 +22,26 @@ use App\myHttp\GroupWare\Controllers\ScheduleController;
         }
         
     @endphp
-    <a class="btn btn-menu col-2 col-lg-2 m-1" href="{{ route( 'groupware.schedule.index', $args  ) }}">
-        <div class="d-block d-lg-none">一覧</div>
-        <div class="d-none d-lg-block">一覧表示</div>
+    <a class="btn btn-menu  m-1" href="{{ route( 'groupware.schedule.index', $args  ) }}">
+        <div class="">リスト</div>
     </a>
     
-    
-    <a class="btn btn-menu col-2 col-lg-2 m-1" href="{{ route( 'groupware.schedule.monthly', $args  ) }}">
-        <div class="d-block d-lg-none">月次</div>
-        <div class="d-none d-lg-block">月次表示</div>
+    <a class="btn btn-menu  m-1" href="{{ route( 'groupware.schedule.monthly', $args  ) }}">
+        <div class="">月次</div>
     </a>
         
-    <a class="btn btn-menu col-2 col-lg-2 m-1" href="{{ route( 'groupware.schedule.weekly', $args   ) }}">
-        <div class="d-block d-lg-none">週次</div><div class="d-none d-lg-block">週次表示</div>
+    <a class="btn btn-menu  m-1" href="{{ route( 'groupware.schedule.weekly', $args   ) }}">
+        <div class="">週次</div>
     </a>
-    
-    <a class="btn btn-menu col-2 col-lg-2 m-1" href="{{ route( 'groupware.calendar.index') }}">
-        <div>カレンダー設定</div>
-    </a>
-        
-    <a class="btn col-1 m-1 ml-auto" href="{{ route( 'groupware.calendar.index'    ) }}">
-        <i class="fas fa-cog" style="font-size: 21px; color: black;"></i>
-    </a>
-    
 
+    <a class="btn btn-menu m-1" href="{{ route( 'groupware.calendar.index', $args   ) }}">
+        <div class="">カレンダー設定</div>
+    </a>
+        
+    @if( is_debug() )
+        <a class="btn btn-menu btn-secondary m-1 disabled" href="">
+            <div class="">空き時間</div>
+        </a>
+    @endif
+    
 </div>

@@ -3,7 +3,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\URL;
 
 use App\Models\Customer;
-#dump( $find, $show, $sort );
+#if_debug( $find, $show, $sort );
 
 @endphp
 
@@ -83,8 +83,8 @@ use App\Models\Customer;
             <div class='row'>
                 @php 
                     $show_items   = [ 'email', 'kana', 'zip_code', 'address', 'birth_day', 'tel', 'fax', 'mobile', 'sex' ];
-                    // dump( config( 'customer.columns_name' ));
-                    //dump( $show );
+                    // if_debug( config( 'customer.columns_name' ));
+                    //if_debug( $show );
                 @endphp
     
                 @foreach( $show_items as $item ) 

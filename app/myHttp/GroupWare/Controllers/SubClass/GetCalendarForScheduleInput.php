@@ -1,6 +1,7 @@
 <?php
 
-namespace App\myHttp\GroupWare\Controllers\Search;
+// namespace App\myHttp\GroupWare\Controllers\Search;
+namespace App\myHttp\GroupWare\Controllers\SubClass;
 
 use Illuminate\Http\Request;
 use DB;
@@ -28,9 +29,17 @@ class GetCalendarForScheduleInput {
         $query      = Calendar::where( 'not_use', '!=', 1 )->where( 'disabled', '!=', 1 )->whereIn( 'id', $subquery_1 )->whereIn( 'id', $writables );
         $calendars  = $query->get();
         
-        // dump( $calendars, $query );
+        // if_debug( $calendars, $query );
         
         return $calendars;
+    }
+    
+    public static function getFromUserAndCalendar( $user_id, Calendar $calendar ) {
+        $calendars = self::user( $user_id );
+        $calendars->push( $calendar );
+
+        return $calendars;
+        
     }
 
     

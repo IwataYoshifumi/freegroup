@@ -162,7 +162,7 @@ class Schedule extends Model {
     //
     /////////////////////////////////////////////////////////////////////////////////////////////
     public function start_time() {
-        if( $this->all_day ) { return "【終日】"; }
+        if( $this->all_day ) { return "終日"; }
         return $this->start->format( 'H:i' );
     }
 
@@ -179,10 +179,14 @@ class Schedule extends Model {
                 return $this->start->format( 'Y-m-d' ) . ' ～ ' . $this->end->format( 'Y-m-d' );
             }
         } else {
-            if( $this->start->eq( $this->end )) { 
-                return $this->start->format( 'Y-m-d H:i' );
+            if( $this->start_date == $this->end_date ) {
+                return $this->start->format( 'Y-m-d H:i') . ' ～ '. $this->end->format( 'H:i' );                
             } else {
-                return $this->start->format( 'Y-m-d H:i' ) . ' ～ ' . $this->end->format( 'Y-m-d H:i' );
+                if( $this->start->eq( $this->end )) { 
+                    return $this->start->format( 'Y-m-d H:i' );
+                } else {
+                    return $this->start->format( 'Y-m-d H:i' ) . ' ～ ' . $this->end->format( 'Y-m-d H:i' );
+                }
             }
         }
     }
@@ -229,7 +233,7 @@ class Schedule extends Model {
     //  $schedules :: 関連者を検索
     
     static public function search( $find, $search_mode = null, $sort = null, $asc_desc = null ) {
-        // dump( $find );
+        // if_debug( $find );
         $start_date = Carbon::parse( $find['start_date'] )->format( 'Y-m-d 00:00:00' );
         $end_date   = Carbon::parse( $find['end_date']   )->format( 'Y-m-d 23:59:59' );
         
@@ -262,9 +266,9 @@ class Schedule extends Model {
 
         //  日報　あり・なし
         //
-        // dump( $find );
+        // if_debug( $find );
         if( ! empty( $find['has_reports'])) {
-            // dump( $find );
+            // if_debug( $find );
             if( $find['has_reports'] == 1 ) {
                 //　日報あり
                 //
@@ -287,12 +291,12 @@ class Schedule extends Model {
                                 // $query->whereIn( 'user_id', $find['users'] );
                                 $query->whereIn( 'scheduleable_id', $find['users'] );
                             });
-            // dump( $schedules, $schedules2 );
+            // if_debug( $schedules, $schedules2 );
         } else {
             //　部署検索
             //
             if( ! empty( $find['dept_id'] )) {
-                //  dump( 'dept_id', $find['dept_id'] );
+                //  if_debug( 'dept_id', $find['dept_id'] );
                 
                 $sub_query = DB::table( 'users' )->select( 'id' )->where( 'dept_id', $find['dept_id'] );
     
@@ -314,13 +318,13 @@ class Schedule extends Model {
                                         $query->where( 'scheduleable_id', auth('user')->id() );
 
                                 });
-                // dump( 'search login ID', auth('user')->id());
-                // dump( 'search login ID', auth('user')->id(), $schedules, $schedules2 );
+                // if_debug( 'search login ID', auth('user')->id());
+                // if_debug( 'search login ID', auth('user')->id(), $schedules, $schedules2 );
 
             }
         }
         
-        // dump( $schedules, $schedules2 );
+        // if_debug( $schedules, $schedules2 );
         
         //　検索実行
         //
@@ -330,20 +334,20 @@ class Schedule extends Model {
             //
             $returns = $schedules->selectRaw(  ' \'作成者\' as tag ,  id, name, place, start_time, end_time, period, notice, memo, user_id, schedule_type_id' )
                                  ->with(['user', 'schedule_type' ])->orderBy( 'start_time' )->get();
-            // dump( 'search_mode 0');
+            // if_debug( 'search_mode 0');
         } elseif( $search_mode == 1 ) {
             //
             //  関連者ベースで検索
             //
             $returns = $schedules2->selectRaw(  ' \'関連者\' as tag ,  id, name, place, start_time, end_time, period, notice, memo, user_id, schedule_type_id' )
                                   ->with([ 'users', 'user', 'schedule_type' ])->orderBy( 'start_time' )->get();
-            // dump( 'search_mode 1');
-            // dump( $schedules2 );
+            // if_debug( 'search_mode 1');
+            // if_debug( $schedules2 );
         } elseif( $search_mode == 2 ) {
             //
             //  作成者・関連者両方で検索（関連者は重複削除）
             //
-            // dump( 'search_mode 2 ');
+            // if_debug( 'search_mode 2 ');
             $sub_query = clone $schedules;
 
             $schedules2= $schedules2->selectRaw(  ' \'関連者\' as tag ,  id, name, place, start_time, end_time, period, notice, memo, user_id, schedule_type_id' )
@@ -361,7 +365,7 @@ class Schedule extends Model {
             //                       ->orderBy( 'start_time' )->get();
         }
 
-        // dump( $returns->all() );
+        // if_debug( $returns->all() );
         return $returns;
     }
     
@@ -386,14 +390,14 @@ class Schedule extends Model {
     //             } else {
     //                 $dates[$d] = [ $schedule->id ];
     //             }
-    //             // dump( 'ID:'.$schedule->id."  date:".$date->format( 'Y-m-d')."   start:".$start_date->format( 'Y-m-d')."   end_date:".$end_date->format( 'Y-m-d') );
+    //             // if_debug( 'ID:'.$schedule->id."  date:".$date->format( 'Y-m-d')."   start:".$start_date->format( 'Y-m-d')."   end_date:".$end_date->format( 'Y-m-d') );
     //             if( $i >= 100 ) { break; }
     //             $i++;
     //         }
     //         if( $i >= 100 ) { break; }
 
     //     }
-    //     // dump( $dates );
+    //     // if_debug( $dates );
     //     return $dates;        
         
     // }
@@ -441,18 +445,18 @@ class Schedule extends Model {
         $users_keys = array_unique( Arr::collapse( [$new_users->modelKeys(), $old_users->modelKeys()] ));
 
         
-        // dump( $users_keys );
-        // dump( $old_users, $new_users );
+        // if_debug( $users_keys );
+        // if_debug( $old_users, $new_users );
 
         $delete_users = $old_users->diff( $new_users );
         $create_users = $new_users->diff( $old_users );
         $update_users = $new_users->intersect( $old_users );
         
-        // dump( $old_users->modelKeys(), $new_users->modelKeys(), $delete_users->modelKeys(), $create_users->modelKeys(), $update_users->modelKeys(), $users_keys );
+        // if_debug( $old_users->modelKeys(), $new_users->modelKeys(), $delete_users->modelKeys(), $create_users->modelKeys(), $update_users->modelKeys(), $users_keys );
         
         $types = ScheduleType::whereIn( 'user_id', $users_keys )->where( 'class', 'relation' )->whereNotNull( 'google_calendar_id' )->get();
         // $types = ScheduleType::whereIn( 'user_id', $users_keys )->get();
-        // dump( $types );
+        // if_debug( $types );
 
 
     }

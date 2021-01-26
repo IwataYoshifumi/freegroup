@@ -34,6 +34,11 @@ class CalPropPolicy
     }
 
     public function update(User $user, CalProp $calprop) {
+        
+        if( $calprop->calendar->is_disabled() ) {
+            return Response::deny( "CalPropPolicy::update 2 : Calendar has been disabled." );
+        }
+        
         if( $calprop->user_id != $user->id ) {
             dd( $user->id, $calprop->user_id, $calprop );
             return Response::deny( "CalPropPolicy::update 1 : This action is unauthorized. You are not CalProp's Owner" );
@@ -41,15 +46,13 @@ class CalPropPolicy
         return Response::allow();
     }
 
-    //　削除・リストアはない
-    //
     public function delete(User $user, CalProp $calprop) {
-        return Response::deny( "CalPropPolicy::create 1 : This action is unauthorized." );
+        die( __METHOD__ );
     }
     public function restore(User $user, CalProp $calprop) {
-        return false;
+        die( __METHOD__ );
     }
     public function forceDelete(User $user, CalProp $calprop) {
-        return false;
+        die( __METHOD__ );
     }
 }

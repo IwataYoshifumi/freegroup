@@ -116,8 +116,19 @@ $sync_bidrection_or_not = [ 0 => '片方向', 1 => '両方向同期' ];
                             {{ Form::color( 'text_color', $calprop->text_color, [ 'class' => 'col-12 col-md-1 form-control m-1', 'id' => 'text-color', 'onChange' => 'sample()' ] ) }}
                 
                             <div class="col-12"></div>
+
+                            @if( $route_name == "groupware.calprop.update" )                            
+                                <div class="col-md-4 col-form-label text-md-right m-1 d-none d-md-block">予定作成</div>
+                                <label for="not_use">新規に予定作成しない</label>
+                                {{ Form::checkbox( 'not_use', 1, $calprop->not_use, [ 'id' => 'not_use', 'class' => 'checkboxradio' ] ) }}
+                                <div class="col-12"></div>
                             
-                            
+                                <div class="col-md-4 col-form-label text-md-right m-1 d-none d-md-block">表示有無</div>
+                                <label for='hide'>隠す</label>
+                                {{ Form::checkbox( 'hide', 1, $calprop->hide, [ 'id' => 'hide', 'class' => 'checkboxradio' ] ) }}
+                                
+                                <div class="col-12"></div>                            
+                            @endif
 
                             <div class="col-4 m-1"></div>
                             <div class="col-6 m-1">

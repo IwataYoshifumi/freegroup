@@ -42,7 +42,7 @@ class ScheduleTypeController extends Controller {
         
         $user = auth( 'user' )->user();
         $schedule_types = $user->schedule_types;
-        // dump( $user, $user->schedule_types );
+        // if_debug( $user, $user->schedule_types );
         
         BackButton::stackHere( request() );
         // BackButton::removePreviousSession();
@@ -56,7 +56,7 @@ class ScheduleTypeController extends Controller {
     
     public function store( ScheduleTypeRequest $request ) {
         $input = $request->input;
-        // dump( $request );
+        // if_debug( $request );
 
         $schedule_type = new ScheduleType( $input );
         $schedule_type->user_id = auth('user')->id();
@@ -68,7 +68,7 @@ class ScheduleTypeController extends Controller {
         //
         if( ! empty( $request->google_private_key_file )) {
             $file = $request->file( 'google_private_key_file' );
-            // dump( $file );
+            // if_debug( $file );
             $path = $file->store('');
             $value = [ 'file_name' => $file->getClientOriginalName(), 'path' => $path, 'user_id' => auth('user')->id() ];
             $f = MyFile::create( $value );
@@ -83,7 +83,7 @@ class ScheduleTypeController extends Controller {
         $schedule_type->save();
 
 
-        #dump( $schedule_type, $request->all() );
+        #if_debug( $schedule_type, $request->all() );
 
         BackButton::removePreviousSession();
         session::flash( 'flash_message', 'スケジュール種別「'.$schedule_type->name.'」を追加しました。');
@@ -110,14 +110,14 @@ class ScheduleTypeController extends Controller {
             //
             if( ! empty( $request->google_private_key_file )) {
                 $file = $request->file( 'google_private_key_file' );
-                dump( $file );
+                if_debug( $file );
                 $path = $file->store('');
                 $value = [ 'file_name' => $file->getClientOriginalName(), 'path' => $path, 'user_id' => auth('user')->id() ];
                 $f = MyFile::create( $value );
                 $schedule_type->files()->sync( [$f->id] );
             } 
         });
-        #dump( $schedule_type, $request->all() );
+        #if_debug( $schedule_type, $request->all() );
 
         BackButton::removePreviousSession();
         session::flash( 'flash_message', 'スケジュール種別「'.$schedule_type->name.'」を修正しました');

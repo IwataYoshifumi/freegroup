@@ -51,7 +51,8 @@ class SearchFile {
             $files = $files->doesntHave( 'fileables' );
 
         }
-        $files = $files->with( 'user', 'schedules', 'reports', 'calprops' )->paginate( $pagination );
+        $files = $files->paginate( $pagination );
+        $files->load( 'user', 'schedules', 'reports', 'calprops' );
         
         return $files;
         

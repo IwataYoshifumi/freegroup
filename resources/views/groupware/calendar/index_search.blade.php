@@ -26,7 +26,7 @@ $array_role_select = ACL::get_array_roles_for_select();
 
 @endphp
 
-{{ Form::open( [ 'route' => Route::currentRouteName(), 'method' => 'GET', 'id' => 'search_form' ] ) }}
+{{ Form::open( [ 'route' => 'groupware.calendar.index' , 'method' => 'GET', 'id' => 'search_form' ] ) }}
     @csrf
     <div class="border border-dark m-1">
         <div class="row">        
@@ -53,7 +53,7 @@ $array_role_select = ACL::get_array_roles_for_select();
                         <div class="col-12 mt-1">その他検索条件</div>
                         <label for='not_use'>予定追加不可</label>
                         {{ Form::checkBox( "find[not_use]", 1, op( $find )['not_use'], [ 'id' => 'not_use', 'class' => 'checkbox_class' ] ) }}
-                        <label for='disabled'>検索対象外・Google同期解除</label>
+                        <label for='disabled'>無効カレンダー</label>
                         {{ Form::checkBox( "find[disabled]", 1, op( $find )['disabled'], [ 'id' => 'disabled', 'class' => 'checkbox_class' ] ) }}
                         
                         

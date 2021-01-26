@@ -26,7 +26,7 @@ class SyncRelatedScheduleToGoogleCalendarEvent
         // dd( $application );
         $this->schedule = Schedule::find( $schedule->id )->first();
         $this->users    = $schedule->users;
-        dump( $this );
+        // if_debug( $this );
     }
 
     /**

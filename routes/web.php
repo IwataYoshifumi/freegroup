@@ -1,10 +1,14 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use app\Http\Helpers\BackButton;
+
 
 use App\Http\Controllers\Vacation\VacationRouter;
 use App\myHttp\GroupWare\Router as GroupWareRouter;
+
+use App\Http\Helpers\BackButton;
+use App\Http\Helpers\Routes\ScreenSizeRoute;;
+
 
 // use App\Http\Controllers\Vacation\UserController;
 
@@ -165,6 +169,13 @@ Route::middleware('auth:user')->namespace( 'Customer' )->prefix( 'customer' )->n
 // グループウエアシステム
 //
 GroupWareRouter::route();
+
+/*
+ *
+ * ScreenSize関連ルート
+ *
+ */
+ScreenSizeRoute::route();
 
 //
 //　戻るボタンのルート

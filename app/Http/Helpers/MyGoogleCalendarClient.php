@@ -63,7 +63,7 @@ class MyGoogleCalendarClient {
             Log::error( __METHOD__ . $log );
             throw new Exception(  __METHOD__ );
         }
-        // dump( $this );
+        // if_debug( $this );
     }
     
     public function create( Schedule $schedule ) {

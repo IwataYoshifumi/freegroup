@@ -24,7 +24,7 @@ class InputCustomersComponent extends Component
         } else {
             $this->customers = $customers;
         }
-        // dump( $customers, $this->customers );
+        // if_debug( $customers, $this->customers );
     }
     
 

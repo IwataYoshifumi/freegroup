@@ -29,7 +29,7 @@ use App\Models\Customer;
                             $inputs = [];
                         } else {
                             $url = route( 'calendar.edit', [ 'gid' => $inputs['gid'] ] );
-                            dump( $inputs );
+                            #if_debug( $inputs );
                         }
                     @endphp
 

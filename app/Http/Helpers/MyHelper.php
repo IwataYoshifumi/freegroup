@@ -13,8 +13,8 @@ if (! function_exists('if_debug')) {
 }
 
 if (! function_exists('if_debug_log')) {
-    function if_debug_log( $value ) {
-        if( is_debug() ) { Log::debug( $value ); }
+    function if_debug_log( ...$values ) {
+        if( is_debug() ) { Log::debug( $values ); }
     }
 }
 
@@ -155,82 +155,8 @@ if (! function_exists('toArrayKeyIncrementalWithNull')) {
     }
 }
 
-
-
-// if (! function_exists('check_model')) {
-    
-//     function check_model( $model ) {
-        
-//         if( is_numeric( $model )) {
-//             if( empty( $class )) { throw new Exception( __METHOD__ ); }
-    
-//             $this->id    = $model;
-//             $this->class = $class;
-//             $this->model = $class::find[ $this->id ];
-
-//         } elseif( is_object( $model )) {
-//             $class_name = get_class( $model );
-//             if( empty( $class_name )) { throw new Exception( __METHOD__); }
-//             if( empty( $class )) {
-//                 $this->class = $class;
-//             } elseif( $class_name != $class ) {
-//                 throw new Exception( __METHOD__ ) ;
-//             }
-            
-//             $this->id    = $model->id;
-//             $this->model = $model;
-//             $this->class = $class;
-//         }
-
-//     }
-// }
-
-
-// if( ! class_exists( 'check_model' ) ) {
-//     // dump( 'check_model');
-//     class check_model {
-    
-//         public $id;
-//         public $model;
-//         public $class;
-    
-//         public function __construct( $model, $class = null ) {
-        
-//             if( is_numeric( $model )) {
-//                 if( empty( $class )) { throw new Exception( __METHOD__ ); }
-
-//                 $this->id    = $model;
-//                 $this->class = $class;
-//                 $this->model = $class::find[ $this->id ];
-
-//             } elseif( is_object( $model )) {
-//                 $class_name = get_class( $model );
-//                 if( empty( $class_name )) { throw new Exception( __METHOD__); }
-//                 if( empty( $class )) {
-//                     $this->class = $class;
-//                 } elseif( $class_name != $class ) {
-//                     throw new Exception( __METHOD__ ) ;
-//                 }
-                
-//                 $this->id    = $model->id;
-//                 $this->model = $model;
-//                 $this->class = $class;
-//             }
-            
-//         }
-
-//         public function id() {
-//             return $this->id;
-//         }
-        
-//         public function model() {
-//             return $this->model;
-//         }
-        
-//         public function class_name() {
-//             return $this->class;
-//         }
-            
-        
-//     }
-// }
+if (! function_exists('p_day_of_week')) {
+    function p_day_of_week( DateTime $date ) {
+        return config( 'constant.days_of_week' )[ $date->dayOfWeek ];
+    }
+}

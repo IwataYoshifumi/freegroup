@@ -31,9 +31,6 @@ if( ! $user->hasRole('CanCreatePrivateCalendars') )     { unset( $calendar_types
 if( ! $user->hasRole('CanCreateCompanyWideCalendars') ) { unset( $calendar_types['company-wide'] ); }
 
 $route_name = Route::currentRouteName();
-$users = User::all();
-$calprop = new CalProp;
-#dump( $users, toArray( $users, 'name' ), with(new CalProp)->getTable() );
 
 @endphp
 
@@ -93,17 +90,30 @@ $calprop = new CalProp;
                             </div>
                             
                             @if( $route_name == "groupware.calendar.update" )
-                                <label for="memo" class="col-md-4 col-form-label text-md-right m-1">今後は使用しない</label>
+                                <label for="memo" class="col-md-4 col-form-label text-md-right m-1">新規予定追加</label>
                                 <div class="col-md-6">
-                                    <label for="not_use">使用しない</label>
+                                    <label for="not_use">今後、新規の予定作成はしない</label>
                                     {{ Form::checkbox( 'not_use', 1, old( 'not_use', $calendar->not_use ),  [ 'class' => 'form-control m-1', 'id' => 'not_use' ] ) }}
                                 </div>
                                 
-                                <label for="memo" class="col-md-4 col-form-label text-md-right m-1">検索対象外・Google同期解除</label>
+                                <label for="memo" class="col-md-4 col-form-label text-md-right m-1">無効化</label>
                                 <div class="col-md-6">
-                                    <label for="disabled">検索対象外・Google同期解除</label>
+                                    <label for="disabled">無効化する</label>
                                     {{ Form::checkbox( 'disabled', 1, old( 'disabled', $calendar->disabled ),  [ 'class' => 'form-control m-1', 'id' => 'disabled' ] ) }}
                                 </div>
+                                
+                                @if( old( 'disabled' )) 
+                                    
+                                    <label for="memo" class="col-md-4 col-form-label text-md-right m-1">カレンダー無効化の再確認</label>
+                                    <div class="col-md-6">
+                                        <label for="comfirm-disabled_1">無効化後は、登録済みの予定も変更できません。</label>
+                                        {{ Form::checkbox( 'comfirm_disabled[0]', 1, false,  [ 'class' => 'form-control m-1', 'id' => 'comfirm-disabled_1' ] ) }}
+
+                                        <label for="comfirm-disabled_2">Googleカレンダー同期設定も全て解除されます。</label>
+                                        {{ Form::checkbox( 'comfirm_disabled[1]', 1, false,  [ 'class' => 'form-control m-1', 'id' => 'comfirm-disabled_2' ] ) }}
+                                    </div>
+                                
+                                @endif
                                 
                                 @push( 'javascript' )
                                     <script>
@@ -111,6 +121,8 @@ $calprop = new CalProp;
                                             $('#not_use').checkboxradio();
                                             $('#disabled').checkboxradio();
                                             $('#init_users_default_permission').checkboxradio();
+                                            $('#comfirm-disabled_1').checkboxradio();
+                                            $('#comfirm-disabled_2').checkboxradio();
                                         });
                                     </script>
                                 @endpush

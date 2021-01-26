@@ -16,12 +16,12 @@ class TemplatePolicy
     use HandlesAuthorization;
 
     public function viewAny( $auth ) {
-        dump( $auth );
+        if_debug( $auth );
         return Response::allow();
     }
 
     public function view( $auth , Template $temp) {
-        dump( $auth );
+        if_debug( $auth );
         return Response::allow();
     }
 

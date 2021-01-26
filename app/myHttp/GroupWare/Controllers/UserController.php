@@ -14,6 +14,7 @@ use DB;
 use App\Http\Helpers\BackButton;
 use App\Http\Helpers\MyForm;
 use App\Http\Helpers\OutputCSV;
+use App\Http\Helpers\ScreenSize;
 
 use App\myHttp\GroupWare\Requests\UserRequest;
 use App\myHttp\GroupWare\Models\Actions\UserAction;
@@ -63,9 +64,13 @@ class UserController extends Controller {
 
     public function mySelf() {
         $user = User::find( auth( 'user')->id() );
-        
-        BackButton::setHere( request() );
         return self::detail( $user );
+    }
+    
+    public function detail( User $user ) {
+        $user = User::find( $user->id );
+        Backbutton::setHere( request() );
+        return view( 'groupware.user.detail' )->with( 'user', $user );
     }
     
     public function show( User $user ) {
@@ -115,11 +120,7 @@ class UserController extends Controller {
         return redirect()->route('groupware.user.show', [ 'user' => $user->id ]);
     }
 
-    public function detail( User $user ) {
-        $user = User::find( $user->id );
-        Backbutton::stackHere( request() );
-        return view( 'groupware.user.detail' )->with( 'user', $user );
-    }
+
     
     public function deleted( User $user ) {
         $user = User::find( $user->id );

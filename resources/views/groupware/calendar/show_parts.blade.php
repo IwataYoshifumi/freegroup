@@ -36,7 +36,7 @@ if( $calendar->isOwner( $user->id )) {
 <div class="col-12 m-1"></div>
 <div class="form-group row">
     <label for="dept_id" class="col-md-4 col-form-label text-md-right m-1">カレンダー名</label>
-    <div class="col-md-6 m-1" style="{{ $calprop->style() }}">
+    <div class="col-md-6 m-1">
         {{ $calendar->name }}
     </div>
     
@@ -68,19 +68,24 @@ if( $calendar->isOwner( $user->id )) {
         {{ $permissions[$calendar->default_permission] }}
     </div>
 
-
-    <label for="dept_id" class="col-md-4 col-form-label text-md-right m-1">今後は使用しない</label>
-    <div class="col-md-6 m-1">
-        @if( $calendar->not_use ) カレンダー使用停止中 @endif
-    </div>
-
-    <label for="dept_id" class="col-md-4 col-form-label text-md-right m-1">検索対象外・Google同期解除</label>
-    <div class="col-md-6 m-1">
-        @if( $calendar->disabled ) 検索対象外・Google同期解除済み @endif
-    </div>
+    @if( $calendar->not_use )
+        <label for="dept_id" class="col-md-4 col-form-label text-md-right m-1">新規予定追加</label>
+        <div class="col-md-6 m-1 alert-danger">
+            否（不可）
+        </div>
+    @endif
+    @if( $calendar->disabled ) 
+        <label for="dept_id" class="col-md-4 col-form-label text-md-right m-1">カレンダー無効化</label>
+        <div class="col-md-6 m-1 alert-danger">
+            無効化中<br>
+            登録済み予定の変更不可（検索・表示は可）<br>
+            Googleカレンダー同期停止済<br>
+        </div>
+    @elseif( 0 )
+        <label for="dept_id" class="col-md-4 col-form-label text-md-right m-1">カレンダー使用中</label>
+        <div class="col-md-6 m-1">
+            登録済み予定の変更可<br>
+            Googleカレンダー同期可
+        </div>
+    @endif
 </div>
-
-
-    <hr>
-    
-    

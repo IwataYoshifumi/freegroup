@@ -20,7 +20,7 @@ class BackButton {
 
         $session = self::get_session_values( $request );
         
-        // dump( session()->all() );
+        // if_debug( session()->all() );
         session()->forget( 'back_button' );
         session()->push( 'back_button', $session );
         return true;
@@ -29,8 +29,8 @@ class BackButton {
     static public function stackHere( Request $request ) {
         $privious = self::get_previous_session_values();
         $session  = self::get_session_values( $request );
-        // dump( $privious['full_url'], $session['full_url'] );
-        // dump( $privious['url'], $session['url'] );
+        // if_debug( $privious['full_url'], $session['full_url'] );
+        // if_debug( $privious['url'], $session['url'] );
         
         // if( $privious['full_url'] !== $session['full_url'] ) {
         if( $privious['url'] !== $session['url'] ) {
@@ -58,7 +58,7 @@ class BackButton {
                     ];
         $para = [];
         foreach( $request->all() as $key => $value ) {
-            // dump( $key, $value );
+            // if_debug( $key, $value );
             if( $key == "_token" ) { continue; }
             $para = array_merge( $para, [ $key => $value ]);
         }
@@ -87,7 +87,7 @@ class BackButton {
         // $privious = self::get_previous_session_values();
         
         $sessions = session()->get( 'back_button' );
-        // dump( $sessions );
+        // if_debug( $sessions );
         
         if( count( $sessions ) >= 3 ) {
             $form  = "<a class='btn btn-secondary ".$class."' href='".route( self::route_back_all )."'>最初に戻る</a>&nbsp;";

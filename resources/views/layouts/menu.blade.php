@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
     <div class="container">
         <a class="navbar-brand" href="@auth {{ route( 'home' ) }} @endauth @guest {{ route( 'home' ) }} @endguest">
-            @if( is_debug() ) 【開発モード中】 @endif
+            @if( is_debug() ) icon( debug ) @endif
             {{ config('app.name', 'myApp') }} No Auth
         </a>
 

@@ -4,6 +4,7 @@ use Carbon\Carbon;
 use App\myHttp\GroupWare\Models\Schedule;
 use App\Models\Dept;
 
+
 @endphp
 
 <!-- Button trigger modal -->
@@ -23,6 +24,11 @@ use App\Models\Dept;
           </div>
           <div class="modal-body">
               <div class="row">
+                  @if( is_debug() )
+                    <div class="col-12">
+                      @icon( debug ) base_date : {{ $request->base_date }} 
+                    </div>
+                  @endif
                   <div class="col-12 col-md-4">検索条件</div>
                   <div class="col-12 col-md-7">
                       @php

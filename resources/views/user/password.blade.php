@@ -9,7 +9,7 @@ use App\Models\User;
 //　パスワードのバリデーション
 //
 $m = config( 'password.error.'.config('user.password_valicator'));
-//dump( $m );
+//if_debug( $m );
 @endphp
 
 @section('content')

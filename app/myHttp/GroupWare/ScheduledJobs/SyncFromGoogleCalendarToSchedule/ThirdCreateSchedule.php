@@ -82,7 +82,7 @@ class ThirdCreateSchedule implements ShouldQueue
         
         $this->schedule = $schedule;
         
-        dump( $schedule );
+        // if_debug( $schedule );
 
         //　他のGoogleカレンダーにも同期
         //

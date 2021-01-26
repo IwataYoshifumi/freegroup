@@ -25,7 +25,7 @@ class InputSchedulesComponent extends Component
         //     $this->schedules = $schedules;
         // }
         $this->schedules = $schedules;
-        // dump( $schedules, $this->schedules );
+        // if_debug( $schedules, $this->schedules );
     }
     
 

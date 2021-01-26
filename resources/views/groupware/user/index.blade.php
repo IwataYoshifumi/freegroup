@@ -31,7 +31,7 @@ use App\User;
                     @include( 'groupware.user.index_find' )
                     <br>
 
-                    <table class="table table-border">
+                    <table class="table table-border table-sm">
                         <tr>
                             <th>詳細</th>
                             @if( isset( $show['dept_id'] )) <th>部署</th> @endif

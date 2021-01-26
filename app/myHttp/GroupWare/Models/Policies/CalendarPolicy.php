@@ -29,6 +29,7 @@ class CalendarPolicy
     }
 
     public function create(User $user) {
+        if( $user->is_retired() ) { return Response::deny( "CalendarPolicy::create 1 : You are retired." ); }
         return true;
     }
 
@@ -43,20 +44,17 @@ class CalendarPolicy
     }
 
     public function delete(User $user, Calendar $calendar) {
+        
+        //　無効状態でないと削除できない
+        //
+        if( $calendar->isNotDisabled() ) { return  Response::deny( "CalendarPolicy::delete 2 : The Calendar is available. You Can not delete it." );  }
+        
         //　オーナーでなければ削除できない
         //
         if( ! $calendar->isOwner( $user->id )) {
-        // if( ! $calendar->access_list()->isOwner( $user->id )) {
             return Response::deny( "CalendarPolicy::delete 1 : This action is unauthorized. You are not Calendar's Owner" );
         }
         return Response::allow();
     }
 
-    public function restore(User $user, Calendar $calendar) {
-        //
-    }
-
-    public function forceDelete(User $user, Calendar $calendar) {
-        //
-    }
 }

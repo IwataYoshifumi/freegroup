@@ -1,112 +1,116 @@
 @php
 use App\myHttp\GroupWare\Models\User;
 
+
 @endphp
 
 <div class="container">
     
-    <div class="form-group row">
-        <label for="name" class="col-md-4 col-form-label text-md-right">件名</label>
-        <div class="col-md-8">
+    <div class="row">
+        <label for="name" class="col-4 col-form-label text-md-right">件名</label>
+        <div class="col-8">
             {{ $schedule->name }}
         </div>
-    </div>
     
-    <div class="form-group row">
-        <label for="place" class="col-md-4 col-form-label text-md-right">場所</label>
-        <div class="col-md-8">
+        <label for="place" class="col-4 col-form-label text-md-right">場所</label>
+        <div class="col-8">
             {{ $schedule->place }}
         </div>
-    </div>
     
-    <div class="form-group row">
-        <label for="place" class="col-md-4 col-form-label text-md-right">カレンダー</label>
-        <div class="col-md-8">
+        <label for="place" class="col-4 col-form-label text-md-right">カレンダー</label>
+        <div class="col-8">
             {{ op( $schedule->calendar )->name }}
+
+            @if( $calendar->is_disabled() )
+                <span class="uitooltip" title="カレンダー管理者による制限によって、無効化されました。">
+                    <i class="fas fa-info-circle"></i>
+                </span>
+            @elseif( $calendar->is_not_use() )
+                <span class="uitooltip" title="カレンダー管理者による制限によって、新規で予定追加できません。">
+                    <i class="fas fa-info-circle"></i>
+                </span>
+            @endif
         </div>
-    </div>
     
-    <div class="form-group row">
-        <label for="email" class="col-md-4 col-form-label text-md-right">日時</label>
-        <div class="col-md-8">
+        <label for="email" class="col-4 col-form-label text-md-right">日時</label>
+        <div class="col-8">
             {{ $schedule->p_dateTime() }}
         </div>
-    </div>
     
-    <div class="form-group row">
-        <label for="customers" class="col-md-4 col-form-label text-md-right">関連顧客</label>
-        <div class="col-md-8">
-            @foreach( $customers as $c )
-                <div class="col-12">
-                    <a href="{{ route( 'customer.show', [ 'customer' => $c->id ] ) }}" class="btn btn-sm btn-outline-secondary">詳細</a>
-                    {{ $c->name }} {{ $c->p_age() }}
-                </div>        
-            @endforeach
-        </div>
-    </div>
-    
-    <div class="form-group row">
-        <label for="customers" class="col-md-4 col-form-label text-md-right">関連社員</label>
-        <div class="col-md-8">
-            @foreach( $users as $u )
-                <div class="col-12">
-                    【 {{ $u->dept->name }} 】{{ $u->name }} {{ $u->grade }}
-                </div>        
-            @endforeach
-        </div>
-    </div>
-    
-    @if( count( $reports )) 
-        <div class="form-group row">
-            <label for="customers" class="col-md-4 col-form-label text-md-right">関連日報</label>
-            <div class="col-md-8">
-                @foreach( $reports as $r )
+        @if( count( $customers ))    
+            <label for="customers" class="col-4 col-form-label text-md-right">関連顧客</label>
+            <div class="col-8">
+                @foreach( $customers as $c )
                     <div class="col-12">
-                        <a href="{{ route( 'groupware.report.show', [ 'report' => $r->id ] ) }}" class="btn btn-sm btn-outline-secondary">詳細</a>
-                        【 作成者：{{ $r->user->name }} 】{{ $r->name }}
+                        <a href="{{ route( 'customer.show', [ 'customer' => $c->id ] ) }}" class="btn btn-sm btn-outline-secondary">詳細</a>
+                        {{ $c->name }} {{ $c->p_age() }}
                     </div>        
                 @endforeach
             </div>
-        </div>
-    @endif
+        @endif
     
+        @if( count( $users ))
+            <label for="customers" class="col-4 col-form-label text-md-right">関連社員</label>
+            <div class="col-8">
+                @foreach( $users as $u )
+                    <div class="col-12">
+                        【 {{ $u->dept->name }} 】{{ $u->name }} {{ $u->grade }}
+                    </div>        
+                @endforeach
+            </div>
+        @endif
     
-    <div class="form-group row">
-        <label for="mobile" class="col-md-4 col-form-label text-md-right">添付ファイル</label>
-        <div class="col-md-8">
+        @if( count( $reports )) 
+            <label for="customers" class="col-4 col-form-label text-md-right">関連日報</label>
+            <div class="col-8">
+                @foreach( $reports as $r )
+                    @php
+                        $route_to_report = route( 'groupware.report.show', [ 'report' => $r->id ] );
+                    @endphp
+                
+                    <div class="col-12 mb-1">
+                        <span class="w-20">{{ $r->user->name }}</span>
+                        <a class="btn btn-sm w-80 btn-outline-dark uitooltip" title="作成日時：{{ $r->updated_at }}" href="{{ $route_to_report }}">{{ $r->name }}</a>
+                    </div>        
+                @endforeach
+            </div>
+        @endif
+    
+        
+        <label for="mobile" class="col-4 col-form-label text-md-right">添付ファイル</label>
+        <div class="col-8">
             @foreach( $files as $file ) 
                 <div class="col-12">
                     <div class="row">
-     
-                        <div class="col-1">
-                            <a href="{{ route('groupware.file.show',     [ 'file' => $file->id ] ) }}" target="_blank"><span class='search icon'></span></a>
-                        </div>
-                        <div class="col-1">
-                            <a href="{{ route('groupware.file.download', [ 'file' => $file->id, 'class' => 'schedule', 'model' => $schedule->id ] ) }}"><span class='download icon'></span></a>
-                        </div>
-                        <div class="col">{{ $file->file_name }}</div> 
+                        @php
+                            $route_file_download = route('groupware.file.download', [ 'file' => $file->id, 'class' => 'schedule', 'model' => $schedule->id ] );
+                            $route_file_view     = route('groupware.file.view',     [ 'file' => $file->id, 'class' => 'schedule', 'model' => $schedule->id ] );
+                            if( $auth->can( 'view', $file )) {
+                                $route_file_show     = route('groupware.file.show',  [ 'file' => $file->id ] ); 
+                            } else {
+                                $route_file_show = "";
+                            }
+                        @endphp
+                        <a href="{{ $route_file_view     }}" class="btn btn_icon"> @icon( search ) </a>
+                        <a href="{{ $route_file_download }}" class="btn btn_icon"> @icon( file-download ) </a>
+                        <span class="" title='アップロード者：{{ $file->user->name }} アップロード日時：{{ $file->created_at }}'>{{ $file->file_name }}</span>
                     </div>
-    
                 </div>
             @endforeach
         </div>
-    </div>
     
     
-    <div class="form-group row">
-        <label for="mobile" class="col-md-4 col-form-label text-md-right">備考</label>
-        <div class="col-md-8">
+        <label for="mobile" class="col-4 col-form-label text-md-right">備考</label>
+        <div class="col-8">
             <pre>{{ $schedule->memo }}</pre>
         </div>
-    </div>
+        
+        @if( optional( $schedule )->google_calendar_event_id )
+            <label for="mobile" class="col-4 col-form-label text-md-right">Google Calendar Event ID</label>
+            <div class="col-8">
+                {{ $schedule->google_calendar_event_id }}
+            </div>
+        @endif
     
-    @if( optional( $schedule )->google_calendar_event_id )
-    <div class="form-group row">
-        <label for="mobile" class="col-md-4 col-form-label text-md-right">Google Calendar Event ID</label>
-        <div class="col-md-8">
-            {{ $schedule->google_calendar_event_id }}
-        </div>
     </div>
-    @endif
-
 </div>

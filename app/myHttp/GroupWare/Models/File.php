@@ -11,6 +11,7 @@ use App\myHttp\GroupWare\Models\User;
 use App\myHttp\GroupWare\Models\Schedule;
 use App\myHttp\GroupWare\Models\CalProp;
 use App\myHttp\GroupWare\Models\Report;
+use App\myHttp\GroupWare\Models\Fileable;
 
 class File extends Model {
     
@@ -46,9 +47,6 @@ class File extends Model {
     }
 
     public function fileables() {
-        // $fileables = DB::table( 'fileables' )->where( 'file_id', $this->id )->get();
-        // $this->fillables = $fileables;
-        // return $fileables;
         return $this->hasMany( Fileable::class, 'file_id' );
     }
     
@@ -86,13 +84,13 @@ class File extends Model {
 
 
 
-class Fileable extends Model {
+// class Fileable extends Model {
     
-    public function file() {
-        return belongsTo( File::class );
-    }
+//     public function file() {
+//         return belongsTo( File::class );
+//     }
     
-    public function fileable() {
-        return $this->morphTo();
-    }
-}
+//     public function fileable() {
+//         return $this->morphTo();
+//     }
+// }

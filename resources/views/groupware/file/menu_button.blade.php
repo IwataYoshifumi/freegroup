@@ -16,9 +16,9 @@
     </a>
 
     @if( is_debug() )
-        <a class="btn btn-danger border-dark col-2 col-lg-2 m-1 " href="{{ route( 'groupware.file.deleteAllUntachedFiles' ) }}">
-            <div>無添付ファイル全削除</div>
-        </a>
+            <a class="btn btn-danger border-dark col-3" href="{{ route( 'groupware.file.deleteAllUntachedFiles' ) }}">
+                <i class="fab fa-dev text-white" style="font-size: 28px"></i><span class="m-1">無添付ファイル全削除</span>
+            </a>
 
     @endif
         

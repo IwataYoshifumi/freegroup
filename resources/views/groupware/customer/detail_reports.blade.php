@@ -21,7 +21,7 @@
                             <a class="d-block text-trancate" href="{{ route( 'groupware.report.show', [ 'report' => $r->id ] ) }}">{{ $r->name }}</a>
                         </div>
                         <div class="col-3 d-block d-lg-none">日時</div>
-                        <div class="col-8 col-lg-4 d-block text-truncate">{{ $r->start_time }}</div>
+                        <div class="col-8 col-lg-4 d-block text-truncate">{{ $r->p_dateTime() }}</div>
                         
                         <div class="col-3 d-block d-lg-none">社員</div>
                         <div class="col-8 col-lg-4 d-block text-truncate">{{ $r->user->name }} </div>

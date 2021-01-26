@@ -10,11 +10,15 @@ use App\myHttp\GroupWare\Models\AccessList;
 use App\myHttp\GroupWare\Models\Search\GetAccessLists;
 use App\myHttp\GroupWare\Models\File as MyFile;
 
-use App\myHttp\GroupWare\Controllers\Search\GetCalendarForScheduleInput;
+use App\myHttp\GroupWare\Controllers\SubClass\GetCalendarForScheduleInput;
 
-use App\myHttp\GroupWare\View\groupware_models_customer_input_customers;
+// use App\myHttp\GroupWare\View\groupware_models_customer_input_customers;
 
-// dump( $schedule );
+use App\myHttp\GroupWare\View\Components\Dept\DeptsCheckboxComponent;
+use App\myHttp\GroupWare\View\Components\User\UsersCheckboxComponent;
+use App\myHttp\GroupWare\View\Components\Customer\CustomersCheckboxComponent;
+
+// if_debug( $schedule );
 
 //　初期化
 //
@@ -31,21 +35,26 @@ $permissions = Schedule::getPermissions();
 
 //　予定追加可能なカレンダー( not_use, disable は対象外）
 //
-$calendars = toArrayWithEmpty( GetCalendarForScheduleInput::user( $user->id ), 'name', 'id' );
+//$calendars = toArrayWithEmpty( Calendar::all(), 'name', 'id' );
 
 //　カレンダーの変更の変更はカレンダー作成者のみ可能
 //
 if( $route_name == 'groupware.schedule.create' ) {
+    $calendars = toArrayWithEmpty( GetCalendarForScheduleInput::user( $user->id ), 'name', 'id' );
     $input_calendar_enable = true;
+    
 } elseif( $route_name == 'groupware.schedule.edit' and $schedule->user_id == $user->id ) {
-   $input_calendar_enable = true;
+    $calendar = $schedule->calendar;
+    $calendars = toArrayWithEmpty( GetCalendarForScheduleInput::getFromUserAndCalendar( $user->id, $calendar ), 'name', 'id' );
+    $input_calendar_enable = true;
+    
 } else {
     $input_calendar_enable = false;
 }
 
 
 #dd( $creator->name, $updator );
-#dump( $attached_files, old( 'attached_files' ) );
+#if_debug( $attached_files, old( 'attached_files' ) );
 
 // エラー表示
 $is_invalid['name'       ] = ( $errors->has( 'name'                ) ) ? 'is-invalid' : '';
@@ -59,7 +68,7 @@ $is_invalid['calendar_id'] = ( $errors->has( 'calendar_id'         ) ) ? 'is-inv
 @section('content')
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-12 col-md-8">
+            <div class="col-12 col-md-9">
 
             @include( 'groupware.schedule2.menu_button' )
 
@@ -150,9 +159,17 @@ $is_invalid['calendar_id'] = ( $errors->has( 'calendar_id'         ) ) ? 'is-inv
 
                                    var start_date = $('#start_date').val();
                                    var end_date   = $('#end_date').val();
-                                   $('.date_input').datepicker({ 'scrollDefault': 'now' });
+                                   $('.date_input').datepicker({ 
+                                            scrollDefault: 'now',
+                                            //showOtherMonths: true,
+                                            selectOtherMonths: true,
+                                            numberOfMonths: 2,
+                                            showButtonPanel: true,
+                                   });
+                                   
+                                   
                                    $('.date_input').datepicker( 'option', 'dateFormat', 'yy-mm-dd' );
-
+                                   //$('.date_input').datepicker( 'option', $.datepicker.regional[ 'ja' ] );
                                    $('#start_date').datepicker( 'setDate', start_date );
                                    $('#end_date').datepicker(   'setDate', end_date   );
                                    
@@ -188,7 +205,9 @@ $is_invalid['calendar_id'] = ( $errors->has( 'calendar_id'         ) ) ? 'is-inv
                             <label for="customers" class="col-md-4 col-form-label text-md-right">関連顧客</label>
                             <div class="col-md-8">
                                 <!--- コンポーネント InputCustomersComponent --->                                
-                                <x-input_customers :customers="$customers"/>
+                                <!--x-input_customers :customers="$customers"/>-->
+                                <x-checkboxes_customers :customers="$customers" button="顧客検索" />
+                                
                             </div>
                         </div>
                             
@@ -196,7 +215,8 @@ $is_invalid['calendar_id'] = ( $errors->has( 'calendar_id'         ) ) ? 'is-inv
                             <label for="users" class="col-md-4 col-form-label text-md-right">関連社員</label>
                             <div class="col-md-8">
                                 <!--- コンポーネント InputCustomersComponent --->                                
-                                <x-input_users :users="$users"/>
+                                <!--x-input_users :users="$users"/>-->
+                                <x-checkboxes_users :users="$users" button="社員検索" />
                             </div>
                         </div> 
                         

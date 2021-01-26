@@ -5,17 +5,24 @@
 use App\Http\Helpers\BackButton;
 use App\Models\User;
 use App\Models\Customer;
-use App\myHttp\GroupWare\Models\Schedule;
+use App\myHttp\GroupWare\Models\Report;
 
 if( ! isset( $customer ) ) { $customer = null; }
 
+$route_name = Route::currentRouteName();
+
+$auth      = auth( 'user' )->user();
+
 $users     = $report->users;
-$user      = $report->user;
+$creator   = $report->creator;
+$updator   = $report->updator;
+$report_list  = $report->report_list;
+
 $files     = $report->files;
 $customers = $report->customers;
 $schedules = $report->schedules;
 
-# dump( $schedules );
+# dd( $user, $files );
 
 @endphp
 
@@ -33,6 +40,7 @@ $schedules = $report->schedules;
                     @include( 'groupware.report.show_button' )
                     @include( 'layouts.flash_message' )
                     @include( 'layouts.error' )
+                    
                     {{ Form::open( [ 'url' => route( Route::currentRouteName(), [ 'report' => optional($report)->id ] ) ]) }}
                         @method( 'GET' )
                         @csrf
@@ -42,7 +50,6 @@ $schedules = $report->schedules;
                         
                         <div class="col-12">
                             {{ BackButton::form() }}
-
                         </div>
                     {{ Form::close() }}
                 </div>
@@ -50,4 +57,10 @@ $schedules = $report->schedules;
         </div>
     </div>
 </div>
+<script>
+    $( function() { $('.uitooltip').uitooltip(); });
+</script>
+
+
 @endsection
+

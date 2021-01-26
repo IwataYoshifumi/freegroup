@@ -34,10 +34,53 @@ use App\myHttp\GroupWare\Requests\TestRequest;
 use App\myHttp\GroupWare\Models\Actions\FileAction;
 use App\myHttp\GroupWare\Models\SubClass\ComponentInputFilesClass;
 
+use App\myHttp\GroupWare\Jobs\File\DeleteFilesJob;
 
 use  App\myHttp\GroupWare\Controllers\Search\SearchFile;
 
 class TestController extends Controller {
+
+    /*
+     *
+     * 開発テスト用テンプレートコントローラ（コピペして使う）
+     *
+     */
+    public function template( Request $request ) {
+        return view( 'groupware.develop.template' )->with( 'request', $request );
+    }
+
+    //　カスタムBladeテスト
+    //
+    public function icons( Request $request ) {
+        return view( 'groupware.test.custome_blade_icons' )->with( 'request', $request );
+    }
+
+
+    public function test( Request $request ) {
+        return view( 'groupware.test.test' )->with( 'request', $request );
+        // return view( 'groupware.test.depts' )->with( 'request', $request );
+    }
+    
+    public function testDeptUserCustomer( Request $request ) {
+        // return view( 'groupware.test.test' )->with( 'request', $request );
+        
+        
+        return view( 'groupware.test.depts_users_customers' )->with( 'request', $request );
+    }
+    
+
+    // Files Delete 開発用ルート
+    //
+    public function deleteFiles( Request $request ) {
+        
+        $files = MyFile::doesntHave( 'fileables' )
+                        ->orWhere( 'id', '>=', 351 )
+                        ->with( 'fileables' )
+                        ->get();
+        if_debug( __METHOD__, $files );
+        DeleteFilesJob::dispatch( $files );
+
+    }
 
     //　Files コンポーネント開発用ルート
     //

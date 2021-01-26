@@ -9,8 +9,10 @@ use App\myHttp\GroupWare\Models\User;
 use App\myHttp\GroupWare\Models\Schedule;
 use App\myHttp\GroupWare\Models\Report;
 
-$schedules = $user->schedules;
-$reports   = $user->reports;
+use App\Http\Helpers\ScreenSize;
+
+$schedules = $user->schedules->load( 'user' );
+$reports   = $user->reports->load( 'user' );
 
 # dump( $schedules, $reports );
 
@@ -51,4 +53,7 @@ $reports   = $user->reports;
         </div>
     </div>
 </div>
+
+{{ ScreenSize::rendarScriptToGetScreenSize() }}
+
 @endsection

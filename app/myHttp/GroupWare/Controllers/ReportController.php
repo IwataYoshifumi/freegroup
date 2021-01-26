@@ -19,13 +19,21 @@ use App\Http\Helpers\MyForm;
 use App\Http\Helpers\OutputCSV;
 use App\Http\Controllers\Controller;
 
-use App\myHttp\GroupWare\Requests\ReportRequest;
+
 
 use App\myHttp\GroupWare\Models\Schedule;
 use App\myHttp\GroupWare\Models\Report;
+use App\myHttp\GroupWare\Models\ReportList;
 use App\myHttp\GroupWare\Models\Customer;
 use App\myHttp\GroupWare\Models\User;
 use App\myHttp\GroupWare\Models\File as MyFile;
+
+use App\myHttp\GroupWare\Models\Actions\ReportAction;
+use App\myHttp\GroupWare\Requests\ReportRequest;
+use App\myHttp\GroupWare\Requests\SubRequests\ComfirmDeletionRequest;
+
+use App\myHttp\GroupWare\Models\SubClass\ComponentInputFilesClass;
+use App\myHttp\GroupWare\Controllers\SubClass\DateTimeInput;
 
 class ReportController extends Controller {
 
@@ -44,10 +52,11 @@ class ReportController extends Controller {
             $find['users']     = ( isset( $request->users )) ? $request->users : [];
             $find['customers'] = ( isset( $request->customers )) ? $request->customers : [];
         }
-        // dump( $find );
+        // if_debug( $find );
         //　検索
         //
-        $reports = Report::search( $find, $request->search_mode );
+        // $reports = Report::search( $find, $request->search_mode );
+        $reports = Report::all();
         
         BackButton::setHere( $request );
         return view( 'groupware.report.index' )->with( 'reports', $reports )
@@ -56,9 +65,9 @@ class ReportController extends Controller {
     }
     
     public function csv( Request $request ) {
-        // dump( $request->all() );
+        // if_debug( $request->all() );
         $reports = Report::search( $request->find, $request->search_mode );
-        // dump( $reports );
+        // if_debug( $reports );
         $values = [];
         foreach( $reports as $i => $r ) {
             $start_time  = Carbon::parse( $r->start_time );
@@ -68,7 +77,7 @@ class ReportController extends Controller {
     
             $users = "";        
             if( count( $r->users )) {
-                // dump( $r->users );
+                // if_debug( $r->users );
                 foreach( $r->users as $i => $user ) {
                     if( $i == 0 ) {
                         $users = $user->name;
@@ -80,7 +89,7 @@ class ReportController extends Controller {
 
             $customers = "";        
             if( count( $r->customers )) {
-                // dump( $r->customers );
+                // if_debug( $r->customers );
                 foreach( $r->customers as $i => $customer ) {
                     if( $i == 0 ) {
                         $customers = $customer->name;
@@ -117,30 +126,39 @@ class ReportController extends Controller {
     public function create( Request $request ) {
         
         $this->authorize( 'create', Report::class );
-        // dump( session()->all() );
-        // dump( $request->all() );
+        // if_debug( session()->all() );
+        // if_debug( $request->all() );
         
         //　初期値設定
         //
         $report = new Report;
         $report->user_id = auth('user')->id();
-
+        
         if( optional( $request )->schedule_id ) {
-            
-            $schedule = Schedule::find( $request->schedule_id );
-            // dd( $schedule );
-            $report->schedules    = [ $schedule ];
-            // $report->schedule_id  = $request->schedule_id;
-            $report->name         = $schedule->name;
-            $report->place        = $schedule->place;
-            $report->start_time   = $schedule->o_start_time(); 
-            $report->end_time     = $schedule->o_end_time();
+        
+            $schedule = Schedule::where( 'id', $request->schedule_id )->first();
+            $schedule->load( 'users', 'customers');
+            $report->schedules[]    = $schedule;
+            $report->name           = $schedule->name;
+            $report->place          = $schedule->name;
+            $report->start_date     = $schedule->start_date;
+            $report->end_date       = $schedule->end_date;
+            $report->start          = $schedule->start;
+            $report->end            = $schedule->end;
+            $report->all_date       = $schedule->all_date;
             $report->users        = $schedule->users;
             $report->customers    = $schedule->customers;
         }
-        // dump( $report );
+        
+        $component_input_files = new ComponentInputFilesClass( 'attach_files'  );
+        
+        $input    = new DateTimeInput( );
+        
+        // if_debug( $report );
         BackButton::stackHere( request() );
-        return view( 'groupware.report.input' )->with( 'report', $report );
+        return view( 'groupware.report.input' )->with( 'report', $report )
+                                               ->with( 'input',  $input  )
+                                               ->with( 'component_input_files', $component_input_files );
         
     }
 
@@ -148,104 +166,48 @@ class ReportController extends Controller {
         
         $this->authorize( 'create', Report::class );
         
-        $report = DB::transaction( function() use( $request ) {
-            $report = new Report;
+        $report = ReportAction::creates( $request );
 
-            $report->user_id   = auth('user')->id();
-            $report->name      = $request->name;
-            $report->place     = $request->place;
-            $report->start_time = $request->start_time;
-            $report->end_time   = $request->end_time;
-            $report->memo      = $request->memo;
-            
-            $report->save();
-            
-            $report->customers()->sync( $request->customers );
-            $report->users()->sync( $request->users );
-            $report->schedules()->sync( $request->schedules );
-            
-            $files = [];
-            foreach( ( $request->file('upload_files')) ? $request->file('upload_files') : [] as $i => $file ) {
-                // dump( "aaa", $i, $file );
-                $path = $file->store('');
-                $value = [ 'file_name' => $file->getClientOriginalName(), 'path' => $path, 'user_id' => auth('user')->id() ];
-                $f = MyFile::create( $value );
-                $files[$i] = $f->id;
-            }
-            // dd( $files );
-            $report->files()->sync( $files );
-            
-            return $report;
-        });
-
-        // dump( $request->all(), $report );
-        // return view( 'groupware.report.show' )->with( 'report', $report );
 
         session()->regenerateToken();
         session()->flash( 'flash_message', "日報「". $request->title. "」を追加しました。" );
         BackButton::removePreviousSession();
+        
+        // return view( 'groupware.report.show' )->with( 'report', $report  );
         return redirect()->route( 'groupware.report.show', [ 'report' =>  $report ]);
         
     }
     
     public function show( Report $report ) {
-        // dump( $report->schedules );
+        // if_debug( $report->schedules );
 
         BackButton::stackHere( request() );
         return view( 'groupware.report.show' )->with( 'report', $report );
     }
     
-    public function detail() {
-        
-    }
-
     public function edit( Report $report ) {
         
         $this->authorize( 'update', [ $report, auth('user')->user() ]);
         
+        $report->load( 'users','users.dept', 'customers', 'files' );
+        $component_input_files = new ComponentInputFilesClass( 'attach_files', $report->files  );
+        $input    = new DateTimeInput( $report );
+        
         BackButton::stackHere( request() );
-        return view( 'groupware.report.input' )->with( 'report', $report );
+        return view( 'groupware.report.input' )->with( 'report', $report )
+                                               ->with( 'input',  $input   )
+                                               ->with( 'component_input_files', $component_input_files );
     }
+
     public function update( Report $report, ReportRequest $request ) {
         
         $this->authorize( 'update', [ $report, auth('user')->user() ]);
         
-        // dd( $request );
-        $report = DB::transaction( function() use( $request, $report ) {
-
-            // $report->user_id  = $request->user_id
-            $report->name        = $request->name;
-            $report->place       = $request->place;
-            $report->start_time  = $request->start_time;
-            $report->end_time    = $request->end_time;
-            $report->memo        = $request->memo;
-            $report->save();
-
-            $report->customers()->sync( $request->customers );
-            $report->users()->sync( $request->users );
-            $report->schedules()->sync( $request->schedules );
-            
-            //　アップロードファイル
-            //
-            $files = ( ! empty( $request->attached_files )) ? $request->attached_files : [] ;
-            // dd( $request->file( 'upload_files' ));
-            foreach( ( $request->file('upload_files')) ? $request->file('upload_files') : [] as $i => $file ) {
-                dump( "aaa", $i, $file );
-                $path = $file->store('');
-                $value = [ 'file_name' => $file->getClientOriginalName(), 'path' => $path, 'user_id' => auth('user')->user()->id ];
-                $f = MyFile::create( $value );
-                // $files[$i] = $f->id;
-                array_push( $files, $f->id );
-            }
-            // dd( $files );
-            $report->files()->sync( $files );
-            
-            
-            return $report;
-        });
+        $report = ReportAction::updates( $report, $request ); 
         
         session()->regenerateToken();
         BackButton::removePreviousSession();
+
         session()->flash( 'flash_message', "スケジュール". $request['name']. "を修正しました。" );
         return redirect()->route( 'groupware.report.show', [ 'report' =>  $report ]);
         
@@ -256,18 +218,12 @@ class ReportController extends Controller {
 
         return view( 'groupware.report.delete' )->with( 'report' , $report );
     }
-    public function deleted( Report $report ) {
+    public function deleted( Report $report, ComfirmDeletionRequest $request ) {
         
         $this->authorize( 'delete', [ $report, auth('user')->user() ]);
         
-        DB::transaction( function() use( $report ) {
-            $report->customers()->detach();
-            $report->users()->detach();
-            $report->files()->detach();
-            $report->schedules()->detach();
-            $report->delete();
-        });
-        
+        ReportAction::deletes( $report );
+
         session()->regenerateToken();
         return view( 'groupware.report.delete' )->with( 'report' , $report );
     }

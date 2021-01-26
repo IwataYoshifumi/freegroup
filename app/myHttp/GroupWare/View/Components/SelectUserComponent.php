@@ -69,7 +69,7 @@ class SelectUserComponent extends Component
             // $this->users = User::geet_array_for_select( [ 'name' => $this->user_name ]);
         }
         
-        // dump( "$this->index, $this->user_id" );
+        // if_debug( "$this->index, $this->user_id" );
         
     }
     

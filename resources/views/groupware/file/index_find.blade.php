@@ -83,12 +83,13 @@ $button['今日']['end']   = $today->format('Y-m-d');
                 {{ Form::select( 'attached', $attached, op( $request )->attached , [ 'class' => 'form-control col-6' ] ) }}
             </div>
 
-            <div class="col-12 d-lg-none p-1">アップロード者</div>
+            <div class="col-12 d-lg-none p-1">アップロード者 @if(is_debug()) <i class="fab fa-dev icon_debug"></i> @endif </div>
             <div class="col-lg-4 p-1 clearfix">
                 @if( is_debug() )
                     @php
                         $users = ( isset( $request->users )) ? $request->users : [];
                     @endphp
+                    
                     <x-input_users :users="$users"/>
                 @else 
                     <input type='hidden' name='users[]' value="{{ user_id() }}">

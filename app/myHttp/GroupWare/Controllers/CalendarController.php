@@ -36,26 +36,20 @@ use App\myHttp\GroupWare\Controllers\Search\SearchCalender;
 class CalendarController extends Controller {
     
     public function index( Request $request ) {
-        
-        $find = ( isset( $request->find )) ? $request->find : [ 'user_id' => user_id(), 'keyword' => 'canWrite' ];
+
+        //　検索初期条件
         //
+        $find = ( isset( $request->find )) ? $request->find : [ 'user_id' => user_id(), 'keyword' => 'canWrite' ];
+
         //　検索条件を入力せずに private なカレンダーは検索できない
         //
         if( ! op($find)['keyword'] or ! $find['user_id'] ) {
             $find['type']['private'] = null;
         }
-        // dump( $find );
+        if( op( $find )['disabled'] ) { $find['not_use'] = 1; }
         
         $calendars = SearchCalender::search( $find );
         $calendars->load( [ 'calprops' => function( $query ) { $query->where( 'user_id', user_id() ); } ] );
-        
-        
-        dump( $calendars );
-        // $calendars = Calendar::with( [
-        //         'access_lists', 
-        //         'calprops' => function( $query ) { $query->where( 'user_id', user_id() ); } 
-        //     ] )->get();
-        // $calendars = Calendar::all();
         
         BackButton::setHere( $request );
         return view( 'groupware.calendar.index' )->with( 'calendars', $calendars )
@@ -65,17 +59,19 @@ class CalendarController extends Controller {
     public function show( Calendar $calendar ) {
         
         $access_list = $calendar->access_list();
-        // dump( $access_list->isOwner( user_id() ));
-        // dump( $access_list->isWriter( user_id() ));
-        // dump( $access_list->isReader( user_id() ));
-        // dump( $access_list->CanWrite( user_id() ));
-        // dump( $access_list->canRead( user_id() ));
+        // if_debug( $access_list->isOwner( user_id() ));
+        // if_debug( $access_list->isWriter( user_id() ));
+        // if_debug( $access_list->isReader( user_id() ));
+        // if_debug( $access_list->CanWrite( user_id() ));
+        // if_debug( $access_list->canRead( user_id() ));
         
         BackButton::stackHere( request() );
         return view( 'groupware.calendar.show' )->with( 'calendar', $calendar );
     }
     
     public function create() {
+        
+        $this->authorize( 'create', Calendar::class );
 
         $calendar    = new Calendar;
         $access_list = new AccessList;
@@ -86,6 +82,8 @@ class CalendarController extends Controller {
     }
     
     public function store( CalendarRequest $request ) {
+
+        $this->authorize( 'create', Calendar::class );
 
         $calendar = CalendarAction::creates( $request );
         
@@ -124,8 +122,31 @@ class CalendarController extends Controller {
         return redirect()->route( 'groupware.calendar.show', [ 'calendar' => $calendar->id ]);
     }
     
-    public function delete() {
+    public function delete( Calendar $calendar ) {
         
         $this->authorize( 'delete', $calendar );
+
+        BackButton::stackHere( request() );
+        return view( 'groupware.calendar.delete' )->with( 'calendar', $calendar );
+
     }
+    
+    public function deleted( Calendar $calendar, CalendarRequest $request ) {
+        
+        $this->authorize( 'delete', $calendar );
+
+        CalendarAction::deletes( $calendar );
+
+        BackButton::removePreviousSession();
+        
+        session()->regenerateToken();
+        session()->flash( 'flash_message', "カレンダー「". $calendar->name . "」と関連スケジュール等は完全に削除されました" );
+
+        return self::index( $request );
+        
+        return redirect()->route( 'groupware.calendar.list' );
+    }
+    
+    
+    
 }

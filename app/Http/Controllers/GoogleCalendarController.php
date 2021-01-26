@@ -42,7 +42,7 @@ class GoogleCalendarController extends Controller
         
         $event = new Google_Service_Calendar_Event( $inputs );
         // dd( $inputs, $request->inputs, $event, $this->calendarId );
-        dump( $request->inputs, $event, $this->calendarId );
+        if_debug( $request->inputs, $event, $this->calendarId );
         
         $event = $service->events->insert($this->calendarId, $event );
         
@@ -52,11 +52,11 @@ class GoogleCalendarController extends Controller
     
     public function edit( $gid ) {
         
-        dump( $gid );
+        if_debug( $gid );
         $client = $this->getClient();
         $service = new Google_Service_Calendar( $client );
         $event = $service->events->get( $this->calendarId, $gid );
-        dump( $event );
+        if_debug( $event );
         
         if( ! empty( $event )) {
             $inputs['summary']  = $event->summary;
@@ -132,7 +132,7 @@ class GoogleCalendarController extends Controller
         $optParams = [];
         $results = $service->events->listEvents($this->calendarId, $optParams);
         $events = $results->getItems();
-        dump( $results, $events );
+        if_debug( $results, $events );
         foreach($events as $event){
             echo $event->getSummary().'';
         }
@@ -160,18 +160,18 @@ class GoogleCalendarController extends Controller
                     ];
 
         // $data = file_get_contents( $url. http_build_query( [] ), true );
-        // $dump( $data );
+        // $if_debug( $data );
 
         $results = $service->events->listEvents( $this->calendarId, $query );
         // $results = $service->events->listEvents( $this->calendarId, [] );
         $events = $results->getItems();
-        dump( $results, $events );
+        if_debug( $results, $events );
         
         //　タスクを読込む
         //
         $service = new Google_Service_Tasks( $client );
         $tasks = $service->tasklists->listTasklists( [ 'maxResults' => 100 ] );
-        dump( $tasks );
+        if_debug( $tasks );
 
         return view( 'test.google.calendar.index' )->with( 'events', $events );
 

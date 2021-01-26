@@ -46,6 +46,7 @@ class FileController extends Controller {
         if( $request->find ) {
             $files = SearchFile::search( $request );
         } else {
+            $request->attached = -1;
             $request->users = [ user_id() ];
             $request->pagination = 30;
             $files = [];
@@ -60,24 +61,34 @@ class FileController extends Controller {
         return $this->index( $request );
     }
 
-    public function show( MyFile $file ) {
-        return $this->detail( $file );
-        
-    }
+
     
     public function detail( MyFile $file ) {
 
-        dump( $file->getModel(), is_debug() );
-        
         $this->authorize( 'view', $file );
         
         BackButton::stackHere( request() );
         return view( 'groupware.file.detail' )->with( 'file', $file );
     }
     
+    public function show( MyFile $file ) {
+        return $this->detail( $file );
+        
+    }
+    
+    public function viewInBrowser( MyFile $file, $class_name, $model_id ) {
+        $this->authorize( 'download', [ $file, $class_name, $model_id ] );
+    
+        try {
+            return response()->file( storage_path( 'app/' ).$file->path );
+        } catch( Exception $e ) {
+            return response( 'ファイル読込エラーが発生しました', 200 );
+        }
+    }
+    
     public function download( MyFile $file, $class_name, $model_id ) {
 
-        // dump( $class, $model, __METHOD__ );
+        // if_debug( $class, $model, __METHOD__ );
         
         $this->authorize( 'download', [ $file, $class_name, $model_id ] );
         
@@ -197,11 +208,14 @@ class FileController extends Controller {
                                     'url'       => route( 'groupware.file.show',  [ 'file' => $f->id ] ),
                                     ] );
         }
-        #dump( $request, $files );
+        #if_debug( $request, $files );
         return response()->json( $array );
     }
     
     public function deleteAllUntachedFiles() {
+        
+        $this->authorize( 'deleteAllUntachedFiles', MyFile::class );
+        
         if( ! is_debug() ) { return Response::deny(); }
         
         FileAction::delete_all_detached_files();
@@ -209,6 +223,7 @@ class FileController extends Controller {
         return redirect()->route( 'groupware.file.index' );
         
     }
+    
     
     //　削除の認可処理
     //

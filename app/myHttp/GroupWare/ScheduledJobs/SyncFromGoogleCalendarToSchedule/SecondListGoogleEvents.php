@@ -104,7 +104,7 @@ class SecondListGoogleEvents implements ShouldQueue
         
         //　カレンダーへのアクセス権限があるか確認
         //
-        if( $calendar->canNotWrite( $user )) { dump( __METHOD__, 'canNot Write Calendar' ); return false; }
+        if( $calendar->canNotWrite( $user )) { if_debug( __METHOD__, 'canNot Write Calendar' ); return false; }
         
         foreach( $this->created_google_events as $google_event ) {
 
@@ -132,7 +132,7 @@ class SecondListGoogleEvents implements ShouldQueue
                 $schedule = Schedule::find( $gcal_sync->schedule_id );
 
                 if( $user->can( 'update', $schedule ) ) {
-                    // dump( "__METHOD__ , gcal_sync $gcal_sync->id " );
+                    // if_debug( "__METHOD__ , gcal_sync $gcal_sync->id " );
                     ThirdUpdateSchedule::dispatch( $schedule, $gcal_sync, $google_event ); 
                 }
             }
@@ -187,7 +187,7 @@ class SecondListGoogleEvents implements ShouldQueue
         $timeMax = $today->copy()->addDays( $calprop->google_sync_span );
         $timeMin = $today->copy()->subDays( $calprop->google_sync_span );
         $updatedMin = ( $calprop->google_synced_at ) ? $calprop->google_synced_at : null;
-        // dump( 'calprop->google_synced_at', $updatedMin );
+        // if_debug( 'calprop->google_synced_at', $updatedMin );
 
         $optParams = array(
           'timeMax' => $timeMax->toAtomString(),
@@ -199,7 +199,7 @@ class SecondListGoogleEvents implements ShouldQueue
         } else {
             $optParams['updatedMin'] = $today->subDays(5)->toAtomString();
         }
-        if( is_debug() ) { dump( 'Google Event List', $optParams ); }
+        if( is_debug() ) { if_debug( 'Google Event List', $optParams ); }
         $this->debug_log_2( $optParams, $updatedMin, __METHOD__ );
 
         //
@@ -208,7 +208,7 @@ class SecondListGoogleEvents implements ShouldQueue
         $client = new MyGoogleCalendarClient( $calprop );
         $google_event_lists = $client->list( $optParams );
         
-        if( is_debug() ) { dump( $google_event_lists ); }
+        if( is_debug() ) { if_debug( $google_event_lists ); }
 
         $google_events = [];
         $updated_event_ids = [];  // updatedMin 以降に更新・追加（新規作成）された google event id の配列
@@ -228,7 +228,7 @@ class SecondListGoogleEvents implements ShouldQueue
             }
             $google_events[ $google_event->id ] = new MyGoogleEventClass( $google_event );
         }
-        if( is_debug() ) { dump( 'google events', $google_events, 'updated_event_ids', $updated_event_ids, 'deleted_event_ids', $deleted_event_ids );  }
+        if( is_debug() ) { if_debug( 'google events', $google_events, 'updated_event_ids', $updated_event_ids, 'deleted_event_ids', $deleted_event_ids );  }
 
         //
         // 更新・削除対象のスケジュール（ Gcalsync）を検索
@@ -240,7 +240,7 @@ class SecondListGoogleEvents implements ShouldQueue
         //
         $updated_event_ids     = $updated_gcal_syncs->pluck( 'id', 'google_event_id')->toArray();
         $created_google_events = array_diff_key( $google_events, $updated_event_ids, $deleted_event_ids );
-        if( is_debug() ) { dump( 'created_google_events', $created_google_events ,'UPDATED GCalSyncs', $updated_gcal_syncs, 'DELETED GCalSyncs', $deleted_gcal_syncs ); }
+        if( is_debug() ) { if_debug( 'created_google_events', $created_google_events ,'UPDATED GCalSyncs', $updated_gcal_syncs, 'DELETED GCalSyncs', $deleted_gcal_syncs ); }
 
         $this->google_client         = $client;
         $this->google_event_lists    = $google_event_lists;

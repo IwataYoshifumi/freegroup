@@ -18,7 +18,7 @@ class RoleGroupAction extends RoleGroup {
     //
     public static function search( $find ) {
         
-        // dump( $find );
+        // if_debug( $find );
         
         $exist_where = false;
         $query = new RoleGroup;
@@ -38,7 +38,7 @@ class RoleGroupAction extends RoleGroup {
         } else {
             $role_groups = $query->all();
         }
-        // dump( $exist_where, $role_groups, $query );
+        // if_debug( $exist_where, $role_groups, $query );
 
         return $role_groups;
         

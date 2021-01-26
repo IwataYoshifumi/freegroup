@@ -80,7 +80,7 @@ class AccessListPolicy
     public function delete(User $user, AccessList $access_list)
     {
         
-        // dump( $access_list->isAttached(), $access_list->groups, $access_list->calendars, $access_list->files );
+        // if_debug( $access_list->isAttached(), $access_list->groups, $access_list->calendars, $access_list->files );
         //
         // アクセスリストが使われていなければ、削除可能
          if( $access_list->isAttached() ) {

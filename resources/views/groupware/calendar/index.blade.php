@@ -21,7 +21,9 @@ $array_roles[''] = '-';
 
 $user = auth( 'user' )->user();
 
-#dump( $find );
+$types = Calendar::getTypes();
+$default_permissions = Calendar::getDefaultPermissions();
+$default_permissions['writers'] = '参加者・カレンダー編集者全員';
 
 @endphp
 
@@ -46,18 +48,16 @@ $user = auth( 'user' )->user();
                     <table class="table table-striped m-1 p-1 border clearfix">
                         <tr class="">
                             <th class="">アクション</th>
-                            <th class="">カレンダー名</th>
-                            <th class="">備考</th>
-                            <th class="">公開種別</th>
+                            <th class="">カレンダー表示名 <span class="uitooltip" title="カレンダー名管理者設定">@icon( info-circle )</span></th>
                             <th class="">アクセス権</th>
-                            <th class="">デフォルト編集設定</th>
-                            <th class="">not_use</th>
-                            <th class="">disabled</th>
+                            <th class="">公開設定</th>
+                            <th class="">予定の変更権限<br>初期設定</th>
+                            <th class="">制限設定</th>
                         </tr>
                         @php
                             $class_new_schedule  = 'btn btn-sm btn-success';
                             $class_show_calprop  = 'btn btn-sm btn-outline btn-outline-secondary';
-                            $class_show_calendar = 'btn btn-sm btn-warning';
+                            $class_show_calendar = 'btn btn-sm btn-outline btn-outline-secondary';
                         
                         @endphp
                         @foreach( $calendars as $i => $calendar )
@@ -88,26 +88,43 @@ $user = auth( 'user' )->user();
                         
                             <tr class="">
                                 <td class="">
-                                    @if( $calendar->canWrite( user_id() ) )
-                                        <a class="{{ $class_new_schedule }}" href="{{ $route_new_schedule  }}">予定作成</a>
-                                    @endif
                                     @if( $calendar->canRead( user_id() ) )
                                         <a class="{{ $class_show_calprop }}" href="{{ $route_show_calprop  }}">表示設定</a>
                                     @endif
                                     @if( $calendar->isOwner( user_id() ) )
                                         <a class="{{ $class_show_calendar }}" href="{{ $route_show_calendar }}">管理者設定</a>
                                     @endif
-                                    {{ $calendar->id }}
+                                    @if( 0 and $calendar->canWrite( user_id() ) and is_debug()  )
+                                        <a class="{{ $class_new_schedule }}" href="{{ $route_new_schedule  }}">予定作成</a>
+                                    @endif
+                                    @if( is_debug() ) 
+                                        <span class="uitooltip icon_debug m-1" title='calendar_id {{ $calendar->id }} calprop_id {{ $calprop->id }}'>
+                                            <i class="fab fa-deploydog"></i>
+                                        </span>
+                                    @endif
+                                    
                                 </td>
                                 <td class="">
-                                    <span style="{{ $style }}" class="border border-round m-1 p-2">{{ $calendar->name }}</span>
+                                    <span style="{{ $style }}" class="border border-round m-1 p-2">{{ $calprop->name }}</span>
+                                    @if( $calprop->name != $calendar->name )
+                                        <span class="uitooltip" title="{{ $calendar->name }}">@icon( info-circle )</span>
+                                    @endif
                                 </td>
-                                <td class="">{{ $calendar->memo                 }}</td>
-                                <td class="">{{ $authority                      }}</td>
-                                <td class="">{{ $calendar->type                 }}</td>
-                                <td class="">{{ $calprop->default_permission    }}</td>
-                                <td class="">{{ $calendar->not_use              }}</td>
-                                <td class="">{{ $calendar->disabled             }}</td>
+                                <td class="">{{ $authority                                                }}</td>
+                                <td class="">{{ op( $types )[$calendar->type]                             }}</td>
+                                <td class="">{{ op( $default_permissions )[$calprop->default_permission] }}
+                                    @if( $calendar->default_permission != $calprop->default_permission )
+                                        <span class="uitooltip" title='管理者設定： {{ op( $default_permissions )[$calendar->default_permission] }}'>
+                                            <i class="fas fa-info-circle"></i>
+                                        </span>
+                                    @endif
+                                </td>
+                                <td class="">
+                                    @if( $calendar->disabled )    <span class="alert-danger p-2">無効中</span>
+                                    @elseif( $calendar->not_use ) <span class="alert-danger p-2"> 新規予定追加不可</span>
+                                    @else &nbsp;
+                                    @endif
+                                </td>
                             </tr>
                         @endforeach
                         
@@ -119,9 +136,15 @@ $user = auth( 'user' )->user();
         </div>
     </div>
 </div>
+@push( 'javascript' )
+    <script>
+        $( function() {  $('.uitooltip').uitooltip();  });
+    </script>
+@endpush
 
 
 @stack( 'search_form_javascript' )
 @stack( 'select_user_component_javascript' )
+@stack( 'javascript' )
 
 @endsection

@@ -52,7 +52,7 @@ class CalPropController extends Controller {
 
         $this->authorize( 'view', $calprop );
         
-        dump( $calprop->getAttributes() );
+        // if_debug( $calprop->getAttributes() );
 
         BackButton::stackHere( request() );
         return view( 'groupware.calprop.show' )->with( 'calprop', $calprop );
@@ -68,7 +68,7 @@ class CalPropController extends Controller {
     
     public function edit( CalProp $calprop ) {
 
-        dump( old() );
+        // if_debug( old() );
         $this->authorize( 'update', $calprop );
         
         $google_private_key_file = $calprop->google_private_key_file();

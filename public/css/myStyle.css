@@ -152,6 +152,7 @@ BootstrapのＣＳＳ定義集
 
 .schedule {
     font-style: normal;
+    font-weight:bold;
     font-size: small;
     text-align: left;
     white-space: nowrap;
@@ -243,11 +244,20 @@ BootstrapのＣＳＳ定義集
 }
 
 .cal_cell_style {
-    min-width:180px;
-    max-width:240px;
-    max-height:200px;
-    min-height:160px;
+    width:      260px;
+    max-width:  260px;
+    height:     180px;
+    max-height: 180px;
+    font-size: small;
 }
+
+.cal_cell_style_weekly {
+    width:      260px;
+    max-width:  260px;
+    min-height: 150px;
+    font-size: small;
+}
+
 
 .cal_cell_header_style {
     margin-left: -12px;
@@ -264,8 +274,47 @@ BootstrapのＣＳＳ定義集
     min-width: 1680px;
 }
 
-.application_style {
-    
-    
-    
+
+
+.ui-datepicker-calendar .day-sunday > a,
+.ui-datepicker-calendar .day-holiday > a {
+  background: #ffc0c0;
 }
+.ui-datepicker-calendar .day-saturday > a {
+  background: #c0d0ff;
+}
+
+.btn_icon { 
+    font-size: 20px;
+}
+
+.icon_btn {
+    font-size: 20px;
+}
+
+.icon-btn {
+    font-size: 20px;
+}
+
+.icon_debug {
+    font-size:28px;
+    color: red;
+}
+
+.iframe_seamless {
+    background-color: transparent;
+    border: none;
+    padding: 0px;
+    overflow: hidden;
+}
+
+.style_today {
+    background-color: lightcyan;    
+    border: 2px solid blue;
+}
+
+  #feedback { font-size: 1.4em; }
+  #selectable .ui-selecting { background: #FECA40; }
+  #selectable .ui-selected { background: #F39814; color: white; }
+  #selectable { list-style-type: none; margin: 0; padding: 0; width: 60%; }
+  #selectable li { margin: 3px; padding: 0.4em; font-size: 1.4em; height: 18px; }

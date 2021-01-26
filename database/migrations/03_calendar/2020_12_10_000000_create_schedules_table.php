@@ -32,7 +32,6 @@ class CreateSchedulesTable extends Migration
             $table->boolean( 'all_day' )->nullable();
 
             $table->string( 'permission' ); // creator, attendees, writer
-            // $table->string( 'delete_permission' ); // creator, permission // 作成者のみ、permissionと同じのどちらか
             
         });
     }

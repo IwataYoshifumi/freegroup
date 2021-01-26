@@ -21,7 +21,7 @@ class UserRetireEvent
     public function __construct( User $user ) {
 
         $this->user = $user;
-        // dump( $this );
+        // if_debug( $this );
     }
 
     /**

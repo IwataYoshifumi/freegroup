@@ -18,7 +18,6 @@ class RedirectIfAuthenticated
      */
     public function handle($request, Closure $next, $guard = null)
     {
-        // dump( $guard, Auth::guard($guard)->check() );
         if (Auth::guard($guard)->check()) {
             if( $guard === 'user' ) {
                 return redirect( RouteServiceProvider::USER_HOME );
@@ -28,7 +27,6 @@ class RedirectIfAuthenticated
                 return redirect(RouteServiceProvider::HOME);
             }
         }
-        // dd( $next, $guard, $request );
         return $next($request);
     }
 }

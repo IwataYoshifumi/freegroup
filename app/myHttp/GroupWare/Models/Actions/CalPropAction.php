@@ -32,9 +32,9 @@ class CalPropAction {
                 $old_calprop = clone $calprop;
                 $old_file = $calprop->google_private_key_file();
 
-                dump( 'old_file', op( $old_file )->id, op( $old_file)->file_name );
-            
-                // dump( $request->input() );
+                // if_debug( 'old_file', op( $old_file )->id, op( $old_file)->file_name );
+                // if_debug( $request->input() );
+                
                 $calprop->name = $request->name;
                 $calprop->memo = $request->memo;
                 $calprop->background_color   = $request->background_color;
@@ -81,18 +81,6 @@ class CalPropAction {
         
         return $calprop;
     }
-
-    
-    //　アクセスリストでグループを使用していたら削除不可
-    //
-    public static function deletes( CalProp $calprop ) {
-
-        $calprop = DB::transaction( function() use ( $calprop ) {
-            });
-        
-        return $calprop;
-    }
-    
 
 }
 

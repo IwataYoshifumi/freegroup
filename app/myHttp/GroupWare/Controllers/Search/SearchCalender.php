@@ -29,19 +29,19 @@ class SearchCalender {
         $ids = [];
         if( isset( op($find)['keyword'] ) and $find['user_id'] ) {
             if( $find['keyword'] == 'isOwner' ) {
-                // dump( 'isOwner');
+                // if_debug( 'isOwner');
                 $calendars = Calendar::getOwner( $find['user_id'] );
                 $ids = toArray( $calendars, 'id' );
             } elseif( $find['keyword'] == 'canWrite' ) { 
-                // dump( 'canWrite');
+                // if_debug( 'canWrite');
                 $calendars = Calendar::getCanWrite( $find['user_id'] );
                 $ids = toArray( $calendars, 'id' );                
             } elseif( $find['keyword'] == 'canRead' ) {
-                // dump( 'canRead');
+                // if_debug( 'canRead');
                 $calendars = Calendar::getCanRead( $find['user_id'] );
                 $ids = toArray( $calendars, 'id' );
             }
-            // dump( 'ids', $ids );
+            // if_debug( 'ids', $ids );
             $query = $query->whereIn('id', $ids );
         }
 
@@ -50,19 +50,19 @@ class SearchCalender {
         if( op( $find )['type'] ) {
             $query = $query->whereIn( 'type', $find['type']);
         }
-        if( op( $find )['not_use']  ) { 
-            $query = $query->where( 'not_use',  1 ); 
-        } else {
-            $query = $query->where( 'not_use',  0 ); 
-        }
         if( op( $find )['disabled'] ) { 
             $query = $query->where( 'disabled', 1 ); 
+            
         } else {
             $query = $query->where( 'disabled', 0 ); 
-        }        
+
+            if( op( $find )['not_use']  ) { 
+                $query = $query->where( 'not_use',  1 ); 
+            }
+        }       
         
         $calendars = $query->get();
-        // dump( 'query', $query, $query->get() );        
+        // if_debug( 'query', $query, $query->get() );        
         
         return $calendars;
     }

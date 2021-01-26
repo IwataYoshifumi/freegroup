@@ -9,6 +9,10 @@ use Illuminate\Support\Facades\Requests;
 use Illuminate\Validation\Rule;
 use Carbon\Carbon;
 
+use App\myHttp\GroupWare\Models\Calendar;
+use App\myHttp\GroupWare\Models\CalProp;
+
+
 class Schedule2Request extends FormRequest
 {
     /**
@@ -73,14 +77,30 @@ class Schedule2Request extends FormRequest
         $rules['end_date']    = 'required|date';
         $rules['calendar_id'] = 'required|integer';
         
-        
-
         if( empty( $this->all_day ) ) {
             $rules['start_time'] = 'required|regex:/^\d{1,2}:\d{1,2}$/';
             $rules['end_time']   = 'required|regex:/^\d{1,2}:\d{1,2}$/';
         }
         if( $this->start->gt( $this->end )) {
             $rules['start_less_than_end'] = 'required';
+        }
+
+        //　有効なカレンダーか確認
+        //
+        if( $this->calendar_id ) {
+            
+            $invalid = Calendar::where( 'id', $this->calendar_id )->where( function( $query ) use ( $route_name ) {
+                    if( $route_name == "groupware.schedule.create" ) {
+                        $query->where( 'not_use', 1 )->orWhere( 'disabled', 1 );
+                    } else {
+                        $query->orWhere( 'disabled', 1 ); 
+                    }
+                })->get();
+                
+            // dd( $num );
+            if( count( $invalid ) >= 1 ) {
+                $rules['calendar_invalid'] = 'required';
+            }
         }
 
         // dd( $this, $this->all_day, $this->start_date, $rules );
@@ -106,6 +126,7 @@ class Schedule2Request extends FormRequest
 
                 'start_less_than_end.required' => '開始日時より終了日時の方が前になっています。',                
                 'calendar_id.required' => 'カレンダーを選択してください',
+                'calendar_invalid.required' => 'カレンダーが不正です',
             
             ];        
 

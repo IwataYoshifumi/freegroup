@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use App\myHttp\GroupWare\Models\User;
 use App\myHttp\GroupWare\Models\Dept;
 use App\myHttp\GroupWare\Models\File as MyFile;
+use App\myHttp\GroupWare\Models\Fileable;
 use App\myHttp\GroupWare\Models\AccessList;
 
 class FileAction  {
@@ -61,7 +62,7 @@ class FileAction  {
         $files = new MyFile;
         $files = $files->doesntHave( 'fileables' )->get();
         
-        if_debug( __METHOD__, $files, $files->pluck( 'path' )->toArray() );
+        // if_debug( __METHOD__, $files, $files->pluck( 'path' )->toArray() );
 
         if( count( $files ) == 0 ) { return 0; }
                 

@@ -14,6 +14,8 @@ return [
                             'users'     => '関連社員',
                             'customers' => '関連顧客',
                         ],
+                        
+        'permissions' => [ 'creator' => '作成者', 'attendees' => '作成者・参加者', 'writers' => '作成者・参加者・日報リスト編集者全員' ],
 
 ];
 

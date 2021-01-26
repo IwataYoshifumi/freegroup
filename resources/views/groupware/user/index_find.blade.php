@@ -65,8 +65,8 @@ use App\Models\Dept;
             <div class='row'>
                 @php 
                     $show_items   = [ 'email','grade', 'dept_id', 'retired' ];
-                    // dump( config( 'user.columns_name' ));
-                    //dump( $show );
+                    // if_debug( config( 'user.columns_name' ));
+                    //if_debug( $show );
                 @endphp
     
                 @foreach( $show_items as $item ) 

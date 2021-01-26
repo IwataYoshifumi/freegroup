@@ -6,6 +6,7 @@ use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Auth\Access\Response;
 
 use App\myHttp\GroupWare\Models\User;
+use App\myHttp\GroupWare\Models\Admin;
 use App\myHttp\GroupWare\Models\Schedule;
 use App\myHttp\GroupWare\Models\Report;
 use App\myHttp\GroupWare\Models\Calprop;
@@ -28,7 +29,6 @@ class FilePolicy
     // ファイルのダウンロードはアップロード者 or 各モデルのリーダーしかアクセス出来ない
     //
     public function download( User $user, MyFile $file, $class_name, $model_id ) {
-        
         if( $class_name == 'schedule' ) { $model = Schedule::find( $model_id ); } 
         if( $class_name == 'report'   ) { $model = Report::find(   $model_id ); }
         if( $class_name == 'calprop'  ) { $model = CalProp::find(  $model_id ); }
@@ -50,4 +50,15 @@ class FilePolicy
     public function forceDelete(User $user, MyFile $file) {
         return $this->view( $user, $file );
     }
+
+    public function deleteAllUntachedFiles( $user ) {
+        if( $user instanceof Admin ) { return Response::allow(); }
+        if( is_debug() ) { return Response::allow(); }
+        return Response::deny();
+    }
+    
+    public function deleteUntachedFiles( User $user ) {
+        return true;
+    }
+    
 }

@@ -140,7 +140,7 @@ class ScheduleType extends Model {
     public static function create_default_schedule_type( User $user ) {
         
         $schedule_type = new ScheduleType;
-        // dump( 'aaa');
+        // if_debug( 'aaa');
         
         $schedule_type->user_id = $user->id;
         $schedule_type->name    = "スケジュール";

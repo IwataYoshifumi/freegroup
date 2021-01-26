@@ -14,10 +14,12 @@ use App\myHttp\GroupWare\Models\Search\CheckAccessList;
 
 use App\Http\Helpers\BackButton;
 
-$calprop = CalProp::where( 'calendar_id', $calendar->id )->where( 'user_id', user_id() )->first();
+$user = auth( 'user' )->user();
+$calprop = CalProp::where( 'calendar_id', $calendar->id )->where( 'user_id', $user->id )->first();
 
 $route_update_calendar = route( 'groupware.calendar.update', [ 'calendar' => $calendar ] );
-$route_update_calprop  = route( 'groupware.calprop.update',  [ 'calprop'  => $calprop  ] );
+$route_delete_calendar = route( 'groupware.calendar.delete', [ 'calendar' => $calendar ] );
+$route_show_calprop  = route( 'groupware.calprop.show',  [ 'calprop'  => $calprop  ] );
 $route_create_schedule = route( 'groupware.schedule.create', [ 'calendar_id' => $calendar->id ] );
 
 @endphp
@@ -34,16 +36,24 @@ $route_create_schedule = route( 'groupware.schedule.create', [ 'calendar_id' => 
                 <div class="card-body">
                     
                         @can( 'update', $calendar )
-                                <a class="btn btn-warning text-dark" href="{{ $route_update_calendar }}">カレンダー管理者設定変更</a>
+                            <a class="btn uitooltip icon_btn" href="{{ $route_update_calendar }}" title="カレンダー管理者設定　変更">
+                                <i class="fas fa-pen"></i>
+                            </a>
                         @endcan
                         @if( $calendar->canRead( user_id() ))
-                            <a class="btn btn-outline-secondary text-dark" href="{{ $route_update_calprop }}">表示設定・Googleカレンダー同期設定</a>
-                        @endif                            
+                            <a class="btn uitooltip icon_btn" href="{{ $route_show_calprop }}" title="【個人設定】色・Googleカレンダー同期等">
+                                <i class="fas fa-cog"></i>
+                            </a>
+                        @endif
+                        @if( $user->can( 'delete', $calendar ))
+                            <a class="btn uitooltip icon_btn" href="{{ $route_delete_calendar }}" title="カレンダー削除">
+                                <i class="fas fa-trash-alt text-danger"></i>
+                            </a>
+                        @endif
 
                         @include( 'layouts.error' )
                         @include( 'layouts.flash_message' )
 
-                        <hr>
                         @include( 'groupware.calendar.show_parts' )
                             
                         {{ BackButton::form() }}

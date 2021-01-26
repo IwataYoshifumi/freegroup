@@ -31,7 +31,7 @@ use App\myHttp\GroupWare\Controllers\Search\SearchGroup;
 class GroupController extends Controller {
 
     public function index( Request $request ) {
-        // dump( $request->input() );
+        // if_debug( $request->input() );
         
         if( ! op( $request )->find and ! $request->users ) {
             $find['access_list']['role']['owner'] ="owner";

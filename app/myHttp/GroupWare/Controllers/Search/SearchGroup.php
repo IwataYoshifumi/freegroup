@@ -34,7 +34,7 @@ class SearchGroup {
             $group_ids = array_unique( Arr::flatten( $group_ids ));
             
             $groups = $groups->whereIn( 'id', $group_ids );
-            // dump( 'groups', $groups );
+            // if_debug( 'groups', $groups );
         }
 
         //　アクセスリストの検索
@@ -55,17 +55,17 @@ class SearchGroup {
                          ->where( 'accesslistable_type', Group::class )
                          ->get();
                 
-                // dump( $access_list_ids, $query );
+                // if_debug( $access_list_ids, $query );
                 
                 $groups = $groups->whereIn( 'id', $query->pluck('accesslistable_id')->toArray() );
                 
             }
         }
         
-        // dump( $groups );
+        // if_debug( $groups );
         $result = $groups->get();
         
-        dump( $result );
+        // if_debug( $result );
         // return Group::all();        
         return $result;
     }

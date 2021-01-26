@@ -11,7 +11,7 @@ use App\Http\Helpers\BackButton;
     <div class="container">
         <H1>デバッグ　ビュー</H1>
         <div class="container">
-            {{ dump( request() ) }}
+            {{ if_debug( request() ) }}
         </div>
     </div>
 @endsection

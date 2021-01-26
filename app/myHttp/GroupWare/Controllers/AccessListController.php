@@ -94,10 +94,10 @@ class AccessListController extends Controller {
         
         $this->authorize( 'update', $access_list );
         
-        // dump( request()->input(), old(), old("users[]") );
+        // if_debug( request()->input(), old(), old("users[]") );
 
         $array = $access_list->get_arrays_for_selector();
-        // dump( $array );
+        // if_debug( $array );
         $orders= $array['orders'];
         $roles = $array['roles'];
         $users = $array['users'];

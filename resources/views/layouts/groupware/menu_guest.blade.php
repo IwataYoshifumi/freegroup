@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
     <div class="container">
         <a class="navbar-brand" href="{{ route( 'welcome' ) }}">
-            @if( is_debug() ) 【開発モード中】 @endif{{ config('app.name', 'FreeGroup') }}  
+            @if( is_debug() ) @icon( debug ) @endif{{ config('app.name', 'FreeGroup') }}  
         </a>
 
         @if( 1 )

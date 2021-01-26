@@ -9,7 +9,7 @@ use App\myHttp\GroupWare\Menu as GroupwareMenu;
 <nav class="navbar navbar-expand-md navbar-light bg-light shadow-sm">
     <div class="container">
         <a class="navbar-brand" href="@auth('admin') {{ route( 'admin.home' ) }} @endauth @guest {{ route( 'admin.home' ) }} @endguest">
-        @if( is_debug() ) 【開発モード中】 @endif  {{ config('app.name', 'myApp') }} 
+        @if( is_debug() ) @icon( debug ) @endif  {{ config('app.name', 'myApp') }} 
 
         </a>
 

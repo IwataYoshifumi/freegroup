@@ -76,7 +76,7 @@ class GsyncScheduleUnSyncJob implements ShouldQueue
 
         //　Google 同期設定のある人だけ同期処理
         //
-        // dump( $gcal_syncs );
+        // if_debug( $gcal_syncs );
         foreach( $gcal_syncs as $gcal_sync ) {
 
             $calprop         = $gcal_sync->calprop;

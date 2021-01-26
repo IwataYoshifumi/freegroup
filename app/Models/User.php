@@ -78,7 +78,7 @@ class User extends Authenticatable
                 }
             }
         }
-        // dump( $users );
+        // if_debug( $users );
                 
         if( isset( $find['paginate'] )) {
             return $users->with('department')->paginate( $find['paginate'] );
@@ -111,10 +111,10 @@ class User extends Authenticatable
     public function is_locked() {
         // dd( config( $this->config_path  ));
         if( in_array( $this->id, config( $this->config_path.".locked_ids"  ))) { 
-            // dump( "locked");
+            // if_debug( "locked");
             return true; 
         } else { 
-            // dump( "no locked");
+            // if_debug( "no locked");
             return false; 
         }
     }
@@ -122,7 +122,7 @@ class User extends Authenticatable
     //　パスワードリセットメール設定(ルート名、password.email, GET password.reset )
     //
     public function sendPasswordResetNotification( $token ) {
-        // dump( $token );
+        // if_debug( $token );
         $notice = new ResetPasswordNotification( $token );
         $callback = get_class( $this )."::getResetPasswordURL";
         $callback = "App\Models\User::getResetPasswordURL";

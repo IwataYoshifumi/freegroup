@@ -21,7 +21,7 @@
                             <a class="d-block text-trancate" href="{{ route( 'groupware.schedule.show', [ 'schedule' => $s->id ] ) }}">{{ $s->name }}</a>
                         </div>
                         <div class="col-3 d-block d-lg-none">日時</div>
-                        <div class="col-8 col-lg-4 d-block text-truncate">{{ $s->print_start_time() }}</div>
+                        <div class="col-8 col-lg-4 d-block text-truncate">{{ $s->p_dateTime() }}</div>
                         
                         <div class="col-3 d-block d-lg-none">社員</div>
                         <div class="col-8 col-lg-4 d-block text-truncate">{{ $s->user->name }} </div>

@@ -26,8 +26,10 @@ class ComponentInputFilesClass  {
         // if_debug( $request, $attached_files);
 
         $this->form_name  = $form_name;
-        $componet_inputs = ( op( $request )->component_input_files ) ? $request->component_input_files : null;
-        $attach_file_ids = ( op( $request )->$form_name            ) ? $request->$form_name            : [];
+        // $componet_inputs = ( op( $request )->component_input_files ) ? $request->component_input_files : null;
+        $componet_inputs = ( op( $request )->component_input_files ) ? $request->component_input_files : old( 'component_input_files' );
+        // $attach_file_ids = ( op( $request )->$form_name            ) ? $request->$form_name            : [];
+        $attach_file_ids = ( op( $request )->$form_name            ) ? $request->$form_name            : old( $form_name );
         $file_ids        = ( op( $componet_inputs )['files']       ) ? $componet_inputs['files']       : [];
 
         // Attached_Files がファイルオブジェクトなら一旦 File_id の配列に変換

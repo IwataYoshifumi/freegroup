@@ -14,5 +14,9 @@
         <div class="d-block d-lg-none">一覧</div>
         <div class="d-none d-lg-block">日報一覧</div>
     </a>
+    
+    <a class="btn btn-menu col-2 col-lg-2 m-1" href="{{ route( 'groupware.report_list.index', $options  ) }}">
+        <div>日報リスト</div>
+    </a>
         
 </div>

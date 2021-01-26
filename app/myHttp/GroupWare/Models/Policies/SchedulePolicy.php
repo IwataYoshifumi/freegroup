@@ -36,7 +36,12 @@ class SchedulePolicy
 
     public function update(User $user, Schedule $schedule) {
 
-        // dump( $schedule->isAttendee( $user ));
+        // if_debug( $schedule->isAttendee( $user ));
+        $calendar = $schedule->calendar;
+        
+        if( $calendar->is_disabled() ) {
+            return Response::deny( 'SchedulePolicy@update 2 : The Calendar has been Disabled' );
+        }
         
         if( $user->id == $schedule->user_id ) {
             return Response::allow();

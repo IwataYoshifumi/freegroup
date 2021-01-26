@@ -101,42 +101,6 @@ use App\myHttp\GroupWare\Controllers\ScheduleController;
                             @endforeach
                         </tbody>
                     </table>
-                    {{ Form::open( [ 'url' => route( 'groupware.schedule.show_m' ), 'id' => 'show_m' ]) }} 
-                        @csrf
-                        @method( 'GET' )
-                        <input type=text name="id" id="show_m_sid">
-                    {{ Form::close() }}
-                    
-                    {{ Form::open( [ 'url' => route( 'groupware.schedule.create' ), 'id' => 'add_form' ]) }} 
-                        @csrf
-                        @method( 'GET' )
-                        <input type=text name="start_time" id="add_form_start_time">
-                    {{ Form::close() }}
-                    <script type="text/javascript">
-                    
-                        //　スケジュールを表示
-                        //
-                        $('.show_m').click( function() {
-                            // console.log( $(this).data('sid'));
-                            // console.log( $(this).prop('id')); 
-                            var sid = $(this).data('sid');
-                            console.log( sid );
-                            $('#show_m_sid').val(sid);
-                            $('#show_m').submit();
-                        });
-                        
-                        //　スケジュール新規作成
-                        //
-                        $('.date_cell').dblclick( function() {
-                             var date = $(this).data('date');
-                             console.log( date );
-                             $('#add_form_start_time').val( date );
-                             $('#add_form').submit();
-                        });
-                        
-                    </script>
-
-
 
 
                     <div class="w-100"></div>
@@ -153,14 +117,4 @@ use App\myHttp\GroupWare\Controllers\ScheduleController;
 
 
 
-
-@php
-
-
-@endphp
-
-
-
-
 @endsection
-

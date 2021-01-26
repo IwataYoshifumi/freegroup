@@ -22,7 +22,7 @@ class GroupAction {
     //
     public static function search( $find ) {
         
-        // dump( $find );
+        // if_debug( $find );
         
         $exist_where = false;
         $query = new RoleGroup;
@@ -42,7 +42,7 @@ class GroupAction {
         } else {
             $role_groups = $query->all();
         }
-        // dump( $exist_where, $role_groups, $query );
+        // if_debug( $exist_where, $role_groups, $query );
 
         return $role_groups;
         
@@ -52,7 +52,7 @@ class GroupAction {
     public static function creates( Request $request ) {
 
         $group = DB::transaction( function() use ( $request ) {
-                // dump( $request->input() );
+                // if_debug( $request->input() );
                 $group = new Group;
                 $group->name = $request->name;
                 $group->memo = $request->memo;

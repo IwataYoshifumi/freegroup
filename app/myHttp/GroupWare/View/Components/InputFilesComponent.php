@@ -23,16 +23,16 @@ class InputFilesComponent extends Component
     //
     public function __construct( $attachedFiles ) {
 
-        // dump( $attachedFiles );
+        // if_debug( $attachedFiles );
         if( count( $attachedFiles )) {
             #$ids = null;
-            #dump( $attachedFiles );
+            #if_debug( $attachedFiles );
             foreach( $attachedFiles as $i => $file ) {
                 $ids[$i] = ( is_array( $file )) ? $file['id'] : $file;
             }
-            #dump( isset( $ids ) ? $ids : null );
+            #if_debug( isset( $ids ) ? $ids : null );
             $this->attached_files = MyFile::select( ['id', 'file_name'] )->find( $ids )->toArray();
-            // dump( $attached_files );
+            // if_debug( $attached_files );
         } else {
             $this->attached_files = [];
         }

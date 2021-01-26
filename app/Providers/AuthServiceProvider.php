@@ -10,16 +10,20 @@ use App\myHttp\GroupWare\Models\Dept;
 use App\myHttp\GroupWare\Models\Group;
 use App\myHttp\GroupWare\Models\Schedule;
 use App\myHttp\GroupWare\Models\Report;
+use App\myHttp\GroupWare\Models\ReporListt;
+use App\myHttp\GroupWare\Models\ReporPropt;
 use App\myHttp\GroupWare\Models\File as MyFile;
 
 use App\myHttp\GroupWare\Models\Policies\UserPolicy;
 use App\myHttp\GroupWare\Models\Policies\GroupPolicy;
 use App\myHttp\GroupWare\Models\Policies\DeptPolicy;
+use App\myHttp\GroupWare\Models\Policies\CalendarPolicy;
 use App\myHttp\GroupWare\Models\Policies\SchedulePolicy;
-use App\myHttp\GroupWare\Models\Policies\ReportPolicy;
 use App\myHttp\GroupWare\Models\Policies\FilePolicy;
 use App\myHttp\GroupWare\Models\Policies\AccessListPolicy;
-use App\myHttp\GroupWare\Models\Policies\CalendarPolicy;
+use App\myHttp\GroupWare\Models\Policies\ReportPolicy;
+use App\myHttp\GroupWare\Models\Policies\ReportListPolicy;
+use App\myHttp\GroupWare\Models\Policies\ReportPropPolicy;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -41,6 +45,9 @@ class AuthServiceProvider extends ServiceProvider
         
         Schedule::class     => SchedulePolicy::class,
         Report::class       => ReportPolicy::class,
+        ReportList::class   => ReportListPolicy::class,
+        // ReportProp::class   => ReportPropPolicy::class,
+        
         MyFile::class       => FilePolicy::class,
         
     ];
