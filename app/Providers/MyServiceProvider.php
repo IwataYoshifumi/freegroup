@@ -21,6 +21,7 @@ use App\myHttp\GroupWare\View\Components\DateSpanFormComponent;
 use App\myHttp\GroupWare\View\Components\Dept\DeptsCheckboxComponent;
 use App\myHttp\GroupWare\View\Components\User\UsersCheckboxComponent;
 use App\myHttp\GroupWare\View\Components\Customer\CustomersCheckboxComponent;
+use App\myHttp\GroupWare\View\Components\ReportList\CheckboxReportListComponent;
 
 
 class MyServiceProvider extends ServiceProvider
@@ -66,6 +67,9 @@ class MyServiceProvider extends ServiceProvider
         Blade::component( 'checkboxes_depts',     DeptsCheckboxComponent::class     );
         Blade::component( 'checkboxes_users',     UsersCheckboxComponent::class     );
         Blade::component( 'checkboxes_customers', CustomersCheckboxComponent::class     );
+        
+        // 2021.02.04 追加
+        Blade::component( 'checkbox_report_lists', CheckboxReportListComponent::class );
 
     }
 }

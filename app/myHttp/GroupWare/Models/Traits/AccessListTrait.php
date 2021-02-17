@@ -67,6 +67,16 @@ trait AccessListTrait {
         return $builder;
     }
     
+    public static function whereInOwners( $users ) {
+        // $users = ( is_array( $users )) ? $users : $users->public( 'id', 'id' )->toArray();
+
+        $subquery = AccessList::whereInOwners( $users )->select('id');
+        $builder =  self::whereHas( 'access_lists', function( $query ) use ( $subquery ) {
+            $query->whereIn( 'access_list_id', $subquery );
+        } );
+        return $builder;
+    }
+    
     public static function whereWriter( $user ) {
         $user_id = ( $user instanceof User ) ? $user->id : $user;
 
@@ -110,8 +120,33 @@ trait AccessListTrait {
         
         return $builder;
     }
+
+    public static function whereCanNotRead( $user ) {
+        $user_id = ( $user instanceof User ) ? $user->id : $user;
+        
+        $subquery = AccessList::whereCanRead( $user_id )->select('id');
+        $builder =  self::whereDoesntHave( 'access_lists', function( $query ) use ( $subquery ) {
+            $query->whereIn( 'access_list_id', $subquery );
+        } );
+        
+        return $builder;
+    }
+
     
+    public static function whereInUsersCanRead( $users ) {
+        $subquery = AccessList::whereInUsersCanRead( $users )->get()->pluck('id')->toArray();;
+        $builder = self::whereHas( 'access_lists', function( $query) use ( $subquery ) {
+                                    $query->whereIn( 'access_list_id', $subquery ); 
+        });
+        return $builder;
+    }
     
-    
+    public static function whereInUsersCanWrite( $users ) {
+        $subquery = AccessList::whereInUsersCanWrite( $users )->get()->pluck('id')->toArray();
+        $builder  = self::whereHas( 'access_lists', function( $query) use ( $subquery ) {
+                                     $query->whereIn( 'access_list_id', $subquery ); 
+        });
+        return $builder;
+    }
     
 }

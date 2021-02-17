@@ -59,10 +59,9 @@ class FileAction  {
     public static function delete_all_detached_files() {
         
         
-        $files = new MyFile;
-        $files = $files->doesntHave( 'fileables' )->get();
-        
-        // if_debug( __METHOD__, $files, $files->pluck( 'path' )->toArray() );
+        // $files = new MyFile;
+        // $files = $files->doesntHave( 'fileables' )->get();
+        $files = MyFile::whereDoentAttached()->get();        
 
         if( count( $files ) == 0 ) { return 0; }
                 

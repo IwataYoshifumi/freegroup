@@ -18,13 +18,18 @@ use App\myHttp\GroupWare\Menu as GroupwareMenu;
                 <ul class="navbar-nav">
 
                     @auth( 'user' )
-                        <!--
-                        //
-                        // 予定・日報システム　社員用メニュー
-                        //
-                        <!-- -->
-                        {{ GroupwareMenu::user_menus() }}
-                        <!-- -->
+                        {{--
+                          --
+                          -- 予定・日報システム　社員用メニュー
+                          --
+                          --}}
+                        @include( 'layouts.groupware.include_menu_for_user' )
+                        {{--
+                          --
+                          -- 開発用メニュー
+                          --
+                          --}}
+                        @include( 'layouts.groupware.include_menu_for_dev' )
                     @endauth
                 </ul>
 

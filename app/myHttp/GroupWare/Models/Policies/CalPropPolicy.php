@@ -40,19 +40,23 @@ class CalPropPolicy
         }
         
         if( $calprop->user_id != $user->id ) {
-            dd( $user->id, $calprop->user_id, $calprop );
             return Response::deny( "CalPropPolicy::update 1 : This action is unauthorized. You are not CalProp's Owner" );
         }
+        $calendar = $calprop->calendar;
+        if( $calendar->type == 'private' and ! $calendar->canRead( $user )) {
+            return Response::deny( 'CalPropPolicy::update : You can not read the calendar anymore');
+        }
+
         return Response::allow();
     }
 
     public function delete(User $user, CalProp $calprop) {
-        die( __METHOD__ );
+        return Response::deny();
     }
     public function restore(User $user, CalProp $calprop) {
-        die( __METHOD__ );
+        return Response::deny();
     }
     public function forceDelete(User $user, CalProp $calprop) {
-        die( __METHOD__ );
+        return Response::deny();
     }
 }

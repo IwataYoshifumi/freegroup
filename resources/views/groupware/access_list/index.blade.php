@@ -41,7 +41,7 @@ $array_roles[''] = '-';
                         <tr class="">
                             <th class="">詳細・変更削除</th>
                             <th class="">アクセスリスト名</th>
-                            <th class="">アクセス権</th>
+                            <th class="">自分のアクセス権</th>
                             <th class="">備考</th>
                         </tr>
                         @foreach( $access_lists as $i => $access_list )
@@ -51,16 +51,18 @@ $array_roles[''] = '-';
                                 #$disabled = ( empty( $acccess_list->role ) or ( $access_list->role == "freeBusyReader" )) ? "disabled" : "";      
                                 $disabled = "";
                                 $button = ( $access_list->isOwner( user_id() )) ? "詳細・変更" : "詳細";
+                                $role = op( $access_list->user_roles->first() )->role;
                                 
                             @endphp
                         
                             <tr class="">
                                 <td class="">
                                     <a class="btn btn-sm btn-outline-secondary {{ $disabled }}" href="{{ $href }}">{{ $button }}</a>
-                                    {{ $access_list->id }}
                                 </td>
                                 <td class="">{{ $access_list->name }}</td>
-                                <td class="">{{ $array_roles[$access_list->role] }}</td>
+                                <td class="">{{ $array_roles[$role] }}
+                                
+                                </td>
                                 
                                 <td class="">{{ $access_list->memo }}</td>
                             </tr>

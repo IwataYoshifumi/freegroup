@@ -105,4 +105,12 @@ class TestController extends Controller {
 
     }
     
+    //　ReportList検索コンポーネント開発用ルート
+    //
+    public function searchReportLists( Request $request ) {
+        
+        return view( 'groupware.test.search_report_lists' )->with( 'request', $request );
+        
+    }
+    
 }

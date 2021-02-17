@@ -35,93 +35,39 @@ use App\myHttp\GroupWare\Requests\SubRequests\ComfirmDeletionRequest;
 use App\myHttp\GroupWare\Models\SubClass\ComponentInputFilesClass;
 use App\myHttp\GroupWare\Controllers\SubClass\DateTimeInput;
 
+use App\myHttp\GroupWare\Controllers\Search\SearchReport;
+
+
 class ReportController extends Controller {
 
     // 　ルーティングコントローラー
     //
     public function index( Request $request ) {
         
-        if( $request->from_menu ) {
-            $find['users'] = [ auth( 'user' )->id() ];
-
-            $find['start_date']  = Carbon::parse('today')->subMonth()->format('Y-m-d');      
-            $find['end_date']    = Carbon::parse('today')->format('Y-m-d');
-            $find['search_mode'] = 1;
-        } else {
-            $find = ( isset( $request->find )) ? $request->find : [] ;
-            $find['users']     = ( isset( $request->users )) ? $request->users : [];
-            $find['customers'] = ( isset( $request->customers )) ? $request->customers : [];
-        }
-        // if_debug( $find );
-        //　検索
-        //
-        // $reports = Report::search( $find, $request->search_mode );
-        $reports = Report::all();
+        if_debug( $request->all() );
         
-        BackButton::setHere( $request );
-        return view( 'groupware.report.index' )->with( 'reports', $reports )
-                                               ->with( 'request', $request )
-                                               ->with( 'find', $find );
-    }
-    
-    public function csv( Request $request ) {
-        // if_debug( $request->all() );
-        $reports = Report::search( $request->find, $request->search_mode );
-        // if_debug( $reports );
-        $values = [];
-        foreach( $reports as $i => $r ) {
-            $start_time  = Carbon::parse( $r->start_time );
-            $end_time    = Carbon::parse( $r->end_time );
-            $period      = $start_time->diffInMinutes( $end_time );
-            $period_hour = round( $period / 60, 2 );
-    
-            $users = "";        
-            if( count( $r->users )) {
-                // if_debug( $r->users );
-                foreach( $r->users as $i => $user ) {
-                    if( $i == 0 ) {
-                        $users = $user->name;
-                    } else {
-                        $users .= ",".$user->name;
-                    }
-                }
-            }
-
-            $customers = "";        
-            if( count( $r->customers )) {
-                // if_debug( $r->customers );
-                foreach( $r->customers as $i => $customer ) {
-                    if( $i == 0 ) {
-                        $customers = $customer->name;
-                    } else {
-                        $customers .= ",".$customer->name;
-                    }
-                }
-            }
-
-            $v = [  $r->user->name, 
-                    $r->name, 
-                    $r->place, 
-                    $r->start_time->format( 'Y-n-j'), 
-                    $r->start_time->format( 'H:m' ),
-                    $r->end_time->format( 'Y-n-j H:m'), 
-                    $r->end_time->format( 'H:m'), 
-                    $period,
-                    $period_hour,
-                    $users,
-                    $customers,
-                    $r->memo,
-                    ];
-            array_push( $values, $v );
+        if( $request->from_menu ) {
+            $request->users = [ user_id() ]; 
+            $request->calendar_auth = 'reader';
+            $request->search_condition = 'users';
+            $request->search_date_condition = 'report_date';
+            $request->display_axis = 'users';
+        } elseif( $request->report_list_id ) {
+            if( ! isset( $request->sorts      )) { $request->sorts = [ 'created_at' ]; }
+            if( ! isset( $request->pagination )) { $request->pagination = 3; }
             
         }
-        $options['lists'] = $values;
-        // $options['column_name'] = [ '作成者', '件名', '場所', '開始日時', '終了日時', '所要時間（分）', '関連社員', '関連顧客', '報告内容' ];
-        $options['column_name'] = [ '作成者', '件名', '場所', '開始日', '開始時刻', '終了日', '終了時刻', '所要時間（分）','所要時間（時間）', '関連社員', '関連顧客', '報告内容' ];
-        // dd( $options );
-        return OutputCSV::input_array( $options );
+            
+        //　検索
+        //
+        $returns = SearchReport::search( $request );
         
+        BackButton::setHere( $request );
+        return view( 'groupware.report.index2' )->with( 'returns', $returns )
+                                               ->with( 'request', $request );
     }
+    
+    
     
     public function create( Request $request ) {
         
@@ -180,6 +126,7 @@ class ReportController extends Controller {
     
     public function show( Report $report ) {
         // if_debug( $report->schedules );
+        $this->authorize( 'view', $report );
 
         BackButton::stackHere( request() );
         return view( 'groupware.report.show' )->with( 'report', $report );
@@ -228,4 +175,103 @@ class ReportController extends Controller {
         return view( 'groupware.report.delete' )->with( 'report' , $report );
     }
     
+    public function csv( Request $request ) {
+        
+        $returns = SearchReport::search( $request );
+        
+        $reports = $returns['reports'];
+        // dd( $reports );
+        $values['column_name'] = [ '作成者', '件名', '場所', '開始日', '開始時刻', '終了日', '終了時刻', '所要時間（分）','所要時間（時間）', '関連社員', '関連顧客', '報告内容' ];
+        $values['lists'] = [];
+        foreach( $reports as $report ) {
+            $attendees = '';
+            foreach( $report->users as $attendee ) {
+                if( empty( $attendees )) { 
+                    $attendees .= $attendee->name;
+                } else { 
+                    $attendees .= "," . $attendee->name;                    
+                }
+            }
+            // dump( $attendees );
+            
+            $value = [ 
+                op( $report->user )->name,
+                $report->name,
+                $report->place,
+                $report->p_dateTime(),
+                $report->memo,
+                $attendees
+                ];
+            array_push( $values['lists'], $value );            
+            
+        }
+        // return response()->json( $values );
+        return OutputCSV::input_array( $values );
+        
+        
+    }
+
+    // public function csv( Request $request ) {
+    //     // if_debug( $request->all() );
+    //     $returns = SearchReport::search( $request );
+        
+    //     $reports = $returns['reports'];
+        
+    //     // if_debug( $reports );
+    //     $values = [];
+    //     foreach( $reports as $i => $r ) {
+    //         $start_time  = Carbon::parse( $r->start_time );
+    //         $end_time    = Carbon::parse( $r->end_time );
+    //         $period      = $start_time->diffInMinutes( $end_time );
+    //         $period_hour = round( $period / 60, 2 );
+    
+    //         $users = "";        
+    //         if( count( $r->users )) {
+    //             // if_debug( $r->users );
+    //             foreach( $r->users as $i => $user ) {
+    //                 if( $i == 0 ) {
+    //                     $users = $user->name;
+    //                 } else {
+    //                     $users .= ",".$user->name;
+    //                 }
+    //             }
+    //         }
+
+    //         $customers = "";        
+    //         if( count( $r->customers )) {
+    //             // if_debug( $r->customers );
+    //             foreach( $r->customers as $i => $customer ) {
+    //                 if( $i == 0 ) {
+    //                     $customers = $customer->name;
+    //                 } else {
+    //                     $customers .= ",".$customer->name;
+    //                 }
+    //             }
+    //         }
+
+    //         $v = [  $r->user->name, 
+    //                 $r->name, 
+    //                 $r->place, 
+    //                 $r->start_time->format( 'Y-n-j'), 
+    //                 $r->start_time->format( 'H:m' ),
+    //                 $r->end_time->format( 'Y-n-j H:m'), 
+    //                 $r->end_time->format( 'H:m'), 
+    //                 $period,
+    //                 $period_hour,
+    //                 $users,
+    //                 $customers,
+    //                 $r->memo,
+    //                 ];
+    //         array_push( $values, $v );
+            
+    //     }
+    //     $options['lists'] = $values;
+    //     // $options['column_name'] = [ '作成者', '件名', '場所', '開始日時', '終了日時', '所要時間（分）', '関連社員', '関連顧客', '報告内容' ];
+    //     $options['column_name'] = [ '作成者', '件名', '場所', '開始日', '開始時刻', '終了日', '終了時刻', '所要時間（分）','所要時間（時間）', '関連社員', '関連顧客', '報告内容' ];
+    //     // dd( $options );
+    //     return OutputCSV::input_array( $options );
+        
+    // }
+
+
 }

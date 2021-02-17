@@ -184,7 +184,7 @@ $route_to_today = route( $route_name , $argv_today );
                                                     @endphp
                                                     {{-- 予定作成者を表示 --}}
                                                     @if( $s->user ) 
-                                                        <div style="{{ $calprop->style() }}" class="{{ $schedule_class }} user_{{ $s->user->id }}" {!! $data_schedule !!}>
+                                                        <div style="{{ $calprop->style() }}" class="{{ $schedule_class }} user_{{ $s->user->id }}" {!! $data_schedule !!}>   {{-- htmlspecialchars OK --}}
                                                             <div class="d-flex">
                                                                 <div class="mr-auto">{{ $s->user->name }}：{{ $s->name }}</div>
                                                                 <div class="ml-auto">{{ $s->start_time() }}</div>
@@ -195,7 +195,7 @@ $route_to_today = route( $route_name , $argv_today );
                                                     @if( $show_attendees && count( $s->users ))
                                                         @foreach( $s->users as $u )
                                                             @if( $s->user_id == $u->id ) @continue @endif
-                                                            <div style="{{ $calprop->style() }}" class="{{ $schedule_class }} user_{{ $u->id}}" {!! $data_schedule !!}>
+                                                            <div style="{{ $calprop->style() }}" class="{{ $schedule_class }} user_{{ $u->id}}" {!! $data_schedule !!}>   {{-- htmlspecialchars OK --}}
                                                                 <div class="d-flex">
                                                                     <div class="mr-auto">{{ $u->name         }}：{{ $s->name }}</div>
                                                                     <div class="ml-auto">＊{{ $s->start_time() }}</div>

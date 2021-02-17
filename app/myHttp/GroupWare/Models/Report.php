@@ -121,7 +121,7 @@ class Report extends Model {
 
         if( $user->id == $this->user_id or
             $this->isAttendee( $user ) or 
-            $this->calendar->canRead( $user->id ) ) {
+            $this->report_list->canRead( $user->id ) ) {
             return true;
         }
         return false;
@@ -170,6 +170,8 @@ class Report extends Model {
             }
         }
     }
+    
+    
 
 
 

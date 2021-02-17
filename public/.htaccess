@@ -21,4 +21,7 @@
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
+    
+    # Below has been apended by Iwata 2021-02-02
+    php_value memory_limit 200M
 </IfModule>

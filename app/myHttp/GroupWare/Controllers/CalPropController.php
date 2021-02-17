@@ -174,9 +174,14 @@ class CalPropController extends Controller {
     
     public function gsyncAll() {
         
-        if( ! is_debug() ) { die( 'This Route is only available to developers'); }
+        if( ! is_debug() ) { 
+            die( 'This Route is only available to developers');
+        } else {
+            if_debug( __METHOD__ );
+        }
         
-        FirstScheduledJob::dispatch();
+        // FirstScheduledJob::dispatch();
+        FirstScheduledJob::dispatch()->delay( now()->addMinute() );
 
         // return redirect()->route( 'groupware.calendar.index' );
         return $this->index( request() );

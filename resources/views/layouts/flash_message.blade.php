@@ -1,5 +1,5 @@
 @if (Session::has('info_message'))
-    <div class="alert alert-warning h5 flush">{!! Session::get('info_message') !!}</div>
+    <div class="alert alert-warning h5 flush">{{ Session::get('info_message') }}</div>
 @endif
 
 @if( session('prepare_validation_message'))

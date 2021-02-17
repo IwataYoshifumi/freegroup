@@ -28,6 +28,8 @@ $Calendars = op( $returns )['calendars'];
 $Users = op( $returns )['users'];
 $Depts = op( $returns )['depts'];
 
+if_debug( $Calendars->toArray(), $Calprops->toArray() );
+
 //　今日ボタン用　変数
 //
 $today = Carbon::today();
@@ -44,8 +46,7 @@ $pre_month->subMonth();
 //　一升あたりの予定表示件数
 //
 $row_num = 30;
-
-if_debug( $request->all() );
+// if_debug( $request->all() );
 
 
 @endphp
@@ -145,14 +146,15 @@ if_debug( $request->all() );
                                             @php
                                                 $s          = $schedules->find( $id );
                                                 $calprop    = $Calprops[$s->calendar_id];
+                                                $calendar   = $Calendars->find( $s->calendar_id );
                                                 $schedule_class = "schedule schedule_item calendar_" . $s->calendar_id;
                                                 $data_schedule = " data-schedule_id='$s->id' data-calendar_id='$s->calendar_id' ";
                                             @endphp 
                                             @if( $i <= $row_num - 1 ) 
                                                 {{-- 予定作成者を表示 --}}
                                                 <div class="">
-                                                    @if( $s->user ) 
-                                                        <div style="{{ $calprop->style() }}" class="{{ $schedule_class }} user_{{ $s->user->id }}" {!! $data_schedule !!}>
+                                                    @if( $s->user and $calendar->type != 'company-wide' ) 
+                                                        <div style="{{ $calprop->style() }}" class="{{ $schedule_class }} user_{{ $s->user->id }}" {!! $data_schedule !!}>   {{-- htmlspecialchars OK --}}
                                                             <div class="d-flex">
                                                                 <div class="mr-auto">{{ $s->user->name }}：{{ $s->name }}</div>
                                                                 <div class="ml-auto">{{ $s->start_time() }}</div>
@@ -161,10 +163,10 @@ if_debug( $request->all() );
                                                     @endif
                                                     
                                                     {{-- 予定関連社員の表示 --}}
-                                                    @if( $show_attendees && count( $s->users ))
+                                                    @if( $show_attendees && count( $s->users ) &&  $calendar->type != 'company-wide' )
                                                         @foreach( $s->users as $u )
                                                             @if( $s->user_id == $u->id ) @continue @endif
-                                                            <div style="{{ $calprop->style() }}" class="{{ $schedule_class }} user_{{ $u->id}}" {!! $data_schedule !!}>
+                                                            <div style="{{ $calprop->style() }}" class="{{ $schedule_class }} user_{{ $u->id}}" {!! $data_schedule !!}>   {{-- htmlspecialchars OK --}}
                                                                 <div class="d-flex">
                                                                     <div class="mr-auto">{{ $u->name         }}：{{ $s->name }}</div>
                                                                     <div class="ml-auto">＊{{ $s->start_time() }}</div>
@@ -172,6 +174,16 @@ if_debug( $request->all() );
                                                             </div>
                                                         @endforeach
                                                     @endif
+                                                    {{-- 全社公開カレンダーの表示 --}}
+                                                    @if( $calendar->type == 'company-wide' )
+                                                        <div style="{{ $calprop->style() }}" class="{{ $schedule_class }}" {!! $data_schedule !!}>   {{-- htmlspecialchars OK --}}
+                                                            <div class="d-flex">
+                                                                <div class="mr-auto">全社公開：{{ $s->name }}</div>
+                                                                <div class="ml-auto">{{ $s->start_time() }}</div>
+                                                            </div>
+                                                        </div>
+                                                    @endif
+                                                    
                                                 </div>
                                             @else
                                                 他 {{ $count - $row_num }} 件

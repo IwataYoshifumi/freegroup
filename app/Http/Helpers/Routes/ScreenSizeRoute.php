@@ -17,10 +17,10 @@ class ScreenSizeRoute {
         
             Route::get(  '/get',  'ScreenSizeController@get' )->name( 'screensize.get' );  
             Route::post( '/set',  'ScreenSizeController@set' )->name( 'screensize.set' );
+            Route::get(  '/forget', 'ScreenSizeController@forget'    )->name( 'screensize.forget' );
      
             if( is_debug() ) {
                 Route::get(  '/dump',   'ScreenSizeController@dump'      )->name( 'screensize.dump' );
-                Route::get(  '/forget', 'ScreenSizeController@forget'    )->name( 'screensize.forget' );
             }
         });        
     }

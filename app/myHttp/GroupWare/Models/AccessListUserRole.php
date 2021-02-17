@@ -62,6 +62,11 @@ class AccessListUserRole extends Model {
         }
         return self::where( 'role', 'owner' )->where( 'user_id', $user_id );
     }
+    
+
+    
+    
+    
     public static function whereWriter( $user ) {
         if( $user instanceof User ) {
             $user_id = $user->id;
@@ -107,6 +112,30 @@ class AccessListUserRole extends Model {
             die( __METHOD__ );
         }
         return self::whereIn( 'role', [ 'owner', 'writer', 'reader' ] )->where( 'user_id', $user_id );
+    }
+    
+    public static function whereInUsersCanRead( $users ) {
+        if( is_array( $users )) {
+            $user_ids = $users;
+        } else {
+            $user_ids = $users->pluck( 'id' )->toArray();
+        }
+        return self::whereIn( 'role', [ 'owner', 'writer', 'reader' ] )->whereIn( 'user_id', $user_ids );
+    }
+
+    public static function whereInUsersCanWrite( $users ) {
+        if( is_array( $users )) {
+            $user_ids = $users;
+        } else {
+            $user_ids = $users->pluck( 'id' )->toArray();
+        }
+        return self::whereIn( 'role', [ 'owner', 'writer' ] )->whereIn( 'user_id', $user_ids );
+    }
+
+    public static function whereInOwners( $users ) {
+        $users = ( is_array( $users )) ? $users : $users->pluck( 'id', 'id' )->toArray();
+        
+        return self::where( 'role', 'owner' )->whereIn( 'user_id', $users );
     }
     
     //////////////////////////////////////////////////////////////////////////

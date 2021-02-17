@@ -1,0 +1,251 @@
+@php
+
+
+use App\myHttp\GroupWare\Models\User;
+use App\myHttp\GroupWare\Models\Dept;
+use App\myHttp\GroupWare\Models\Customer;
+use App\myHttp\GroupWare\Models\RoleGroup;
+use App\myHttp\GroupWare\Models\RoleList;
+use App\myHttp\GroupWare\Models\ACL;
+use App\myHttp\GroupWare\Models\AccessList;
+use App\myHttp\GroupWare\Models\Report;
+use App\myHttp\GroupWare\Models\ReportList;
+use App\myHttp\GroupWare\Models\ReportProp;
+
+use App\myHttp\GroupWare\View\Components\Dept\DeptsCheckboxComponent;
+use App\Http\Helpers\MyHelper;
+
+$route_name = Route::currentRouteName();
+$auth = auth( 'user' )->user();
+
+$not_use  = [ 0 => '', 1 => '日報追加不可', -1 => '日報追加可能' ];
+$disables = [ 0 => '', 1 => '無効日報リスト', -1 => '有効日報リスト' ];
+
+$depts = Dept::getArrayforSelect();
+$report_list_auths = [ '' => '', 'owner' => '日報リスト管理権限あり', 'writer' => '日報リストへ日報追加可能', 'reader' => '日報閲覧可能' ];
+
+$users = ( $request->users ) ? $request->users : [];
+
+#if_debug( $report_list_types );
+if( is_debug() ) {
+    $hidden_form_type = 'text';
+} else {
+    $hidden_form_type = 'hidden';
+}
+
+$depts = ( op( $request )->depts ) ? $request->depts : [];
+
+$search_date_conditions = [ 'report_date' => '期間', 'created_at' => '日報作成日' ];
+
+$report_lists = ReportList::whereCanRead( $auth );
+$report_lists->with( [ 'report_props' => function ( $query ) use ( $auth ) {
+                                            $query->where( 'user_id', $auth->id );
+                }]);
+                
+$report_lists = $report_lists->get();
+
+
+
+$sorts = [ '' => '', 'created_at' => '作成日', 'user_id' => '作成者', 'report_list_id' => '日報リスト', 'name' => '件名' ];
+
+if_debug( $report_lists );
+
+@endphp
+
+
+{{ Form::open( [ 'route' => $route_name, 'id' => 'search_form' ] ) }}
+    @csrf
+    @method( 'GET' )
+
+
+    <div class="widget">
+        <fieldset class="border border-dark m-2">
+            <div class="m-2">日報検索条件</div>            
+            <div class="container m-2 coltrolgroup">
+                <div class="row">
+                    
+                    
+                    
+                    <div class="col-12">
+                        @if( is_debug() ) @icon( debug )  search_query @endif
+                        <input type='{{ $hidden_form_type }}' name='search_query' value=1>
+                    </div><div class="col-12">
+                        @if( is_debug() ) @icon( debug )  base_date @endif
+                        <input type='{{ $hidden_form_type }}' name='base_date' value='{{ $request->base_date }}' id='base_date'>
+                    </div>
+
+                    @if( $request->report_list_id ) 
+                        @php
+                            $report_prop =  ReportProp::where( 'report_list_id', $request->report_list_id )->where( 'user_id', user_id() )->first();
+                        @endphp
+                    
+                    
+                        <div class="col-11 border border-dark m-1 p-1" style="{{ op( $report_prop )->style() }}">
+                            日報リスト名：{{ op( $report_prop )->name }}
+                        </div>
+                        <input type=hidden name='report_list_id' value='{{ $request->report_list_id }}'>
+                    @endif
+
+
+                    {{-- 検索期間 --}}
+                    @if( $route_name == 'groupware.report.index' )
+                        <div class="col-11 m-1 p-1 border border-dark">
+                            <div class="m-2">日報検索期間</div>
+
+                            @php
+                                $start = "start_date";
+                                $end   = "end_date";
+                            @endphp
+                            <x-input_date_span :start="$start" :end="$end" />
+                            
+                            <div class="col-11">
+                                @foreach( $search_date_conditions as $value => $text )
+                                    @php
+                                        $id = 'search_date_condition_' . $value;
+                                        $checked = ( $request->search_date_condition == $value ) ? true : false;
+                                    @endphp
+                                    <label for="{{ $id }}">{{ $text }}</label>
+                                    {{ Form::radio( 'search_date_condition', $value, $checked, [ 'class' => 'checkboxradio', 'id' => $id ] ) }}
+                                
+                                @endforeach
+                            </div>
+                        </div>
+                    @else
+                        @if( is_debug() )
+                            <div class="col-12">
+                            @icon( debug ) {{ $request->start_date }}～{{ $request->end_date   }}
+                            </div>
+                        @endif
+                    @endif
+
+                    {{-- 部署検索 --}}
+                    <fieldset class="col-4 border border-dark m-1 p-1">
+                        <div class="m-2">部署検索</div>
+                        {{-- Form::select( 'dept_id', $depts, $request->dept_id, [ 'class' => 'form-control' ] ) --}}
+                        <x-checkboxes_depts :depts="op( $request )->depts" name="depts" button="部署検索する" />
+                    </fieldset>
+
+                    {{-- ユーザ検索 --}}
+                    <fieldset class="col-4 border border-dark m-1 p-1">
+                        <div class="m-2">社員検索</div>
+                        <x-checkboxes_users :users="op( $request )->users" button="社員検索" />
+
+                    </fieldset>
+
+                    {{-- その他の検索条件 --}}
+
+                    <fieldset class="col-3 border border-dark m-1 p-1">
+                        <div class="m-2">検索対象</div>
+                        @if( is_debug() or $route_name != "groupware.report.index" )
+                            {{ Form::select( "search_condition", [ 'only_creator' => '日報作成者のみ', 'users' => '日報作成者＆関連社員' ], $request->search_condition,  [ 'class' => 'form-control w-80' ] ) }}
+                        @endif
+                        <div class="m-2">表示件数</div>
+                        
+                            {{ Form::select( "pagination", config( 'config.paginations' ), $request->pagination,  [ 'class' => 'form-control w-80' ] ) }}
+                    </fieldset>
+
+                    {{-- 日報リスト種別 --}}
+                    @if( ! $request->report_list_id )
+                        <div class="w-100">
+                            <div class="btn btn-outline m-1 bg-light"
+                                data-toggle="collapse"
+                                data-target="#search_report_lists"
+                                aria-expand="true"
+                                aria-controls="search_report_lists">日報リスト検索条件</div>
+                            
+                            
+                            <div class="col-11 border border-dark m-1 p-1 collapse" id="search_report_lists">
+    
+                                <div class="m-2">検索対象日報リスト</div>
+                                
+                                {{--
+                                @php
+                                    $array = ( $request->report_lists ) ? $request->report_lists : [];
+                                @endphp
+                                @foreach( $report_lists as $report_list )
+                                    @php
+                                        $id = 'report_list_' . $report_list->id;
+                                        $checked = ( in_array( $report_list->id, $array )) ? true : false ;
+                                    
+                                    @endphp
+                                    <label for='{{ $id }}'>{{ $report_list->name }}</label>
+                                    {{ Form::checkbox( 'report_lists[]', $report_list->id, $checked, [ 'class' => 'checkboxradio', 'id' => $id ] ) }}
+                                @endforeach
+                                --}}
+    
+                                @foreach( ReportList::getTypes() as $type => $name )
+                                    @php 
+                                        $checked = ( ! empty( op( $request->report_list_types )[$type] )) ? 1 : 0;
+                                    @endphp
+                                    <label for="{{ $type }}">{{ $name }}</label>
+                                    {{ Form::checkbox( "report_list_types[$type]", $type,  $checked, [ 'id' => $type, "class" => "report_list_types checkboxradio" ] ) }}
+                                @endforeach
+        
+                                <div class="m-2">閲覧制限日報リストのアクセス権限</div>
+                                {{ Form::select( "report_list_auth", $report_list_auths,  $request->report_list_auth, [  "class" => "form-control col-4" ] ) }}
+                                
+                                <div class="m-2">その他の条件</div>
+                                <label for="show_hidden_report_list">非表示日報リストも検索</label>
+                                @php 
+                                    $checked = ( $request->show_hidden_report_list ) ? 1 : 0;
+                                @endphp
+                                {{ Form::checkbox( "show_hidden_report_list", 1,  $checked, [ 'id' => 'show_hidden_report_list', "class" => "checkboxradio m-1" ] ) }}
+        
+                                @php 
+                                    $checked = ( $request->show_retired_users ) ? 1 : 0;
+                                @endphp
+                                <label for="show_retired_users">退社済社員も検索</label>
+                                {{ Form::checkbox( "show_retired_users", 1,  $checked, [ 'id' => 'show_retired_users', "class" => "checkboxradio m-1" ] ) }}
+                            </div>
+                        </div>
+                    @endif
+
+                    {{-- ソート --}}
+                    <div class="w-100">
+                        <div class="btn btn-outline m-1 bg-light"
+                            data-toggle="collapse"
+                            data-target="#sorter"
+                            aria-expand="true"
+                            aria-controls="sorter">ソート</div>
+                        
+                        
+                        <div class="col-11 border border-dark m-1 p-1 collapse" id="sorter">
+                            <div class="m-2">ソート順</div>
+                            <div class="row container m-1">
+                                @for( $i = 0; $i <= 2; $i++ )                             
+                                    {{ Form::select( "sorts[$i]", $sorts, op( $request->sorts )[ $i ], [ 'class' => 'form-control col-3 m-1' ] ) }} 
+                            
+                            
+                                @endfor
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    
+                    <script>
+                        function clear_button( class_name ) {
+                            $check_clear = false;
+                            $( class_name ).each( function() {
+                                if( $(this).prop('checked') == true ) {
+                                    $(this).prop('checked', false );
+                                    $check_clear = true;
+                                }
+                            });
+                            if( $check_clear ) { $('#search_form').submit(); }
+                        }
+                    </script>
+
+
+                    <div class="col-11 m-1 row d-flex justify-content-between">
+                        <button type="button" class="btn btn-search col-3 m-1" onClick="this.form.submit()">検索</button>
+                        <div class="col-3"></div>
+                        <button type="button" class="btn btn-search col-3 m-1" onClick="this.form.submit()">検索</button>
+                    </div>
+            </div>
+            
+            </div>
+        </fieldset>
+    </div>
+{{ Form::close() }}

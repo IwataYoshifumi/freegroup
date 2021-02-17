@@ -126,7 +126,7 @@ class FileController extends Controller {
 
     public function deleted( FileRequest $request ) {
         
-        $files = MyFile::with( 'user', 'schedules', 'reports' )->find( $request->input('files') );
+        $files = MyFile::with( 'user', 'schedules', 'reports', 'calprops', 'fileables' )->find( $request->input('files') );
         
         //　認可
         //
@@ -136,10 +136,10 @@ class FileController extends Controller {
         //
         $files = DB::transaction( function() use ( $files, $request ) {
     
-            // $files = MyFile::with( 'user', 'schedules', 'reports' )->find( $request->input('files') );
             foreach( $files as $file ) {
                 $file->reports()->detach();
                 $file->schedules()->detach();
+                $file->calprops()->detach();
             }
             MyFile::destroy( $request->input('files') );
             return $files;

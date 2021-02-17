@@ -72,7 +72,9 @@ class BackButton {
     static private function get_previous_session_values() {
 
         $sessions = session( 'back_button' );
-        if( is_array( $sessions )) {
+        // dd( $sessions );
+        if( is_array( $sessions ) and count( $sessions ) >= 1 ) {
+        // if( is_array( $sessions ) ) {
             return $sessions[ array_key_last( $sessions )];
         } else {
             return null;
@@ -88,12 +90,12 @@ class BackButton {
         
         $sessions = session()->get( 'back_button' );
         // if_debug( $sessions );
-        
+
         if( count( $sessions ) >= 3 ) {
             $form  = "<a class='btn btn-secondary ".$class."' href='".route( self::route_back_all )."'>最初に戻る</a>&nbsp;";
             $form .= "<a class='btn btn-secondary ".$class."' href='".route( self::route_back_one )."'>１つ戻る</a>";
-        } elseif( count( $sessions ) == 1 ) {
-            $form = "";            
+        } elseif( count( $sessions ) <= 1 ) {
+            $form = "";
         } else {
             $form = "<a class='btn btn-secondary ".$class."' href='".route( self::route_back_one )."'>戻る</a>";
         }
@@ -156,6 +158,4 @@ class BackButton {
             Route::get( 'back_all', function() { return BackButton::backAll(); })->name( 'back_all' );
         });
     }
-    
-
 }

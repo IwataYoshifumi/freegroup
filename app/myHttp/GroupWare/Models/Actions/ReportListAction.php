@@ -22,6 +22,8 @@ use App\Http\Helpers\MyHelper;
 use App\myHttp\GroupWare\Models\Actions\AccessListUserRoleUpdate;
 use App\myHttp\GroupWare\Jobs\File\DeleteFilesJob;
 
+use App\myHttp\GroupWare\Models\Initialization\InitReportProp;
+
 class ReportListAction {
     
     // protected $table = 'groups';
@@ -43,21 +45,8 @@ class ReportListAction {
 
                 //　全ユーザにReportPropを生成
                 //
-                $values  = [ 'report_list_id'     => $report_list->id, 
-                             'name'               => $report_list->name,
-                             'memo'               => $report_list->memo,
-                             'text_color'         => ReportProp::default_text_color(),
-                             'background_color'   => ReportProp::default_background_color(),
-                             'default_permission' => $report_list->default_permission,
-                            ];
-                
-                
-                // $colors = config( 'color' );
-                foreach( User::all() as $i => $user ) {
-                    // $values['background_color'] = Arr::random( $colors );
-                    $values['user_id'] = $user->id;
-                    $report_prop = ReportProp::create( $values );
-                }
+                initReportProp::withReportList( $report_list );
+
                 return $report_list;
             });
         

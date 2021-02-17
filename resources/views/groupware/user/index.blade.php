@@ -14,7 +14,6 @@ use App\User;
 
 
 @section('content')
-
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-12">
@@ -38,7 +37,7 @@ use App\User;
                             @if( isset( $show['grade']   )) <th>役職</th> @endif
                             <th>名前</th>
                             @if( isset( $show['email']   )) <th>メール</th> @endif
-                            @if( isset( $show['退職']    )) <th>退職</th>   @endif
+                            @if( isset( $show['retired'] )) <th>退職</th>   @endif
                         </tr>
                         @foreach( $users as $user )
                             @php
@@ -76,8 +75,8 @@ use App\User;
                         @endforeach
                     </table>
 
-                    @if( isset( $find['pagination'] )) 
-                        {{ $users->appends( [ 'find' => $find ] )->links() }}
+                    @if( method_exists( $users, 'links' )) 
+                        {{ $users->appends( request()->all() )->links() }}
                     @endif
                     <div class="w-100"></div>
                     @php

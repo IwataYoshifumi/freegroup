@@ -76,11 +76,20 @@ class ReportProp extends Model {
         return config( 'groupware.report_prop.default.font_style');
     }
     
+    public static function getPermissions() {
+        return config( 'groupware.report_prop.permissions' );
+    }
+    
+    
+    
     /////////////////////////////////////////////////////////////////////////////////////////////
     //
     //  フォーム用メソッド
     //
     /////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
 
     public function style() {
         return "background-color:".$this->background_color."; color:".$this->text_color.";";

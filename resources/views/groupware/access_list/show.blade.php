@@ -16,9 +16,14 @@ use App\Http\Helpers\BackButton;
 #dump( $access_list, $acls );
 #dump( $access_list, $lists, $users, $access_list->users );
 
-$disabled = ( ! user()->can( 'delete', $access_list ) ) ? "disabled" : "";
+$auth = user();
 
+$disabled         = ( ! $auth->can( 'delete', $access_list ) ) ? "disabled" : "";
+$title_delete_btn = ( ! $disabled ) ? "アクセスリスト削除" : "アクセスリスト設定先があるため削除できません" ;
 
+$route_to_edit   = route( 'groupware.access_list.update', [ 'access_list' => $access_list ] );
+$route_to_delete = route( 'groupware.access_list.delete', [ 'access_list' => $access_list ] );
+if_debug( $title_delete_btn );
 @endphp
 
 @section('content')
@@ -32,8 +37,14 @@ $disabled = ( ! user()->can( 'delete', $access_list ) ) ? "disabled" : "";
 
                 <div class="card-body">
                         @can( 'update', $access_list )
-                                <a class="btn btn-warning text-dark" href="{{ route( 'groupware.access_list.update', [ 'access_list' => $access_list ] ) }}">アクセスリストの修正</a>
-                                <a class="btn btn-danger text-white {{ $disabled }}" href="{{ route( 'groupware.access_list.delete', [ 'access_list' => $access_list ] ) }}">アクセスリスト削除</a>
+                            <a class="btn btn_icon uitooltip" href="{{ $route_to_edit   }}" title="アクセスリストの修正"   >@icon( edit  )</a>
+                            @if( $auth->can( 'delete', $access_list ))
+                                @php $title = "アクセスリスト削除"; @endphp
+                                <a class="btn btn_icon uitooltip" href="{{ $route_to_delete }}" title="{{ $title }}">@icon( trash )</a>
+                            @else
+                                @php $title = "アクセスリスト設定先があるため削除できません"; @endphp
+                                <a class="btn btn_icon uitooltip text-secondary" title="{{ $title }}">@icon( trash )</a>
+                            @endif
                         @endcan
                     
                         

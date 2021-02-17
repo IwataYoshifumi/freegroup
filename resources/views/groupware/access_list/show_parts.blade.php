@@ -4,6 +4,7 @@ use App\myHttp\GroupWare\Models\User;
 use App\myHttp\GroupWare\Models\Dept;
 use App\myHttp\GroupWare\Models\Group;
 use App\myHttp\GroupWare\Models\Calendar;
+use App\myHttp\GroupWare\Models\ReportList;
 use App\myHttp\GroupWare\Models\AccessList;
 use App\myHttp\GroupWare\Models\ACL;
 use App\myHttp\GroupWare\Models\File as MyFile;
@@ -27,7 +28,7 @@ $class_names = [ Group::class => "グループ",
                  Dept::class  => "部署",
                  MyFile::class => "ファイル",
                  Calendar::class => "カレンダー",
-                 ReportList::class => "報告書リスト",
+                 ReportList::class => "日報リスト",
                 ]
 
 @endphp
@@ -120,16 +121,17 @@ $class_names = [ Group::class => "グループ",
                     $href = route( 'groupware.group.show', ['group' => $model->id ] );
                 } elseif( $model instanceof Calendar ) {
                     $href = route( 'groupware.calendar.show', ['calendar' => $model->id ] );
+                } elseif( $model instanceof ReportList ) {
+                    $href = route( 'groupware.report_list.show', [ 'report_list' => $model->id ] );
                 }
                 $class_name = ( op( $class_names )[get_class( $model )] ) ? $class_names[get_class( $model )] : get_class( $model );
                     
             @endphp
-        
 
             <tr>
                 <td>
                     <a href="{{ $href }}" class="btn btn-sm btn-outline-secondary">詳細</a>
-                    {{ $model->id }}
+                    @if( is_debug() )  {{ $model->id }} @endif
                 </td>
                 <td>{{ $class_name }}</td>
                 <td>{{ $model->name }}</td>

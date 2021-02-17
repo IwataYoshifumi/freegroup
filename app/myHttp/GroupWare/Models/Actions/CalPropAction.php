@@ -44,6 +44,8 @@ class CalPropAction {
                 $calprop->not_use = ( $request->not_use ) ? 1 : 0;
                 $calprop->hide    = ( $request->hide    ) ? 1 : 0;
                 
+                $calprop->google_sync_on = ( $request->google_sync_on ) ? 1 : 0;
+                
                 $calprop->google_sync_bidirectional = $request->google_sync_bidirectional;
                 $calprop->google_calendar_id = $request->google_calendar_id;
                 $calprop->google_id          = $request->google_id;

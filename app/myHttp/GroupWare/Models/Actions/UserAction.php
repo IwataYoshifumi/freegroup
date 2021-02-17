@@ -21,6 +21,7 @@ use App\myHttp\GroupWare\Events\UserRetireEvent;
 use App\myHttp\GroupWare\Events\UserReturnEvent;
 use App\myHttp\GroupWare\Events\UserTransferDeptEvent;
 
+use App\myHttp\GroupWare\Models\Initialization\InitUser;
 
 class UserAction  {
     
@@ -47,6 +48,10 @@ class UserAction  {
             //  配属部署が使われているアクセスリストを更新
             // 
             AccessListUserRoleUpdate::Dept( $user->dept_id );
+
+            //　他のDB関連初期化
+            //
+            InitUser::init( $user );
             
             return $user;
         });
@@ -76,13 +81,18 @@ class UserAction  {
             
             // AccessListUserRole DBの更新
             //
+            $init_user = false;
             if( $user->retired != $old_user->retired ) {
-                // AccessListUserRoleUpdate::whereUser( $user );
                 AccessListUserRoleUpdate::User( $user );
+                $init_user = true;
             }
             if( $user->dept_id != $old_user->dept_id ) {
                 AccessListUserRoleUpdate::Depts( [$user->dept_id, $old_user->dept_id] );
+                $init_user = true;
             }
+            if( $init_user ) { InitUser::init( $user ); }
+            
+            
             return $user;
         });
 

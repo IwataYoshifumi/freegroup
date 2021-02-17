@@ -136,7 +136,7 @@ $route_to_today     = route( $route_name, $argv_today );
                                                 $data_schedule  = " data-schedule_id='$schedule->id' data-calendar_id='$schedule->calendar_id' ";
                                                 @endphp
                                                 
-                                                <div style="{{ $calprop->style() }}" class="{{ $schedule_class }}" {!! $data_schedule !!}>
+                                                <div style="{{ $calprop->style() }}" class="{{ $schedule_class }}" {!! $data_schedule !!}>   {{-- htmlspecialchars OK --}}
                                                     <div class="d-flex">
                                                         <div class="mr-auto">{{ $schedule->name }} @if( $schedule->user->id != $user->id ) ＊@endif </div>
                                                         <div class="ml-auto">{{ $s->p_time() }}</div>

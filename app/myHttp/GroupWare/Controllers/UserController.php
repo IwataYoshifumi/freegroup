@@ -44,7 +44,7 @@ class UserController extends Controller {
             $show = $request[ 'show' ];
             $asc_desc = $request['asc_desc'];
         } else {
-            $find = [ 'retired' => false, ];
+            $find = [ 'retired' => false, 'paginate' => 20 ];
             $sort = [];
             $show = [ 'dept_id' => 'dept_id' ,'email' => 'email', 'grade' => 'grade' ];
             $asc_desc = [];
@@ -68,6 +68,8 @@ class UserController extends Controller {
     }
     
     public function detail( User $user ) {
+        $user->init();
+        
         $user = User::find( $user->id );
         Backbutton::setHere( request() );
         return view( 'groupware.user.detail' )->with( 'user', $user );

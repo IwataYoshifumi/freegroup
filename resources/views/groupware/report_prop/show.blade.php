@@ -50,7 +50,7 @@ $permissions = Report::getPermissions();
                         @include( 'layouts.flash_message' )
 
                         <div class="form-group row">
-                            <label for="dept_id" class="col-md-4 col-form-label text-md-right m-1">日報リスト名{!! $info !!}
+                            <label for="dept_id" class="col-md-4 col-form-label text-md-right m-1">日報リスト名{!! $info !!}   {{-- htmlspecialchars OK --}}
                             </label>
                             <div class="col-md-6 m-1">
                                 {{ $report_list->name }}
@@ -61,7 +61,7 @@ $permissions = Report::getPermissions();
                                 {{ $report_prop->name }}
                             </div>
                         
-                            <label for="dept_id" class="col-md-4 col-form-label text-md-right m-1">日報リスト公開種別{!! $info !!}</label>
+                            <label for="dept_id" class="col-md-4 col-form-label text-md-right m-1">日報リスト公開種別{!! $info !!}</label>   {{-- htmlspecialchars OK --}}
                             <div class="col-md-6 m-1">
                                 {{ ReportList::getTypes()[$report_list->type] }}
                             </div>
@@ -93,7 +93,7 @@ $permissions = Report::getPermissions();
 
                             <div class="col-4 m-1"></div>
                             <ul class="col-7 m-1">
-                                <ui>{!! $info !!}は日報リスト管理者設定</ui>
+                                <ui>{!! $info !!}は日報リスト管理者設定</ui>   {{-- htmlspecialchars OK --}}
                             </ul>
                         </div>
                             

@@ -16,23 +16,23 @@ $target = ( $route_name == 'groupware.schedule.show_modal' ) ? "target='_parent'
 
 
     @can( 'update', $schedule )
-        <a class="btn col-1 m-1 uitooltip" style="font-size: 20px;" href="{{ $route_edit }}" title="変更"  {!! $target !!}>
+        <a class="btn col-1 m-1 uitooltip" style="font-size: 20px;" href="{{ $route_edit }}" title="変更"  {!! $target !!}>   {{-- htmlspecialchars OK --}}
             <i class="fas fa-pen"></i>
         </a>
     @endcan
         
     @can( 'delete', $schedule )
-        <a class="btn col-1 m-1" style="font-size: 20px;" href="{{ $route_delete }}" title="削除"  {!! $target !!}>
+        <a class="btn col-1 m-1" style="font-size: 20px;" href="{{ $route_delete }}" title="削除"  {!! $target !!}>   {{-- htmlspecialchars OK --}}
             <i class="fas fa-trash-alt"></i>
         </a>
     @endcan
 
     @if( $route_name == 'groupware.schedule.show_modal' )
-        <a class="btn btn-outline-secondary m-1" href="{{ $route_show }}" {!! $target !!}>全画面表示</a>
+        <a class="btn btn-outline-secondary m-1" href="{{ $route_show }}" {!! $target !!}>全画面表示</a>   {{-- htmlspecialchars OK --}}
     @endif
 
     {{-- @can( 'update', $schedule ) --}}
-        <a class="btn btn-primary text-white col-2 m-1" href="{{ $route_new_report  }}" {!! $target !!}>新規日報</a>
+        <a class="btn btn-primary text-white col-2 m-1" href="{{ $route_new_report  }}" {!! $target !!}>新規日報</a>   {{-- htmlspecialchars OK --}}
     {{-- @endif --}}
     
     @if( $show_more_info )

@@ -1,9 +1,12 @@
-
 @php
-#dump( $request->all() );
-$skip_keys = [ '_token', '_method', 'start_date', 'end_date', 'base_date' ];
+
+#dd( $request->all() );
+$skip_keys = [ '_token', '_method', 'start_date', 'end_date', 'base_date', 'calendar_types' ];
 #$form_type = 'text';
 $form_type = 'hidden';
+
+
+
 @endphp
 
 {{ Form::open( [ 'route' => 'groupware.schedule.daily', 'id' => 'form_to_show_daily', 'method' => 'GET' ] ) }}

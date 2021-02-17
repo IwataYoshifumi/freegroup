@@ -149,12 +149,12 @@ class Schedule2IndexController extends Controller {
         //
         // if_debug( $request, $returns );
         BackButton::setHere( $request );
-        return view( 'groupware.schedule2.weekly' )->with( 'request' , $request )
-                                                   ->with( 'returns',  $returns )
-                                                   ->with( 'base_date', $base_date )
-                                                   ->with( 'dates', $dates )
-                                                   ->with( 'schedule_ids', $schedule_ids )
-                                                   ->with( 'schedules', $schedules );
+        return view( 'groupware.schedule2.weekly_user' )->with( 'request' , $request )
+                                                        ->with( 'returns',  $returns )
+                                                        ->with( 'base_date', $base_date )
+                                                        ->with( 'dates', $dates )
+                                                        ->with( 'schedule_ids', $schedule_ids )
+                                                        ->with( 'schedules', $schedules );
         
     }
 
@@ -184,7 +184,7 @@ class Schedule2IndexController extends Controller {
         // View をレンダー
         //
         BackButton::stackHere( $request );
-        return view( 'groupware.schedule2.daily_users' )->with( 'request' , $request )
+        return view( 'groupware.schedule2.daily_user' )->with( 'request' , $request )
                                                         ->with( 'returns',  $returns )
                                                         ->with( 'base_date', $base_date );
     }

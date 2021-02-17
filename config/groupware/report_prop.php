@@ -10,5 +10,10 @@ return [
         'font_weight'       => 'bold',
     ],
     
+    'permissions'   => [    'creator'   => '作成者のみ',
+                            'attendees' => '作成者・関連社員',
+                            'writer'    => '作成者・関連社員・日報リスト編集者',
+                    ],
+    
     
     ];

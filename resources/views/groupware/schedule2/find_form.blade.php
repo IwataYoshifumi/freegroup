@@ -22,7 +22,7 @@ $not_use  = [ 0 => '', 1 => 'スケジュール追加不可', -1 => 'スケジ�
 $disables = [ 0 => '', 1 => '無効カレンダー', -1 => '有効カレンダー' ];
 
 $depts = Dept::getArrayforSelect();
-$calendar_auths = [ 'owner' => 'カレンダー管理権限あり', 'writer' => 'カレンダーへ予定追加可能', 'reader' => '予定閲覧可能' ];
+$calendar_auths = [ '' => '', 'owner' => 'カレンダー管理権限あり', 'writer' => 'カレンダーへ予定追加可能', 'reader' => '予定閲覧可能' ];
 
 $users = ( $request->users ) ? $request->users : [];
 
@@ -107,12 +107,13 @@ $depts = ( op( $request )->depts ) ? $request->depts : [];
                         <div class="btn btn-outline m-1"
                             data-toggle="collapse"
                             data-target="#search_calendars"
-                            aria-expand="false"
+                            aria-expand="true"
                             aria-controls="search_calendars">カレンダー検索条件</div>
                         
                         
                         <fieldset class="col-11 border border-dark m-1 p-1 collapse" id="search_calendars">
-                            <div class="m-2">カレンダー検索条件</div>
+                            <div class="m-2">検索対象カレンダー</div>
+                            
                             @foreach( Calendar::getTypes() as $type => $name )
                                 @php 
                                     $checked = ( ! empty( op( $request->calendar_types )[$type] )) ? 1 : 0;
@@ -120,10 +121,8 @@ $depts = ( op( $request )->depts ) ? $request->depts : [];
                                 <label for="{{ $type }}">{{ $name }}</label>
                                 {{ Form::checkbox( "calendar_types[$type]", $type,  $checked, [ 'id' => $type, "class" => "calendar_types checkboxradio" ] ) }}
                             @endforeach
-                            <bottun class="btn btn-outline-dark btn-sm" onClick="clear_button( '.calendar_types' );">クリア</bottun>
     
-    
-                            <div class="m-2">カレンダーアクセス権限</div>
+                            <div class="m-2">閲覧制限カレンダーのアクセス権限</div>
                             {{ Form::select( "calendar_auth", $calendar_auths,  $request->calendar_auth, [  "class" => "form-control" ] ) }}
                             
                             

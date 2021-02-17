@@ -34,15 +34,9 @@ class UserEventSubscriber // implements ShouldQueue
         $events->listen( UserReturnEvent::class,        'App\myHttp\GroupWare\Listeners\UserEventSubscriber@return' );
     }
     
-
-
-    
     public function created( UserCreateEvent $event ) {
         $user = $event->user;
         // if_debug( 'created', $user );
-        
-        $user->init();
-        
         
     }
     

@@ -46,17 +46,16 @@ $user_id = auth( 'user' )->id();
                         @foreach( $groups as $group )
                             @php
                                 $href = route( 'groupware.group.show', [ 'group' => $group->id ] );
-                                $used_owner = ( $group->check_if_the_user_in_this_is_owner( $user_id ) ) ? "アクセスリストで管理者設定あり" : "";
-                                
                                 $is_owner = $group->access_list()->isOwner( $user_id );
                                 $button   = ( $is_owner ) ? "詳細・変更削除" : "詳細";
-                                #dump( "/", $group->id, op( $group->access_list() )->id );
+
                             @endphp
                             <tr class="">
                                 <td class="">
                                     <a class="btn btn-sm btn-outline-secondary" href="{{ $href }}">{{ $button }}</a>
-                                    {{ $group->id }} : {{ $used_owner }}
-                                    
+                                    @if( $group->check_if_the_user_in_this_is_owner( $user_id )  )
+                                        <span class="btn_icon uitooltip" title="アクセスリストの管理者設定に使われて言います">@icon( exclamation-triangle )</span>
+                                    @endif
                                 </td>
                                 <td class="">{{ $group->name }}</td>
                                 <td class="">{{ $group->memo }}</td>

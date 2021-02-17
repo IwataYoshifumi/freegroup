@@ -61,59 +61,12 @@ class Menu
                 1003   => route( 'groupware.test.depts_users_customers'),
 
                     ];
-
-
+                    
         $return = <<<EOT
             <a class="nav-item nav-link" href="$route[1]">顧客管理</a> 
             <a class="nav-item nav-link" href="$route[2]">スケジュール</a>
-            
             <a class="nav-item nav-link" href="$route[3]">日報</a>
 
-            <!--
-            <a class="nav-item nav-link" href="$route[0]">【ホーム】</a> 
-            <a class="nav-item nav-link" href="$route[4]">【ToDo】</a>
-            <a class="nav-item nav-link" href="$route[5]">【稟議/決裁】</a>
-            <a class="nav-item nav-link" href="$route[5]">【施設備品/予約】</a>
-            -->
-            
-            <div class="dropdown">
-                <a id="dropdownMenuButton1"
-                        class="nav-item nav-link dropdown-toggle"
-	                    data-toggle="dropdown"
-                        aria-haspopup="true"
-	                    aria-expanded="false">開発用</a>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1" style="z-index:9999;">
-
-
-                        <a role="button" class="dropdown-toggle dropdown-item" id="Test" data-toggle="dropdown">Test</a>
-                            <div class="dropdown-menu" aria-labelledby='Test'>
-
-                                <a class="dropdown-item" href="$route[1000]">Test Template</a>
-                                <a class="dropdown-item" href="$route[1001]">Test</a>
-                                <a class="dropdown-item" href="$route[1002]">Blade Icons</a>
-                                <a class="dropdown-item" href="$route[1003]">Depts Users Customers</a>
-                            </div>
-
-
-                        <a role="button" class="dropdown-toggle dropdown-item" id="File" data-toggle="dropdown">File</a>
-                            <div class="dropdown-menu" aria-labelledby='File'>
-        
-
-                                <a class="dropdown-item" href="$route[94]">複数ファイル削除</a>
-                                <a class="dropdown-item" href="$route[98]">無添付全ファイル一括削除</a>
-                                <a class="dropdown-item" href="$route[99]">ファイル入力コンポーネント</a>
-                            </div>
-                        
-                        
-                        <a role="button" class="dropdown-toggle dropdown-item" id="ScreenSize" data-toggle="dropdown">ScreenSize</a>
-                            <div class="dropdown-menu" aria-labelledby='ScreenSize'>
-                                <a class="nav-item nav-link" href="$route[97]">set</a> 
-                                <a class="nav-item nav-link" href="$route[96]">dump</a> 
-                                <a class="nav-item nav-link" href="$route[95]">forget</a> 
-                            </div>
-                </div>
-            </div>
-            
             <div class="dropdown">
                 <a id="dropdownMenuButton"
                         class="nav-item nav-link dropdown-toggle"
@@ -130,8 +83,10 @@ class Menu
             </div>
 
 EOT;
+
         return new HtmlString( $return );
     }
+
 
     // 管理者メニュー
     //
@@ -151,11 +106,7 @@ EOT;
             <a class="nav-item nav-link" href="$route[4]">ロール設定</a>
             <a class="nav-item nav-link" href="$route[0]">管理者管理</a>
 
-
             <!--
-            <a class="nav-item nav-link" href="">休暇検索</a>
-            <a class="nav-item nav-link" href="">有給割当</a>
-            <a class="nav-item nav-link" href="">未完確認</a>
 
             <div class="dropdown">
                 <a id="dropdownMenuButton"

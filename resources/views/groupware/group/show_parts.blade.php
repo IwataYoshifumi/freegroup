@@ -5,8 +5,8 @@ use App\myHttp\GroupWare\Models\ACL;
 
 use App\Http\Helpers\MyHelpers;
 
-$users = $group->users;
-$access_list  = $group->access_list();
+$users       = $group->users;
+$access_list = $group->access_list();
 
 $url_to_the_access_list = route( 'groupware.access_list.show', [ 'access_list' => $access_list->id ] );
 
@@ -46,7 +46,7 @@ $access_lists = AccessList::whereGroup( $group )->get();
             </tr>
             @foreach( $users as $user )
                 <tr>
-                    <td>{{ $user->id }} : {{ $user->name }}</td>
+                    <td>{{ $user->name }}</td>
                     <td>{{ $user->dept->name }}</td>
                     <td>{{ $user->grade }}</td>
                 </tr>
@@ -70,7 +70,7 @@ $access_lists = AccessList::whereGroup( $group )->get();
                     
                 @endphp
                 <tr>
-                    <td>{{ $access_list->id }} : <a class="btn btn-sm btn-outline-secondary" href="{{ $href }}">{{ $button }}</a></td>
+                    <td><a class="btn btn-sm btn-outline-secondary" href="{{ $href }}">{{ $button }}</a></td>
                     <td>{{ $access_list->name }}</td>
                     <td>{{ $access_list->meemo }}</td>
                     <td></td>

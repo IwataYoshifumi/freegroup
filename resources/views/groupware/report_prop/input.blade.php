@@ -107,6 +107,31 @@ if( $report_list->isOwner( $user->id )) {
                             
                             <label for="text_color" class="col-md-4 col-form-label text-md-right m-1 d-none d-md-block">文字色</label>
                             {{ Form::color( 'text_color', $report_prop->text_color, [ 'class' => 'col-12 col-md-1 form-control m-1', 'id' => 'text-color', 'onChange' => 'sample()' ] ) }}
+                            <div class="col-12"></div>
+
+                            @php
+                                $checked = ( $report_prop->not_use ) ? 1 : 0;
+                            @endphp
+                            <div class="col-4 text-md-right m-1">日報作成</div>
+                            <div class="col-6">
+                                <label for="not_use">新規にこの日報を作成しない</label>
+                                {{ Form::checkbox( 'not_use', 1, $checked, [ 'class' => 'checkboxradio m-1', 'id' => 'not_use' ] ) }}
+                            </div>
+
+                
+                            @php
+                                $checked = ( $report_prop->hide ) ? 1 : 0;
+                            @endphp
+                            <div class="col-4 text-md-right m-1">表示有無</div>
+                            <div class="col-6">
+                                <label for="hide">隠す</label>
+                                {{ Form::checkbox( 'hide', 1, $checked, [ 'class' => 'checkboxradio m-1', 'id' => 'hide' ] ) }}
+                            </div>
+
+
+
+                            <div class="col-12"></div>
+
                 
                             <div class="col-12"></div>
                             

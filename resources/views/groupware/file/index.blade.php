@@ -16,6 +16,7 @@ use App\Models\Customer;
 
 
 $route_name = Route::currentRouteName();
+$auth = auth( 'user' )->user();
 
 @endphp
 
@@ -47,7 +48,8 @@ $route_name = Route::currentRouteName();
                         <div class="d-none d-lg-block">
                             <div class="row container">
                                 <div class="col-1">
-                                    @if( $route_name == "groupware.file.index" )
+                                    @if( $route_name == "groupware.file.index"  )
+                                        
                                         詳細
                                     @elseif( $route_name == "groupware.file.select" )
                                         削除
@@ -78,18 +80,18 @@ $route_name = Route::currentRouteName();
                                 @endphp
                                 
                                 <div class="col-12 col-lg-1 d-none d-lg-block">
-                                    @if( $route_name == "groupware.file.index" )
+                                    @if( $route_name == "groupware.file.index" and $auth->can( 'view', $file ) )
                                         <a class="btn btn-sm btn-outline-secondary" href="{{ $route_show }}">詳細</a>
-                                    @elseif( $route_name == "groupware.file.select" )
+                                    @elseif( $route_name == "groupware.file.select" and $auth->can( 'delete', $file ) )
                                         {{ Form::checkbox( 'files[]', $file->id, "", [ 'class' => 'delete_checkboxes' ] ) }}
                                     @endif
-                                    
                                 </div>
 
                                 <div class="col-12 col-lg-4">
                                     <div class="row">
                                         <div class="col-4 d-block d-lg-none">ファイル名</div>
                                         <div class="col-7 col-lg-12">
+                                            @if( is_debug() ) <a title='{{ $file->id }}' href='{{ $route_show }}' class="uitooltip">@icon( debug )</a> @endif
                                             {{ $file->file_name }}
                                         </div>
                                     </div>
@@ -152,11 +154,10 @@ $route_name = Route::currentRouteName();
                     @endif
 
                     <div class="w-100">
-                        @if( count( $files )) 
+                        @if( method_exists( $files, 'links' )) 
                             {{ $files->appends( $request->all() )->links() }}
                         @endif
                     </div>
-                   
                 </div>
             </div>
         </div>

@@ -7,7 +7,8 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 // use App\Http\Controllers\Vacation\VacationSchedules;
 
-use App\myHttp\GroupWare\ScheduledJobs\CalPropsGsyncScheduledJob;
+use App\myHttp\GroupWare\ScheduledJobs\SyncFromGoogleCalendarToSchedule\FirstScheduledJob;
+use App\myHttp\GroupWare\ScheduledJobs\SyncFromGoogleCalendarToSchedule\GoogleCalendarSyncJob;
 
 class Kernel extends ConsoleKernel
 {
@@ -28,7 +29,12 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->job( new CalPropsGsyncScheduledJob )->everyMinute()->withoutOverlapping( 5 );
+        // Googleカレンダーの双方向同期処理
+        //
+        // $schedule->job( new CalPropsGsyncScheduledJob )->everyFiveMinutes();
+        $schedule = GoogleCalendarSyncJob::scheduledSyncJob( $schedule );
+
+        
         
     }
 

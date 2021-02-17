@@ -25,9 +25,13 @@ use App\myHttp\GroupWare\Menu as GroupwareMenu;
                     // 予定・日報システム　管理者メニュー
                     //
                     -->
-                     {{ GroupwareMenu::admin_menus() }}
-                    
-
+                    @include( 'layouts.groupware.include_menu_for_admin' )
+                    {{-- 
+                      --
+                      -- 開発用メニュー
+                      --
+                      --}}
+                    @include( 'layouts.groupware.include_menu_for_dev' )
                     
                     @if( 0 ) {
                         @if( Route::has( 'user.index' ))

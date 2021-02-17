@@ -44,9 +44,7 @@ class SearchSchedule {
         
         //　期間の検索
         //
-        // if_debug( __METHOD__, $request->start_date, $request->end_date );
-        // if_debug( __METHOD__, $request->input('start_date'), $request->input('end_date') );
-        // dd( $request->all() );
+        // if_debug( $request->all() );
 
         $schedules = Schedule::where( function( $sub_query ) use ( $request ) {
                     $sub_query->where( function( $query ) use ( $request ) {
@@ -65,6 +63,7 @@ class SearchSchedule {
 
         $schedules_1 = clone $schedules;  // 予定作成者用
         $schedules_2 = clone $schedules;  // 関係者検索用
+        $schedules_3 = clone $schedules;  // 全社公開カレンダー用
 
         //　社員、部署検索
         //
@@ -88,6 +87,8 @@ class SearchSchedule {
         } elseif( ! is_array( $request->depts ) and is_array( $request->users )) {
             $users->whereIn( 'id',      $request->users ); 
         }
+        
+        $clone_users = clone $users; if_debug( $clone_users->select( 'id', 'name' )->get()->toArray() );
 
         // if( ! empty( $request->user_name )) { $users->where( 'name', 'like', '%'. $request->user_name . '%');  }
         // if_debug( $users, $users->get()->toArray() );
@@ -101,43 +102,87 @@ class SearchSchedule {
         $schedules_2->whereHas( 'users', function( $query ) use ( $users ) {
             $query->whereIn( 'id', $users );
         });
-        
-        //　アクセス権限で権限のあるカレンダーを検索
+
+        /*
+         *
+         *　検索対象のカレンダーを検索
+         *
+         */
+
+        //　閲覧制限付きカレンダーを権限で検索あるカレンダーを検索
         //
-        if( $request->calendar_auth == 'owner' ) {
-            $calendars = Calendar::getOwner( user_id() );
-        } elseif( $request->calendar_auth == 'writer' ) {
-            $calendars = Calendar::getCanWrite( user_id() );
-        } elseif( $request->calendar_auth == 'reader' ) {
-            $calendars = Calendar::getCanRead( user_id() );
-        }
-        $calendars = $calendars->toQuery();
-        if( is_array( $request->calendar_types )) {
-            $calendars->whereIn( 'type', $request->calendar_types );
+        if( is_null( $request->calendar_types ) or in_array( 'private', $request->calendar_types )) {
+            if( $request->calendar_auth == 'owner' ) {
+                $calendars = Calendar::getOwner( user_id() );
+            } elseif( $request->calendar_auth == 'writer' ) {
+                $calendars = Calendar::getCanWrite( user_id() );
+            // } elseif( $request->calendar_auth == 'reader' ) {
+            } else {
+                $calendars = Calendar::getCanRead( user_id() );
+            }
+            $private_calendars = clone $calendars->toQuery()->where( 'type', 'private' );
+
+        } else {
+            $private_calendars = Calendar::where( 'id', 0 );   
         }
         
+        // 公開カレンダーの検索
+        //
+        if( is_null( $request->calendar_types ) or in_array( 'public', $request->calendar_types )) {
+            // $public_calendars = Calendar::whereInOwners( $users )->where( 'type', 'public' );
+            $public_calendars = Calendar::where( 'type', 'public' );
+        } else {
+            $public_calendars = Calendar::where( 'id', 0 );
+        }
+
+        //　全社公開カレンダーの検索
+        //
+        if( is_null( $request->calendar_types ) or in_array( 'company-wide', $request->calendar_types )) {
+            $campany_wide_calendars = Calendar::where( 'type', 'company-wide' );
+        } else {
+            $campany_wide_calendars = Calendar::where( 'id', 0 );
+
+        }
+        
+        //　カレンダーの公開種別の検索（公開、閲覧制限、全社公開）        
+        // $calendars = $calendars->toQuery();
+        // if( is_array( $request->calendar_types )) {
+        //     $calendars->whereIn( 'type', $request->calendar_types );
+        // }
+
         //　CalPropでhide にしているカレンダーは検索対象外
         //
         if( ! $request->show_hidden_calendar ) {
-            $calendars->whereHas( 'calprops', function( $query ) {
-                $query->where( 'user_id', user_id() )->where( 'hide', 0 ); 
-            });
+            $private_calendars->whereHas( 'calprops', function( $query ) {
+                        $query->where( 'user_id', user_id() )->where( 'hide', 0 ); 
+                    });
+            $public_calendars->whereHas( 'calprops', function( $query ) {
+                        $query->where( 'user_id', user_id() )->where( 'hide', 0 ); 
+                    });
+            $campany_wide_calendars->whereHas( 'calprops', function( $query ) {
+                        $query->where( 'user_id', user_id() )->where( 'hide', 0 ); 
+                    });
         }
-
-        //　アクセス権限のあるカレンダーに登録された予定を検索
+        
+        //　検索カレンダーを検索
         //
-        $calendars->select( 'id' );
+        // if_debug( $private_calendars->get()->toArray(), $public_calendars->get()->toArray(), $campany_wide_calendars->get()->toArray() );
+        $calendars = $private_calendars->union( $public_calendars )->get();
+
+        $calendars = $calendars->toQuery()->select( 'id' );
+        $campany_wide_calendars->select( 'id' );
+
+        //　対象カレンダーの予定を検索
+        //
         $schedules_1->whereIn( 'calendar_id', $calendars );
         $schedules_2->whereIn( 'calendar_id', $calendars );
+        $schedules_3->whereIn( 'calendar_id', $campany_wide_calendars );
         $ids_1 = $schedules_1->get()->pluck( 'id', 'id' );
         $ids_2 = $schedules_2->get()->pluck( 'id', 'id' );
-        $schedule_ids = $ids_1->union( $ids_2 )->toArray();
-        // if_debug( $ids_1, $ids_2, $ids_1->union( $ids_2 ) );
+        $ids_3 = $schedules_3->get()->pluck( 'id', 'id' );
+        $schedule_ids = $ids_1->union( $ids_2 )->union( $ids_3 )->toArray();
 
-        //
-        //
         $schedules = Schedule::whereIn( 'id', $schedule_ids );
-        
 
         // 予定作成者・関連社員のロード
         //
@@ -150,7 +195,7 @@ class SearchSchedule {
         } else {
             $schedules->with( [ 'user' => function( $query ) use ( $users ) { $query->whereIn( 'id', $users ); } ]); 
             $schedules->with( ['users' => function( $query ) use ( $users ) { $query->whereIn( 'id', $users ); } ]);
-        } 
+        }
 
         $schedules = $schedules->get();
         

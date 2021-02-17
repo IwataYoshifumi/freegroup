@@ -45,10 +45,20 @@ class SearchFile {
         // 添付のあり・なし
         //
         if( $request->attached == 1 ) {          // 添付あり
-            $files = $files->has( 'fileables' );
+            // $files = $files->has( 'fileables' );
+            $files = $files->where( function( $query ) {
+                $query->has( 'reports' )
+                      ->orHas( 'schedules' )
+                      ->orHas( 'calprops'  );
+            });
 
         } elseif( $request->attached == -1 ) {   // 添付なし
-            $files = $files->doesntHave( 'fileables' );
+            // $files = $files->doesntHave( 'fileables' );
+            $files = $files->where( function( $query ) {
+                $query->doesntHave( 'reports'   )
+                      ->doesntHave( 'schedules' )
+                      ->doesntHave( 'calprops'  );
+            });
 
         }
         $files = $files->paginate( $pagination );

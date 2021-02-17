@@ -40,9 +40,9 @@ class AccessList extends Model {
         return $this->morphedByMany( calendar::class, 'accesslistable' );
     }
     
-    // public function report_lists() {          
-    //     return $this->morphedByMany( ReportList::class, 'accesslistable' );
-    // }
+    public function report_lists() {          
+        return $this->morphedByMany( ReportList::class, 'accesslistable' );
+    }
 
     public function files() {  
         return $this->morphedByMany( MyFile::class, 'accesslistable' );
@@ -53,13 +53,16 @@ class AccessList extends Model {
     }
     
     public function user_roles() {
-        return $this->hasMany( AccessListUserRole::class  );
+        // return $this->hasMany( AccessListUserRole::class  );
+        return $this->hasMany( AccessListUserRole::class, 'access_list_id' , 'id' );
     }
-    
+
     public function accesslistables() {
         $groups    = $this->groups;
         $calendars = $this->calendars;
-        return $groups->merge( $calendars );
+        $report_lists = $this->report_lists;
+
+        return $groups->merge( $calendars )->merge( $report_lists );
     }
 
 
@@ -119,6 +122,15 @@ class AccessList extends Model {
         $subquery = AccessListUserRole::whereOwner( $user_id )->select('access_list_id');
         return AccessList::whereIn( 'id', $subquery );
     }
+    
+    public static function whereInOwners( $users ) {
+        // $users = ( is_array( $users )) ? $users : $users->pluck( 'id', 'id' )->toArray();
+
+        $subquery = AccessListUserRole::whereInOwners( $users )->select('access_list_id');
+        return AccessList::whereIn( 'id', $subquery );
+    }
+    
+    
     public static function whereWriter( $user ) {
         if( $user instanceof User ) {
             $user_id = $user->id;
@@ -159,6 +171,20 @@ class AccessList extends Model {
         return AccessList::whereIn( 'id', $subquery );
     
     }
+    
+    public static function whereInUsersCanRead( $users ) {
+        // $subquery = AccessListUserRole::whereInUsersCanRead( $users )->select( 'access_list_id' );
+        $subquery = AccessListUserRole::whereInUsersCanRead( $users )->get()->pluck('access_list_id')->toArray();
+        return AccessList::whereIn( 'id', $subquery );
+    }
+
+    public static function whereInUsersCanWrite( $users ) {
+        // $subquery = AccessListUserRole::whereInUsersCanWrite( $users )->select( 'access_list_id' );
+        $subquery = AccessListUserRole::whereInUsersCanWrite( $users )->get()->pluck( 'access_list_id' )->toArray();
+        return AccessList::whereIn( 'id', $subquery );
+    }
+    
+    
     
     //////////////////////////////////////////////////////////////////////////
     //
@@ -269,8 +295,11 @@ class AccessList extends Model {
         $user_id = ( $user instanceof User ) ? $user->id : $user;
         $result = AccessListUserRole::where( 'user_id', $user_id )
                                     ->whereIn( 'role', [ 'owner', 'writer', 'reader'] )
-                                    ->where( 'access_list_id', $this->id )->count();
-        return $result == 1;
+                                    ->where( 'access_list_id', $this->id );
+        // $r = clone $result;
+        // if_debug( $r->get() );
+        
+        return $result->count() == 1;
     }
     
     //////////////////////////////////////////////////////////////////////////

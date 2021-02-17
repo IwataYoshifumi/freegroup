@@ -16,6 +16,8 @@ conposer.phar
 .phpunit.result.cache
 .my.cnf
 /storage
+worker.log
+phpinfo.php
 
 ## Laravel Homestead ##
 /.vagrant

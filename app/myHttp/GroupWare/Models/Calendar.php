@@ -94,10 +94,10 @@ class Calendar extends Model {
         $subquery = DB::table( 'accesslistables' )->select('accesslistable_id' )->whereIn( 'access_list_id', $access_lists )->where( 'accesslistable_type', Calendar::class );
         // if_debug( 'getCanRead', $subquery, $subquery->get() );
         return self::whereIn( 'id', $subquery )->get();
+        
+        
     }
     
-    
-
     /////////////////////////////////////////////////////////////////////////////////////////////
     //
     //  権限確認メソッド
@@ -154,6 +154,21 @@ class Calendar extends Model {
         return ! $this->is_not_use();
     }
     
+    public function isPrivate() {
+        return $this->type == 'private';
+    }
+
+    public function isPublic() {
+        return $this->type == 'public';
+    }
+    
+    public function isCompanyWide() {
+        return $this->type == 'company-wide';
+    }
+    
+    public function isNotCompanyWide() {
+        return ! $this->isCompanyWide();
+    }
 
     /////////////////////////////////////////////////////////////////////////////////////////////
     //

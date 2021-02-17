@@ -34,7 +34,7 @@ class FirstScheduledJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $calprops;
+    public $calprops;                       // Googleカレンダーと双方向同期中のCalPropのコレクション
     
     /**
      * Create a new job instance.
@@ -42,14 +42,16 @@ class FirstScheduledJob implements ShouldQueue
      * @return void
      */
     public function __construct() {
+
+        // 双方向同期のCalPropを検索
         //
         $this->calprops = CalProp::where( 'google_sync_on', 1 )
                                  ->where( 'google_sync_bidirectional', 1 )
                                  ->get();
-        
-        Log::info( __FILE__ .' has been running.');
+
         
         if( is_debug() ) {
+            Log::debug( __FILE__ .' has been running.');
             $log  = " : calprops_num : ". $this->calprops->count();
             Log::debug( __METHOD__ );
             Log::debug( __METHOD__. $log );
@@ -59,6 +61,8 @@ class FirstScheduledJob implements ShouldQueue
 
     /**
      * Execute the job.
+     *
+     * 双方向同期になっているCalPropに対してジョブを立ち上げる
      *
      * @return void
      */
@@ -76,6 +80,9 @@ class FirstScheduledJob implements ShouldQueue
             }
             
             SecondListGoogleEvents::dispatch( $calprop );
+            // SecondListGoogleEvents::dispatch( $calprop )->delay( now()->addMinute() );
         }    
     }
+
+
 }

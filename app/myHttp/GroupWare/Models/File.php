@@ -52,6 +52,27 @@ class File extends Model {
     
     //////////////////////////////////////////////////////////////////////////
     //
+    //  DBクエリーメソッド
+    //
+    //////////////////////////////////////////////////////////////////////////
+    public static function whereAttached() {
+        return self::where( function( $query ) {
+                $query->has( 'reports' )
+                      ->orHas( 'schedules' )
+                      ->orHas( 'calprops'  );
+            });
+    }
+
+    public static function whereDoentAttached() {
+        return self::where( function( $query ) {
+                    $query->doesntHave( 'reports' )
+                          ->doesntHave( 'schedules' )
+                          ->doesntHave( 'calprops'  );            
+            });
+    }
+    
+    //////////////////////////////////////////////////////////////////////////
+    //
     //  値取得メソッド
     //
     //////////////////////////////////////////////////////////////////////////

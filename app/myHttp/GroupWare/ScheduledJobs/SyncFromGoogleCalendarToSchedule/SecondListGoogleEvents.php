@@ -36,6 +36,11 @@ class SecondListGoogleEvents implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    //
+
+
+    //　
+    //
     public $calprop;
     public $calendar;
     public $user;
@@ -65,8 +70,12 @@ class SecondListGoogleEvents implements ShouldQueue
     /**
      * Execute the job.
      *
+     * CalProp毎にGoogleカレンダーを検索して、新規・更新・削除されたイベントを検索
+     * 新規・更新・削除されたイベントがあれば、それをFreeGroupのスケジュールに反映するジョブ（キュー）を起動する
+     *
      * @return void
      */
+    
     public function handle() {
         //
         if( ! $this->checkSyncOrNot() ) { return false; }
@@ -253,7 +262,7 @@ class SecondListGoogleEvents implements ShouldQueue
     }
      
     private function debug_log_1( $calprop, $google_event, $method ) {
-        if( is_debug() ) {
+        if( 0 && is_debug() ) {
             $log  = " : calprop_id : ". $calprop->id;
             Log::debug( $method. $log );
             $log = " : google_calendar_id : ". $calprop->google_calendar_id;
@@ -274,7 +283,7 @@ class SecondListGoogleEvents implements ShouldQueue
     
     private function debug_log_2( $optParams, $updatedMin, $method ) {
         
-        if( is_debug() ) {
+        if( 0 && is_debug() ) {
             Log::debug( $method. " : timeMax    : ". $optParams['timeMax']);
             Log::debug( $method. " : timeMin    : ". $optParams['timeMin']);
             if( $updatedMin ) {
@@ -286,7 +295,7 @@ class SecondListGoogleEvents implements ShouldQueue
     }
     
     private function debug_log_3( $that, $method ) {
-        if( is_debug() ) {
+        if( 1 && is_debug() ) {
             Log::debug( $method. '---------------------------------------------------- START');
             $log  = " : calprop_id : "        . $that->calprop->id;
             Log::debug( $method. $log );

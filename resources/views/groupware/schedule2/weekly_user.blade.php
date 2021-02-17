@@ -36,14 +36,28 @@ $Depts = op( $returns )['depts'];
 //　縦軸を社員名するための表示用データ
 //
 $users_schedules = [];
+
+// 全社公開カレンダーがあるか検索
+foreach( $schedules as $s ) {
+    $calendar = $Calendars->find( $s->calendar_id );
+    if( $calendar->isCompanyWide() ) {
+        $users_schedules['company-wide'] = [];
+        break;
+    }
+}
 foreach( $Users as $u ) { $users_schedules[$u->id] = []; }
 foreach( $schedules as $s ) {
-    if( $s->user ) { array_push( $users_schedules[$s->user->id] , $s->id ); }
-    if( ! empty( $s->users ) and count( $s->users )) {
-        foreach( $s->users as $u ) {
-            if( op( $s->user )->id == $u->id ) { continue; }
-            array_push( $users_schedules[$u->id], $s->id ); 
+    $calendar = $Calendars->find( $s->calendar_id );    
+    if( $calendar->type != 'company-wide' ) {
+        if( $s->user ) { array_push( $users_schedules[$s->user->id] , $s->id ); }
+        if( ! empty( $s->users ) and count( $s->users )) {
+            foreach( $s->users as $u ) {
+                if( op( $s->user )->id == $u->id ) { continue; }
+                array_push( $users_schedules[$u->id], $s->id ); 
+            }
         }
+    } else {
+        array_push( $users_schedules['company-wide'], $s->id ); 
     }
 }
 
@@ -89,8 +103,6 @@ $route_to_today = route( $route_name , $argv_today );
                     @include( 'layouts.flash_message' )
                     @include( 'layouts.error' )
 
-
-
                     <div class="row m-2 w-100 w-md-50">
                         
                         <!-- 検索フォームボタン・検索ダイヤログ -->
@@ -112,8 +124,6 @@ $route_to_today = route( $route_name , $argv_today );
                         <div class="text-nowrap h5 bg-light">{{ $print_period }}</div>
                         <a class="btn btn_icon" href="{{ route( Route::currentRouteName(), $argv_2 ) }}">@icon( caret-right )</a>
                         <div class="col-1"></div>
-                        
-
 
                     </div>
 
@@ -147,7 +157,11 @@ $route_to_today = route( $route_name , $argv_today );
                                     <tr class="{{ $class_name }}">
                                         <th>
                                             <div class="uitooltip" style="writing-mode: vertical-rl">
-                                                {{ $user->name }}
+                                                @if( $user_id == 'company-wide' )
+                                                    全社公開
+                                                @else
+                                                    {{ $user->name }}
+                                                @endif
                                             </div>
                                         </th>
                                         
@@ -173,25 +187,23 @@ $route_to_today = route( $route_name , $argv_today );
                                                 @foreach( $s_ids as $id )
                                                     @if( ! in_array( $id, $user_schedule_ids )) @continue @endif
                                                     @php 
-                                                        $s = $schedules->find($id); 
+                                                        $s = $schedules->find($id);
+                                                        
                                                         if( $i >= $max_rows ) {
                                                             printf( '<div class="show_daily schedule" data-date="%s">・・・</div>', $d );
                                                             break;
                                                         }
                                                         $i++;
-                                                        $calprop = $Calprops[$s->calendar_id];
+                                                        $calprop  = $Calprops[$s->calendar_id];
+                                                        $calendar = $Calendars->find( $s->calendar_id );
                                                         
                                                         $schedule_class = "schedule schedule_item calendar_" . $s->calendar_id;
                                                         $data_schedule = " data-schedule_id='$s->id' data-calendar_id='$s->calendar_id' ";
 
-
-
-
-
                                                     @endphp
                                                     {{-- 予定作成者を表示 --}}
-                                                    @if( $s->user and $s->user->id == $user->id )
-                                                        <div style="{{ $calprop->style() }}" class="{{ $schedule_class }} user_{{ $s->user->id }}" {!! $data_schedule !!}>
+                                                    @if( $calendar->isNotCompanyWide() and $s->user and $s->user->id == $user->id  )
+                                                        <div style="{{ $calprop->style() }}" class="{{ $schedule_class }} user_{{ $s->user->id }}" {!! $data_schedule !!}>   {{-- htmlspecialchars OK --}}
                                                             <div class="d-flex">
                                                                 <div class="mr-auto">{{ $s->user->name }}：{{ $s->name }}</div>
                                                                 <div class="ml-auto">{{ $s->start_time() }}</div>
@@ -199,17 +211,26 @@ $route_to_today = route( $route_name , $argv_today );
                                                         </div>
                                                     @endif
                                                     {{-- 予定関連社員の表示 --}}
-                                                    @if( $show_attendees && count( $s->users ))
+                                                    @if( $calendar->isNotCompanyWide() && $show_attendees && count( $s->users ) )
                                                         @foreach( $s->users as $u )
                                                             @if( $s->user_id == $u->id ) @continue @endif
                                                             @if( $u->id != $user->id )   @continue @endif
-                                                            <div style="{{ $calprop->style() }}" class="{{ $schedule_class }} user_{{ $u->id}}" {!! $data_schedule !!}>
+                                                            <div style="{{ $calprop->style() }}" class="{{ $schedule_class }} user_{{ $u->id}}" {!! $data_schedule !!}>   {{-- htmlspecialchars OK --}}
                                                                 <div class="d-flex">
                                                                     <div class="mr-auto">{{ $u->name         }}：{{ $s->name }}</div>
                                                                     <div class="ml-auto">＊{{ $s->start_time() }}</div>
                                                                 </div>
                                                             </div>
                                                         @endforeach
+                                                    @endif
+                                                    {{-- 全社公開カレンダーの表示 --}}
+                                                    @if( $calendar->isCompanyWide() )
+                                                        <div style="{{ $calprop->style() }}" class="{{ $schedule_class }}" {!! $data_schedule !!}>   {{-- htmlspecialchars OK --}}
+                                                            <div class="d-flex">
+                                                                <div class="mr-auto">{{ $s->name }}</div>
+                                                                <div class="ml-auto">{{ $s->start_time() }}</div>
+                                                            </div>
+                                                        </div>
                                                     @endif
                                                 @endforeach
                                             </td>

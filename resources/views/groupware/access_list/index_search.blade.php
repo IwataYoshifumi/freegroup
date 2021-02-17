@@ -41,11 +41,13 @@ $array_role_select = ACL::get_array_roles_for_select();
                             {{ Form::checkBox( "find[role][$role]", $role, optional( optional( $find )['role'])[$role], [ 'id' => $form_id, 'class' => 'checkbox_class' ] ) }}
                         @endforeach
                     </fieldset>
-                    {{-- アクセス権ないものも検索 --}}
-                    <fieldset class="border border-dark col-12 mt-1">
-                        <label for="search_all" class="m-1">アクセス権ないものも検索</label>
-                        {{ Form::checkBox( "find[all]", 1, optional( $find )['all'], [ 'id' => 'search_all', 'class' => 'checkbox_class' ] ) }}
-                    </fieldset>
+                    @if( is_debug() ) 
+                        {{-- アクセス権ないものも検索 --}}
+                        <fieldset class="border border-dark col-12 mt-1">
+                            <label for="search_all" class="m-1">アクセス権ないものも検索</label>
+                            {{ Form::checkBox( "find[all]", 1, optional( $find )['all'], [ 'id' => 'search_all', 'class' => 'checkbox_class' ] ) }}
+                        </fieldset>
+                    @endif
                 </div>
             </div>            
     

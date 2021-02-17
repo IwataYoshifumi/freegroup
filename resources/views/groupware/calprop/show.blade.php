@@ -75,7 +75,7 @@ $info = "<i class='fas fa-minus-circle' style='color:lightgray'></i>";
                         @endif
 
 
-                        @elseif( $calprop->is_filled_GoogleConfig() ) 
+                        @elseif( $calprop->is_filled_GoogleConfig() and $user->can( 'update', $calprop ) ) 
                             <a class="btn btn-warning border-dark" href="{{ $route_gsync_check }}">Googleカレンダー同期チェック</a>
                         @endif
                         
@@ -84,7 +84,7 @@ $info = "<i class='fas fa-minus-circle' style='color:lightgray'></i>";
                         @include( 'layouts.flash_message' )
 
                         <div class="form-group row">
-                            <label for="dept_id" class="col-md-4 col-form-label text-md-right m-1">カレンダー名{!! $info !!}
+                            <label for="dept_id" class="col-md-4 col-form-label text-md-right m-1">カレンダー名{!! $info !!}   {{-- htmlspecialchars OK --}}
                             </label>
                             <div class="col-md-6 m-1">
                                 {{ $calendar->name }}
@@ -95,7 +95,7 @@ $info = "<i class='fas fa-minus-circle' style='color:lightgray'></i>";
                                 {{ $calprop->name }}
                             </div>
                         
-                            <label for="dept_id" class="col-md-4 col-form-label text-md-right m-1">カレンダー公開種別{!! $info !!}</label>
+                            <label for="dept_id" class="col-md-4 col-form-label text-md-right m-1">カレンダー公開種別{!! $info !!}</label>   {{-- htmlspecialchars OK --}}
                             <div class="col-md-6 m-1">
                                 {{ Calendar::getTypes()[$calendar->type] }}
                             </div>
@@ -208,7 +208,7 @@ $info = "<i class='fas fa-minus-circle' style='color:lightgray'></i>";
 
                             <div class="col-4 m-1"></div>
                             <ul class="col-7 m-1">
-                                <ui>{!! $info !!}はカレンダー管理者設定</ui>
+                                <ui>{!! $info !!}はカレンダー管理者設定</ui>   {{-- htmlspecialchars OK --}}
                             </ul>
                         </div>
                             

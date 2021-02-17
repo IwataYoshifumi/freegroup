@@ -27,6 +27,7 @@ use App\myHttp\GroupWare\Models\ReportList;
 use App\myHttp\GroupWare\Models\ReporPropt;
 
 use App\myHttp\GroupWare\Models\Actions\ReportListAction;
+use App\myHttp\GroupWare\Controllers\Search\SearchReportList;
 
 use App\myHttp\GroupWare\Models\User;
 use App\myHttp\GroupWare\Models\AccessList;
@@ -38,15 +39,13 @@ class ReportListController extends Controller {
     public function index( Request $request ) {
         
         $this->authorize( ReportList::class );
+
+        // 検索条件の初期化
+        //
+        if( empty( $request->user_auth )) { $request->user_auth = 'canRead'; }
+        if( empty( $request->users     )) { $request->users     = [ user_id() ]; }
         
-        // $report_lists = SearchReportList::search( $find );
-        $report_lists = ReportList::all();
-        
-        // $report_lists = ReportList::with( [
-        //         'access_lists', 
-        //         'calprops' => function( $query ) { $query->where( 'user_id', user_id() ); } 
-        //     ] )->get();
-        // $report_lists = ReportList::all();
+        $report_lists = SearchReportList::search( $request );
         
         BackButton::setHere( $request );
         return view( 'groupware.report_list.index' )->with( 'report_lists', $report_lists )

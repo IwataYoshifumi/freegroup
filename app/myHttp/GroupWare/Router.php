@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Models\Dept;
 
 use App\Http\Helpers\BackButton;
+use App\Http\Helpers\Routes\ScreenSizeRoute;
 
 class Router {
  
@@ -47,6 +48,8 @@ class Router {
         
         Route::middleware( 'auth:user,admin' )->group( function() {
             self::route_ajax(); 
+            self::test_user_admin_ok_route();
+            ScreenSizeRoute::route();
         });
         
         self::customer_route();
@@ -176,50 +179,7 @@ class Router {
         
     }
     
-    //　Schedule ルート
-    //
-    // static public function schedule_route() {
-        
-    //     Route::prefix( 'schedule')->name( 'schedule.')->namespace( '\App\myHttp\GroupWare\Controllers' )->group( function() {
-            
-    //         Route::get(   '/index',      'ScheduleController@index'          )->name('index'       );
-    //         Route::get(   '/monthly',    'ScheduleController@index_monthly'  )->name('monthly'     );
-    //         Route::get(   '/weekly',     'ScheduleController@index_weekly'   )->name('weekly'      );
-    //         Route::get(   '/daily',      'ScheduleController@index_daily'    )->name('daily'       );
-    //         Route::get(   '/json_search','ScheduleController@json_search'    )->name('json_search' );
-            
-    //         Route::get(   '/create',     'ScheduleController@create'          )->name('create');
-    //         Route::post(  '/create',     'ScheduleController@store'           )->name('store' );
-            
-    //         Route::get(   '/show/{schedule}',     'ScheduleController@show'   )->name('show'  )->where( 'schedule', '\d+' );
-    //         Route::get(   '/show',                'ScheduleController@show_m' )->name('show_m');
-            
-    //         Route::get(   '/edit/{schedule}',     'ScheduleController@edit'   )->name('edit'   )->where( 'schedule', '\d+' );
-    //         Route::post(  '/edit/{schedule}',     'ScheduleController@update' )->name('update' )->where( 'schedule', '\d+' );
-    
-    //         Route::get(     '/delete/{schedule}',     'ScheduleController@delete'  )->name('delete' )->where( 'schedule', '\d+' );
-    //         Route::delete(  '/delete/{schedule}',     'ScheduleController@deleted' )->name('deleted')->where( 'schedule', '\d+' );
-    
-    
-    //         config(['groupware.schedule.index'    => '予定一覧',
-            
-    //                 'groupware.schedule.monthly'  => '月次表示',
-    //                 'groupware.schedule.weekly'   => '週次表示',
-    //                 'groupware.schedule.daily'    => '日次表示',
-    //                 'groupware.schedule.create'   => '新規　予定登録',
-    //                 'groupware.schedule.store'    => '新規　予定登録完了',
-    //                 'groupware.schedule.show'     => '予定内容',
-    //                 'groupware.schedule.detail'   => '予定詳細',
-    //                 'groupware.schedule.edit'     => '予定　変更',
-    //                 'groupware.schedule.update'   => '予定　変更完了',
-    //                 'groupware.schedule.delete'   => '予定　削除',
-    //                 'groupware.schedule.deleted'  => '予定　削除完了',
-    //                 'groupware.schedule.select'   => '予定　選択',
-    //                 ]);
-    //     });
-    // }
-    
-        //　Schedule2 ルート
+    //　Schedule2 ルート
     //
     static public function schedule2_route() {
         
@@ -275,26 +235,6 @@ class Router {
         });
     }
     
-    //  ScheduleType ルート
-    //
-    // static public function schedule_type_route() {
-    //     Route::prefix( 'schedule.type')->name( 'schedule.type.')->namespace( '\App\myHttp\GroupWare\Controllers' )->group( function() {
-        
-    //         Route::get(   '/index',                 'ScheduleTypeController@index'      )->name('index'       );
-    //         Route::get(   '/create',                'ScheduleTypeController@create'     )->name('create');
-    //         Route::post(  '/create',                'ScheduleTypeController@store'      )->name('store' );
-    //         Route::get(   '/edit/{schedule_type}',   'ScheduleTypeController@edit'       )->name('edit'   )->where( 'schedule_type', '\d+' );
-    //         Route::post(  '/edit/{schedule_type}',   'ScheduleTypeController@update'     )->name('update' )->where( 'schedule_type', '\d+' );
-
-    //         config(['groupware.schedule.type.index'    => 'スケジュール種別',
-    //                 'groupware.schedule.type.create'    => '新規スケジュール種別',
-    //                 'groupware.schedule.type.edit'      => 'スケジュール種別 変更',
-            
-    //                 ]);
-    //     });
-    
-    // }
-
     //  Report ルート
     //
     static public function report_route() {
@@ -377,8 +317,6 @@ class Router {
         });
     }
     
-    
-    
     //  File ルート
     //
     static public function file_route() {
@@ -408,7 +346,7 @@ class Router {
             Route::post(   '/api/upload', 'FileController@uploadAPI' )->name( 'api.upload' );
             Route::post(   '/api/delete', 'FileController@deleteAPI' )->name( 'api.delete' );
 
-            if( is_debug() ) {
+            if( 1 or is_debug() ) {
 
                 Route::get( '/deleteAllUntachedFiles',  'FileController@deleteAllUntachedFiles'   )->name('deleteAllUntachedFiles');
             }
@@ -422,9 +360,6 @@ class Router {
                     ]);
         });
     }
-    
-
-    
     
     //  AccessList ルート
     //
@@ -535,30 +470,51 @@ class Router {
 
             //　File Component 開発用
             //
-            if( is_debug() ) {
+            if( true or is_debug() ) {
+                
+                Route::get( '/test',     'TestController@test'     )->name( 'test' );
+                Route::get( '/delete_files', 'TestController@deleteFiles' )->name( 'delete_files' );
+                Route::get(  '/files',  'TestController@files'        )->name('files');
+                Route::post( '/files',  'TestController@filesUpdate'  )->name('files');
+                Route::get( '/search_report_lists', 'TestController@searchReportLists' )->name( 'search_report_lists');
+            }
+
+            config([
+                    'groupware.test.files'     => 'ファイルテスト',
+                    'groupware.test.search_report_lists'     => '日報リスト検索',
+            ]);
+        });
+    }
+    
+    static public function test_user_admin_ok_route() {
+        Route::name( 'groupware.test.' )->namespace( '\App\myHttp\GroupWare\Controllers' )->group( function() {
+
+            //　File Component 開発用
+            //
+            if( true or is_debug() ) {
                 
                 //　テンプレートルートをコピーして使う
                 //
                 Route::get( '/template', 'TestController@template' )->name( 'template' );
                 Route::get( '/depts_users_customers', 'TestController@testDeptUserCustomer' )->name( 'depts_users_customers' );
                 
+                //　スクリーンサイズ取得テスト
+                //
+                
                 
                 //　カスタムBlade iconのテスト
                 //
                 Route::get( '/custome_blade_icons',  'TestController@icons'    )->name( 'custome_blade_icons' );
-                
-                
-                Route::get( '/test',     'TestController@test'     )->name( 'test' );
-                Route::get( '/delete_files', 'TestController@deleteFiles' )->name( 'delete_files' );
-                Route::get(  '/files',  'TestController@files'        )->name('files');
-                Route::post( '/files',  'TestController@filesUpdate'  )->name('files');
             }
 
             config([
                     'groupware.test.files'     => 'ファイルテスト',
             ]);
         });
+        
+        
     }
+    
 
     
     //  JSONルート AJAX
@@ -574,9 +530,12 @@ class Router {
     static public function route_ajax() {
         Route::namespace( '\App\myHttp\GroupWare\Controllers\AJAX' )->group( function() {
             
-            Route::get('/ajax/dept/search',       'DeptController@search'      )->name( 'ajax.dept.search'     );
-            Route::get('/ajax/user/search',       'UserController@search'      )->name( 'ajax.user.search'     );
-            Route::get('/ajax/customer/search',   'CustomerController@search'  )->name( 'ajax.customer.search' );
+            Route::get('/ajax/dept/search',         'DeptController@search'         )->name( 'ajax.dept.search'     );
+            Route::get('/ajax/user/search',         'UserController@search'         )->name( 'ajax.user.search'     );
+            Route::get('/ajax/customer/search',     'CustomerController@search'     )->name( 'ajax.customer.search' );
+            Route::get('/ajax/report_list/search',  'ReportListController@search'   )->name( 'ajax.report_list.search' );
+            
+            
         });
     }
 
