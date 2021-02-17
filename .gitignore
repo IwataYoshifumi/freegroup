@@ -13,6 +13,7 @@ conposer.phar
 .env
 .env.example
 .env.backup
+.env.cloud9
 .phpunit.result.cache
 .my.cnf
 /storage
