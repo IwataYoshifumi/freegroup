@@ -29,7 +29,8 @@ class ReportListPolicy
     }
 
     public function create(User $user) {
-        if( $user->is_retired() ) { return Response::deny( "ReportListPolicy::create 1 : You are retired." ); }
+        if(   $user->is_retired()               ) { return Response::deny( "ReportListPolicy::create 1 : You are retired." ); }
+        if( ! $user->hasAccessListsWhoIsOwner() ) { return Response::deny( "ReportListPolicy::create : You do not have AccessLists that you own" ); }
         return true;
     }
 

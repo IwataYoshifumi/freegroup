@@ -14,11 +14,11 @@ use App\myHttp\GroupWare\Models\ReportList;
 use App\Http\Helpers\BackButton;
 use App\Http\Helpers\MyHelper;
 
-$user = auth( 'user' )->user();
+$auth = auth( 'user' )->user();
 
 //　オーナー権限アクセスリスト
 //
-$access_lists = toArray( AccessList::whereOwner( $user )->get(), 'name', 'id' );
+$access_lists = toArray( AccessList::whereOwner( $auth )->get(), 'name', 'id' );
 
 //　日報リスト公開種別の選択肢 
 //
@@ -26,7 +26,7 @@ $report_list_types = array_merge( [''=>''], ReportList::getTypes() );
 
 $permissions = Report::getPermissions();
 
-if( ! $user->hasRole('CanCreatePrivateReportLists') ) { unset( $report_list_types['private'] );      }
+if( ! $auth->hasRole('CanCreatePrivateReportLists') ) { unset( $report_list_types['private'] );      }
 
 $route_name = Route::currentRouteName();
 

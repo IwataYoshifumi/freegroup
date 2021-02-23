@@ -19,7 +19,7 @@ use App\Http\Helpers\BackButton;
 $array_roles = ACL::get_array_roles_for_select();
 $array_roles[''] = '-';
 
-$user = auth( 'user' )->user();
+$auth = auth( 'user' )->user();
 $report_list_types   = ReportList::getTypes();
 $default_permissions = ReportProp::getPermissions();
 
@@ -82,16 +82,16 @@ $default_permissions = ReportProp::getPermissions();
                                 $report_prop = $report_list->report_props->first();
                                 $style = "color: ". $report_prop->text_color . "; background-color:" . $report_prop->background_color . ";";
                                 
-                                if( $report_list->isOwner( $user->id )) {
+                                if( $report_list->isOwner( $auth->id )) {
                                     $authority = "管理者";
-                                } elseif( $report_list->isWriter( $user->id )) {
+                                } elseif( $report_list->isWriter( $auth->id )) {
                                     $authority = "日報追加可能";
-                                } elseif( $report_list->isReader( $user->id )) {
+                                } elseif( $report_list->isReader( $auth->id )) {
                                     $authority = "閲覧のみ可";
                                 } else {
                                     $authority = "権限なし";
                                 }
-                                $button = ( $report_list->canRead( $user->id )) ? "詳細・変更" : "詳細";
+                                $button = ( $report_list->canRead( $auth->id )) ? "詳細・変更" : "詳細";
                                 
                                 if( $report_list->name == $report_prop->name ) {
                                     $name = htmlspecialchars( $report_prop->name );

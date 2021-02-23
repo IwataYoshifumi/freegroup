@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use DB;
 
@@ -68,7 +69,13 @@ class UserController extends Controller {
     }
     
     public function detail( User $user ) {
-        $user->init();
+
+        //　なんらかのエラーがあればログアウト？
+        //
+        if( ! $user->init() ) { 
+            // Auth::logout(); 
+            // return back(); 
+        }
         
         $user = User::find( $user->id );
         Backbutton::setHere( request() );

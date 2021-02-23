@@ -7,6 +7,7 @@ use Illuminate\Auth\Access\Response;
 
 use App\myHttp\GroupWare\Models\User;
 use App\myHttp\GroupWare\Models\Schedule;
+use App\myHttp\GroupWare\Models\Calendar;
 
 
 class SchedulePolicy
@@ -30,8 +31,11 @@ class SchedulePolicy
     }
 
     public function create(User $user) {
+        
+        //　予定作成可能があるか確認
         //
-        return true;
+        $calendars = Calendar::whereCanWrite( $user )->where( 'not_use', false )->get();
+        return count( $calendars ) >= 1;
     }
 
     public function update(User $user, Schedule $schedule) {

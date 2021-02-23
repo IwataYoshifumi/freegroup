@@ -39,7 +39,7 @@ class ReportListController extends Controller {
     public function index( Request $request ) {
         
         $this->authorize( ReportList::class );
-
+        
         // 検索条件の初期化
         //
         if( empty( $request->user_auth )) { $request->user_auth = 'canRead'; }
@@ -63,6 +63,8 @@ class ReportListController extends Controller {
     }
     
     public function create() {
+        
+        $this->authorize( 'create', ReportList::class );
 
         $report_list = new ReportList;
         $access_list = new AccessList;
