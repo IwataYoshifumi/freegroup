@@ -33,7 +33,7 @@ use App\myHttp\GroupWare\Models\Dept;
                             @method( 'GET' )
                             <div class="row">
                                 <div class="col-12 col-lg-6">
-                                    {{ Form::text( 'find[name]', old( 'find[name]', $find['name'] ), [ 'class' => 'form-control', 'placeholder' => '部署名' ] ) }}
+                                    {{ Form::text( 'find[name]', op( $find )['name'], [ 'class' => 'form-control', 'placeholder' => '部署名' ] ) }}
                                 </div>
                                 <div class="col-12 col-lg-6">
                                     <button type="submit" class="btn btn-search">検索</button>

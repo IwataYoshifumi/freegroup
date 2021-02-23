@@ -36,14 +36,28 @@ class InitUser  {
     
     //　検索
     //
+    //　何かしらのエラーがあれば false を返す
+    //
     public static function init( $user ) {
+
         
         $user = ( $user instanceof User ) ? $user : User::find( $user );
-        
+        $has_error = false;
+
         //　ロールグループの設定がなければデフォルトのロールグループを割当
         //
         if( ! $user->hasRoleGroup() ) {
-            $user->setRoleGroup( RoleGroup::getDefault() );
+
+            //　エラー対策（デフォルトRoleGroupの定義がないとエラーになってしまう対策）
+            //
+            if( RoleGroup::hasDefault() ) {
+                $user->setRoleGroup( RoleGroup::getDefault() );
+            } else {
+                //　デフォルトのRoleGroupがなければログアウト
+                //
+                session()->flash( 'error_message', "デフォルトのロールが設定されていません。管理者にデフォルトロールグループの作成とロール割当を依頼してください。" );
+                $has_error = true;                
+            }
         }
         
         //　Calprop, ReportPropクラスの初期化
@@ -54,6 +68,8 @@ class InitUser  {
         //　アクセス権がなくなったカレンダーのGoogleカレンダー同期を解除
         //
         self::unSyncGoogleCalendars( $user );
+
+        return ! $has_error;
     }
     
     //  アクセス権限がなくなったカレンダーのCalPropに対して、Googleカレンダー同期を解除する

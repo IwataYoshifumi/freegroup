@@ -96,10 +96,13 @@ class User extends OriginalUser {
     
     //////////////////////////////////////////////////////////////////////////
     //
-    //　ユーザロール関連（ロールグループ関連メソッド）
+    //　ロールグループ関連メソッド
+    //  アクセスリスト関連メソッド
     //
     //////////////////////////////////////////////////////////////////////////
     
+    //　ロールグループ関連
+    //
     public function role_group() {
         return $this->morphToMany( RoleGroup::class, 'rolegroupable' )->first();
     }    
@@ -114,6 +117,24 @@ class User extends OriginalUser {
         $subquery2 = RoleGroup::whereIn( 'id', $subquery1 )->select('id');
         return $this->role_groups()->whereIn( 'id', $subquery2 )->count() === 1;
     }
+
+    //　アクセスリスト関連
+    //
+    public function hasAccessListsWhoCanRead() {
+        $access_lists = AccessList::whereCanRead( $this )->count();
+        return $access_lists >= 1;
+    }
+    
+    public function hasAccessListsWhoCanWrite() {
+        $access_lists = AccessList::whereCanWrite( $this )->count();
+        return $access_lists >= 1;
+    }
+    
+    public function hasAccessListsWhoIsOwner() {
+        $access_lists = AccessList::whereOwner( $this )->count();
+        return $access_lists >= 1;
+    }
+
 
     //////////////////////////////////////////////////////////////////////////
     //

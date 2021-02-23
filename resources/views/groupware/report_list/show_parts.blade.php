@@ -13,7 +13,7 @@ use App\myHttp\GroupWare\Models\Search\ListOfUsersInTheAccessList;
 
 //　表示用データの取得
 //
-$user = auth( 'user' )->user();
+$auth = auth( 'user' )->user();
 $access_list = $report_list->access_list();
 $report_prop = $report_list->report_prop();
 
@@ -21,11 +21,11 @@ $route_access_list = route( 'groupware.access_list.show', [ 'access_list' => $ac
 
 $permissions = Report::getPermissions();
 
-if( $report_list->isOwner( $user->id )) {
+if( $report_list->isOwner( $auth->id )) {
     $authority = "管理者";
-} elseif( $report_list->isWriter( $user->id )) {
+} elseif( $report_list->isWriter( $auth->id )) {
     $authority = "スケジュール追加可能";
-} elseif( $report_list->isReader( $user->id )) {
+} elseif( $report_list->isReader( $auth->id )) {
     $authority = "スケジュール閲覧のみ";
 } else {
     $authority = "権限なし";

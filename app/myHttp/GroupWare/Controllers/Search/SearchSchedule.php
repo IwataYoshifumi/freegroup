@@ -44,8 +44,6 @@ class SearchSchedule {
         
         //　期間の検索
         //
-        // if_debug( $request->all() );
-
         $schedules = Schedule::where( function( $sub_query ) use ( $request ) {
                     $sub_query->where( function( $query ) use ( $request ) {
                                 $query->where( 'start_date', '>=', $request->start_date )
@@ -120,10 +118,18 @@ class SearchSchedule {
             } else {
                 $calendars = Calendar::getCanRead( user_id() );
             }
-            $private_calendars = clone $calendars->toQuery()->where( 'type', 'private' );
+            
+            if( count( $calendars )) {
+                $private_calendars = clone $calendars->toQuery()->where( 'type', 'private' );
+            } else {
+                // エラー対策　LogicException Unable to create query for empty collection.
+                // カレンダーが何も定義されていないとエラーになる
+                //
+                $private_calendars = Calendar::whereNull( 'id' );
+            }
 
         } else {
-            $private_calendars = Calendar::where( 'id', 0 );   
+            $private_calendars = Calendar::whereNull( 'id' );   
         }
         
         // 公開カレンダーの検索
@@ -132,16 +138,14 @@ class SearchSchedule {
             // $public_calendars = Calendar::whereInOwners( $users )->where( 'type', 'public' );
             $public_calendars = Calendar::where( 'type', 'public' );
         } else {
-            $public_calendars = Calendar::where( 'id', 0 );
+            $public_calendars = Calendar::whereNull( 'id' );
         }
 
         //　全社公開カレンダーの検索
         //
+        
         if( is_null( $request->calendar_types ) or in_array( 'company-wide', $request->calendar_types )) {
             $campany_wide_calendars = Calendar::where( 'type', 'company-wide' );
-        } else {
-            $campany_wide_calendars = Calendar::where( 'id', 0 );
-
         }
         
         //　カレンダーの公開種別の検索（公開、閲覧制限、全社公開）        
@@ -169,7 +173,14 @@ class SearchSchedule {
         // if_debug( $private_calendars->get()->toArray(), $public_calendars->get()->toArray(), $campany_wide_calendars->get()->toArray() );
         $calendars = $private_calendars->union( $public_calendars )->get();
 
-        $calendars = $calendars->toQuery()->select( 'id' );
+        // エラー対策　LogicException Unable to create query for empty collection.
+        // カレンダーが何も定義されていないとエラーになる
+        //
+        if( count( $calendars )) {
+            $calendars = $calendars->toQuery()->select( 'id' );
+        } else {
+            $calendars = Calendar::whereNull( 'id' )->select( 'id' );
+        }
         $campany_wide_calendars->select( 'id' );
 
         //　対象カレンダーの予定を検索
@@ -234,9 +245,8 @@ class SearchSchedule {
                             $query->whereIn( 'id', $user_ids ); 
                      }])->get();
 
-        
-        // if_debug( $users, $user_ids );
-        
+        //　検索結果を返す
+        //
         $return = [ 
                     'user_ids'  => $user_ids,
                     'users'     => $users,
@@ -246,6 +256,7 @@ class SearchSchedule {
                     'calprops'  => $calprops
                     ];
         
+        if_debug( $return );
         return $return;
         
         

@@ -7,6 +7,7 @@ use Illuminate\Auth\Access\Response;
 
 use App\myHttp\GroupWare\Models\User;
 use App\myHttp\GroupWare\Models\Report;
+use App\myHttp\GroupWare\Models\ReportList;
 
 
 class ReportPolicy
@@ -25,8 +26,11 @@ class ReportPolicy
     }
 
     public function create(User $user) {
+        
+        //　日報作成可能な日報リストがあるか確認
         //
-        return true;
+        $report_lists = ReportList::whereCanWrite( $user )->where( 'not_use', false )->get();
+        return count( $report_lists ) >= 1;
     }
 
     public function update(User $user, Report $report) {

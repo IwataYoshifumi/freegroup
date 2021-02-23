@@ -1,5 +1,7 @@
 @php
 
+use App\myHttp\GroupWare\Models\Report;
+
 $schedule_id = [ 'schedule' => $schedule->id ];
 $route_show       = route( 'groupware.schedule.show'  , $schedule_id ); 
 $route_edit       = route( 'groupware.schedule.edit'  , $schedule_id ); 
@@ -31,9 +33,9 @@ $target = ( $route_name == 'groupware.schedule.show_modal' ) ? "target='_parent'
         <a class="btn btn-outline-secondary m-1" href="{{ $route_show }}" {!! $target !!}>全画面表示</a>   {{-- htmlspecialchars OK --}}
     @endif
 
-    {{-- @can( 'update', $schedule ) --}}
+    @if( $auth->can( 'update', $schedule ) and $auth->can( 'create', Report::class ))
         <a class="btn btn-primary text-white col-2 m-1" href="{{ $route_new_report  }}" {!! $target !!}>新規日報</a>   {{-- htmlspecialchars OK --}}
-    {{-- @endif --}}
+    @endif
     
     @if( $show_more_info )
         <div class="ml-auto">

@@ -42,7 +42,10 @@ class RoleGroup extends Model {
         return RoleGroup::where( 'default', 1 )->first();
     }
     
-    
+    public static function hasDefault() {
+        $role_groups = RoleGroup::where( 'default', 1 )->get();
+        return count( $role_groups ) == 1;
+    }
     
     //////////////////////////////////////////////////////////////////////////
     //

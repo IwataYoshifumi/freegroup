@@ -20,8 +20,8 @@ use App\myHttp\GroupWare\View\groupware_models_customer_input_customers;
 //
 $route_name = Route::currentRouteName();
 
-$user      = auth( 'user' )->user();
-$creator   = ( $report->creator ) ? $report->creator : $user;
+$auth      = auth( 'user' )->user();
+$creator   = ( $report->creator ) ? $report->creator : $auth;
 $updator   = ( $report->updator ) ? $report->updator : null;
 $customers = old( 'customers', optional( $report )->customers ); 
 $users     = old( 'users',     optional( $report )->users ); 
@@ -36,12 +36,12 @@ $permissions = Report::getPermissions();
 //　日報リストの変更の変更はカレンダー作成者のみ可能
 //
 if( $route_name == 'groupware.report.create' ) {
-    $report_lists = toArrayWithEmpty( GetReportListForReportInput::user( $user->id ), 'name', 'id' );
+    $report_lists = toArrayWithEmpty( GetReportListForReportInput::user( $auth->id ), 'name', 'id' );
     $input_report_list_enable = true;
 
-} elseif( $route_name == 'groupware.report.edit' and $report->user_id == $user->id ) {
+} elseif( $route_name == 'groupware.report.edit' and $report->user_id == $auth->id ) {
     $report_list = $report->report_list;
-    $report_lists = toArrayWithEmpty( GetReportListForReportInput::getFromUserAndReportList( $user->id, $report_list ), 'name', 'id' );
+    $report_lists = toArrayWithEmpty( GetReportListForReportInput::getFromUserAndReportList( $auth->id, $report_list ), 'name', 'id' );
 
     $input_report_list_enable = true;
 
@@ -190,7 +190,7 @@ $is_invalid['report_list_id'] = ( $errors->has( 'report_list_id'         ) ) ? '
                         @endpush
                     
                         @if( $route_name == 'groupware.report.create' or 
-                           ( $route_name == 'groupware.report.edit' and $creator->id == $user->id ))
+                           ( $route_name == 'groupware.report.edit' and $creator->id == $auth->id ))
                                 <label for="place" class="col-md-4 mt-1 col-form-label text-md-right">変更権限</label>
                                 <div class="col-md-8">
                                     {{ Form::select( 'permission', $permissions, $report->permission, [ 'class' => 'form-control col-6' ] ) }}

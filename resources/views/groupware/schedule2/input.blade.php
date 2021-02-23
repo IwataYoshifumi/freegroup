@@ -24,8 +24,8 @@ use App\myHttp\GroupWare\View\Components\Customer\CustomersCheckboxComponent;
 //
 $route_name = Route::currentRouteName();
 
-$user      = auth( 'user' )->user();
-$creator   = ( $schedule->creator ) ? $schedule->creator : $user;
+$auth      = auth( 'user' )->user();
+$creator   = ( $schedule->creator ) ? $schedule->creator : $auth;
 $updator   = ( $schedule->updator ) ? $schedule->updator : null;
 $customers = old( 'customers', optional( $schedule )->customers ); 
 $users     = old( 'users',     optional( $schedule )->users ); 
@@ -40,12 +40,12 @@ $permissions = Schedule::getPermissions();
 //　カレンダーの変更の変更はカレンダー作成者のみ可能
 //
 if( $route_name == 'groupware.schedule.create' ) {
-    $calendars = toArrayWithEmpty( GetCalendarForScheduleInput::user( $user->id ), 'name', 'id' );
+    $calendars = toArrayWithEmpty( GetCalendarForScheduleInput::user( $auth->id ), 'name', 'id' );
     $input_calendar_enable = true;
     
-} elseif( $route_name == 'groupware.schedule.edit' and $schedule->user_id == $user->id ) {
+} elseif( $route_name == 'groupware.schedule.edit' and $schedule->user_id == $auth->id ) {
     $calendar = $schedule->calendar;
-    $calendars = toArrayWithEmpty( GetCalendarForScheduleInput::getFromUserAndCalendar( $user->id, $calendar ), 'name', 'id' );
+    $calendars = toArrayWithEmpty( GetCalendarForScheduleInput::getFromUserAndCalendar( $auth->id, $calendar ), 'name', 'id' );
     $input_calendar_enable = true;
     
 } else {
@@ -191,7 +191,7 @@ $is_invalid['calendar_id'] = ( $errors->has( 'calendar_id'         ) ) ? 'is-inv
                         @endpush
                     
                         @if( $route_name == 'groupware.schedule.create' or 
-                           ( $route_name == 'groupware.schedule.edit' and $creator->id == $user->id ))
+                           ( $route_name == 'groupware.schedule.edit' and $creator->id == $auth->id ))
                             <div class="form-group row">
                                 <label for="place" class="col-md-4 col-form-label text-md-right">変更権限</label>
                                 <div class="col-md-8">

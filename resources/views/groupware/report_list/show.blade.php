@@ -22,7 +22,7 @@ $route_show_report_prop  = route( 'groupware.report_prop.show',  [ 'report_prop'
 
 if_debug( ReportProp::default_text_color(), ReportProp::default_background_color(), config( 'groupware.report_prop') );
 
-$user = auth( 'user' )->user();
+$auth = auth( 'user' )->user();
 
 @endphp
 
@@ -45,7 +45,7 @@ $user = auth( 'user' )->user();
                         @if( $report_list->canRead( user_id() ))
                             <a class="col-1 ml-2 btn icon_btn" href="{{ $route_show_report_prop }}" title="日報関連　個人設定"> @icon( user-cog )</a>
                         @endif   
-                        @if( $user->can( 'delete', $report_list ))
+                        @if( $auth->can( 'delete', $report_list ))
                             <a class="col-1 col btn icon_btn text-danger ml-auto" href="{{ $route_delete_report_list }}" title="日報リスト削除"> @icon( trash-alt ) </a>
                         @endif
                     </div>

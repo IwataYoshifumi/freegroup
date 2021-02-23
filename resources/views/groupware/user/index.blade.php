@@ -53,11 +53,11 @@ use App\User;
                                 </td>
                                 
                                 @if( isset( $show['dept_id'] )) 
-                                    <td>{{ $user->dept->name }}</td>
+                                    <td>{{ op( $user->dept )->name }}</td>
                                 @endif
 
                                 @if( isset( $show['grade'] )) 
-                                    <td>{{ $user->grade}}</td>
+                                    <td>{{ $user->grade }}</td>
                                 @endif
                                 
                                 <td>{{ $user->name }}</td>
