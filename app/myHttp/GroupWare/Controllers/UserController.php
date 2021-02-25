@@ -19,6 +19,7 @@ use App\Http\Helpers\ScreenSize;
 
 use App\myHttp\GroupWare\Requests\UserRequest;
 use App\myHttp\GroupWare\Models\Actions\UserAction;
+use App\myHttp\GroupWare\Models\Initialization\InitUser;
 
 use App\myHttp\GroupWare\Models\User;
 use App\myHttp\GroupWare\Models\Dept;
@@ -72,7 +73,7 @@ class UserController extends Controller {
 
         //　なんらかのエラーがあればログアウト？
         //
-        if( ! $user->init() ) { 
+        if( ! InitUser::init( $user )) { 
             // Auth::logout(); 
             // return back(); 
         }

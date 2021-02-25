@@ -7,7 +7,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Notifications\RequestPassword;
-use Illuminate\Auth\Notifications\ResetPassword as ResetPasswordNotification;
+
+use App\Notifications\RestPasswordForUser as ResetPasswordNotification;
 
 class User extends Authenticatable
 {
@@ -119,8 +120,15 @@ class User extends Authenticatable
         }
     }
     
+    //　パスワードリセットメール（オーバーライド）
+    //
+    public function sendPasswordResetNotification($token) {
+        $this->notify(new ResetPasswordNotification($token));
+    }
+    
     //　パスワードリセットメール設定(ルート名、password.email, GET password.reset )
     //
+    /*
     public function sendPasswordResetNotification( $token ) {
         // if_debug( $token );
         $notice = new ResetPasswordNotification( $token );
@@ -130,12 +138,13 @@ class User extends Authenticatable
         $notice->createUrlUsing( $callback );
         $this->notify( $notice );
     }
+
     static public function getResetPasswordURL( $notifiable, $token ) {
         // $url = url( route( $this->route_name_for_reset_password, [ 'token' => $token, 'email' => $notifiable->getEmailForPasswordReset(), ] ));
         $url = url( route( self::$route_name['password.email'], [ 'token' => $token, 'email' => $notifiable->getEmailForPasswordReset(), ] ));
         return $url;
     }
-    
+    */
     /////////////////////////////////////////////////////////////////////////////////////////////
     //
     //  表示用関数

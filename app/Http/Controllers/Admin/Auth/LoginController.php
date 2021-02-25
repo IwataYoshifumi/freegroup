@@ -42,6 +42,12 @@ class LoginController extends Controller
      protected function guard() {
         return Auth::guard('admin');
     }
+    
+    //　未認証ユーザのリダイレクト（オーバーライド）
+    //
+    // protected function redirectTo() {
+    //     return route( 'welcome' );
+    // }
 
     public function showLoginForm() {
         return view('admin.auth.login');

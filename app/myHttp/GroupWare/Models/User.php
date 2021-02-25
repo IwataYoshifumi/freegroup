@@ -26,31 +26,6 @@ use App\myHttp\GroupWare\Models\Initialization\InitUser;
 
 class User extends OriginalUser {
 
-    // ModelRouteTrait
-    // const set_route_index_name  = "groupware.user.index";
-    // const set_route_create_name = "groupware.user.create";
-    
-    // public function __construct( array $attributes = [] ) {
-    //     parent::__construct($attributes);
-
-    //     // ModelRouteTraitで利用する変数
-    //     // 
-    //     $route_names = [ 'index'  => "groupware.user.index",
-    //                     'show'   => "groupware.user.show",
-    //                     'create' => "groupware.user.create",
-    //                     'store'  => "groupware.user.store",
-    //                     'edit'   => "groupware.user.edit",
-    //                     'update' => "groupware.user.update",
-    //                     'delete' => "groupware.user.delete",
-    //     ];
-    //     // $this->initModelRouteTrait( 'user', $route_names );
-    // }
-    //////////////////////////////////////////////////////////////////////////
-    //
-    //　リレーション定義
-    //
-    //////////////////////////////////////////////////////////////////////////
-
     public function dept() {
         return $this->belongsTo( Dept::class );
     }
@@ -136,15 +111,6 @@ class User extends OriginalUser {
     }
 
 
-    //////////////////////////////////////////////////////////////////////////
-    //
-    //　初期化・ユーザデータ・アクセスリスト修正後の関連データのアップデート
-    //
-    //////////////////////////////////////////////////////////////////////////
-    public function init() {
-        return InitUser::init( $this );
-    }
-    
     //////////////////////////////////////////////////////////////////////////
     //
     //　ユーザの状態取得メソッド

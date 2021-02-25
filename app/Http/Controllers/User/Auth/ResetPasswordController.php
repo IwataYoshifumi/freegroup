@@ -64,6 +64,12 @@ class ResetPasswordController extends Controller
         return Auth::guard( $this->guard );
     }
     
+    // パスワードブロッカー（オーバーライド）
+    //
+    public function broker() {
+        return Password::broker( 'users' );
+    }
+    
     //　パスワードのバリデーション
     //
     protected function rules() {

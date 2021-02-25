@@ -12,8 +12,17 @@ return [
     | these language lines according to your application's requirements.
     |
     */
+    
+    'user' => 'User',
+    'admin' => 'Administrator',
+    'customer' => 'Customer',
 
     'failed' => 'These credentials do not match our records.',
     'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
+
+    'user' => 'User',
+    'admin' => 'Administrator',
+    'customer' => 'Customer',
+    'reset_password' => 'Reset Password',
 
 ];
