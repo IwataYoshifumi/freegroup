@@ -7,6 +7,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
 
+use App\Notifications\RestPasswordForAdmin as ResetPasswordNotification;
+
 // class Admin extends Authenticatable {
 class Admin extends User {
 
@@ -30,6 +32,12 @@ class Admin extends User {
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    
+    //　パスワードリセットメール（オーバーライド）
+    //
+    public function sendPasswordResetNotification( $token ) {
+        $this->notify( new ResetPasswordNotification($token) );
+    }
 
 
 }

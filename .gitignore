@@ -1,5 +1,5 @@
 ## Composer ##
-conposer.phar
+# conposer.phar
 /node_modules
 /public/hot
 /public/storage
@@ -16,7 +16,13 @@ conposer.phar
 .env.cloud9
 .phpunit.result.cache
 .my.cnf
-/storage
+/storage/app/*
+/storage/logs/*
+/storage/framework/app/*
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/storage/framework/testing/*
 worker.log
 phpinfo.php
 

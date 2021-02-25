@@ -12,6 +12,7 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 use Illuminate\Auth\Events\PasswordReset;
 
+
 class ResetPasswordController extends Controller
 {
     /*
@@ -28,7 +29,7 @@ class ResetPasswordController extends Controller
     use ResetsPasswords;
     
     protected $guard     = "admin";
-    protected $view      = "admin.auth.password.reset";
+    protected $view      = "admin.auth.passwords.reset";
     protected $validator = "admin.password.validator";
     
     /**
@@ -41,8 +42,7 @@ class ResetPasswordController extends Controller
     //　パスワードリセットフォームの表示( オーバーライド )
     //
     public function showResetForm(Request $request, $token = null) {
-        // return view( 'user.auth.passwords.reset' )->with(
-        // dd( $view );
+        // dd( $this->view );
         return view( $this->view )->with(
             ['token' => $token, 'email' => $request->email]
         );
@@ -63,6 +63,12 @@ class ResetPasswordController extends Controller
     protected function guard() {
         return Auth::guard( $this->guard );
     }
+    
+    // パスワードブロッカー（オーバーライド）
+    public function broker() {
+        return Password::broker( 'admins' );
+    }
+    
     
     //　パスワードのバリデーション
     //

@@ -14,11 +14,14 @@ use App\myHttp\GroupWare\Models\Dept;
 use App\myHttp\GroupWare\Models\Group;
 use App\myHttp\GroupWare\Models\RoleGroup;
 use App\myHttp\GroupWare\Models\AccessList;
+use App\myHttp\GroupWare\Models\AccessListUserRole;
 use App\myHttp\GroupWare\Models\ACL;
 use App\myHttp\GroupWare\Models\CalProp;
 use App\myHttp\GroupWare\Models\Calendar;
 
 use App\myHttp\GroupWare\Models\Actions\AccessListUserRoleUpdate;
+use App\myHttp\GroupWare\Models\Actions\AccessListAction;
+use App\myHttp\GroupWare\Models\Actions\CalendarAction;
 
 use App\myHttp\GroupWare\Events\UserCreateEvent;
 use App\myHttp\GroupWare\Events\UserRetireEvent;
@@ -40,7 +43,6 @@ class InitUser  {
     //
     public static function init( $user ) {
 
-        
         $user = ( $user instanceof User ) ? $user : User::find( $user );
         $has_error = false;
 
@@ -60,7 +62,7 @@ class InitUser  {
             }
         }
         
-        //　Calprop, ReportPropクラスの初期化
+        //　Calprop, ReportProp クラスの初期化
         //
         InitCalendar::forUser( $user );
         InitReportProp::forUser( $user );
@@ -98,9 +100,100 @@ class InitUser  {
                 $user->notify( new UnSyncGoogleCalendar( $calprop ));
             }
         });
-        
     }
-    
+
+
+    // ユーザ作成時に初期の（自分のみ管理者の）アクセスリストと（公開）カレンダーを生成
+    // 管理者権限のみ実行可能
+    //
+    public static function whenUserHasCreatedFirst( User $user ) {
+        
+        //　初期化
+        //
+        self::init( $user );
+        
+        //　自分のみ管理者のアクセスリストを生成
+        //
+        $access_list = self::initAccessList( $user );
+        
+        //　自分の公開カレンダーを生成
+        //
+        if( ! is_null( $access_list )) {
+            self::initCalendar( $user, $access_list );
+        }
+    }
+
+
+    //　ユーザ用アクセスリストの初期化（ユーザが管理者のアクセスリストがなければ、作成）
+    //
+    public static function initAccessList( User $user ) {
+
+        // 管理者権限のアクセスリストがあればアクセスリストを生成せず、
+        // 自分が管理者のアクセスリストのインスタンスを返す。
+        //
+        $access_lists = AccessList::getOwner( $user );
+
+        if( count( $access_lists ) >= 1 ) {
+
+            //　自分のみ管理者であるアクセスリストを検索
+            //
+            $user_roles = AccessListUserRole::whereIn( 'access_list_id', $access_lists->pluck('id')->toArray() )
+                                            ->selectRaw( 'access_list_id, count( user_id ) as count' )
+                                            ->having( 'count', 1 )
+                                            ->groupBy( 'access_list_id' )->get();
+            // dump( $user_roles->toArray() );                
+            //　基本は自分のみ設定されているアクセスリストを返す
+            //
+            if( count( $user_roles )) {
+                return AccessList::find( $user_roles->first()->access_list_id );
+                
+            } else {
+                //　自分のみ管理者のアクセスリストがなければ任意のアクセスリストを返す
+                //
+                return $access_lists->first();
+            }
+        } 
+        
+        // 　自分のみ管理者のアクセスリストを生成
+        //
+        $request = new Request;
+        $request->name = $user->name . 'のみ管理者';
+        $request->memo = '初期自動生成';
+        
+        $i = 1;
+        $orders[$i] = $i;
+        $roles[$i]  = 'owner';
+        $types[$i]  = 'user';
+        $users[$i]  = $user->id;
+        $request->orders = $orders;
+        $request->roles  = $roles;
+        $request->types  = $types;
+        $request->users  = $users;
+        
+        $access_list = AccessListAction::creates( $request );
+        
+        return $access_list;        
+    }
+
+    //  自分の公開カレンダーを生成（自分のWrite権限カレンダーがない場合）
+    //  Write権限カレンダーがあれば、Null を返す
+    //
+    public static function initCalendar( User $user, AccessList $access_list ) {
+        
+        $calendars = Calendar::getCanWrite( $user );
+        if( count( $calendars )) { return null; }
+        
+        $request = new Request;
+        $request->name = $user->name . "の公開カレンダー";
+        $request->memo = "初期自動生成カレンダー";
+        $request->type = 'public';
+        $request->default_permission = 'creator';
+        $request->access_list_id = $access_list->id;
+
+        $calendar = CalendarAction::creates( $request );
+        
+        return $calendar;
+    }
 
 }
 

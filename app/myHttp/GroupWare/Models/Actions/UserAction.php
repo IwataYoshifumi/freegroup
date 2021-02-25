@@ -51,7 +51,8 @@ class UserAction  {
 
             //　他のDB関連初期化
             //
-            InitUser::init( $user );
+            // InitUser::init( $user );
+            InitUser::whenUserHasCreatedFirst( $user );
             
             return $user;
         });

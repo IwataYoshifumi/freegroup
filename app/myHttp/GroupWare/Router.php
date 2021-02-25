@@ -44,6 +44,10 @@ class Router {
 
         Route::middleware('auth:admin')->group(function () {
             self::role_group_route();
+
+            Route::prefix( 'groupware' )->name( 'groupware.' )->group( function() {
+                self::route_init();
+            });
         });
         
         Route::middleware( 'auth:user,admin' )->group( function() {
@@ -462,6 +466,21 @@ class Router {
             ]);
         });
     }
+
+    //　初期化ルート
+    //
+    static public function route_init() {
+        Route::prefix( 'init/' )->name( 'init.' )->namespace( '\App\myHttp\GroupWare\Controllers' )->group( function() {
+            Route::get(  '/all_users', 'InitController@showForminitAllUsers' )->name( 'all_users' );
+            Route::post( '/all_users', 'InitController@initAllUsers'         )->name( 'all_users' );
+            config([
+                'groupware.init.all_users'          => 'DB初期化',
+            ]);
+            
+        });
+    }
+
+
     
     //  開発用ルート（ TEST　）
     //
@@ -538,6 +557,8 @@ class Router {
             
         });
     }
+    
+    
 
 
 

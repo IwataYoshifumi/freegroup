@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Admin\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 class ForgotPasswordController extends Controller
 {
@@ -20,12 +23,20 @@ class ForgotPasswordController extends Controller
 
     use SendsPasswordResetEmails;
     
-    private $view = 'admin.auth.passwords.email';
-    
     //　リセットパスワードフォーム（オーバーライド）
+    //
     public function showLinkRequestForm() {
-        //  return view('user.auth.passwords.email');
-        // dd( $this->view );
-        return view( $this->view );
+        return view( 'admin.auth.passwords.email' );
     }
+    
+    // パスワードブロッカー（オーバーライド）
+    //
+    public function broker() {
+        return Password::broker( 'admins' );
+    }
+
+
+    // public function sendResetLinkEmail( Request $request ) {
+    //     dd( $request, Route::currentRouteName() );
+    // }
 }

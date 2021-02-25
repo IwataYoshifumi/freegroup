@@ -5,7 +5,7 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">ユーザ{{ __('Reset Password') }}</div>
+                <div class="card-header">【@lang( 'auth.user' )】 @lang( 'auth.reset_password' )</div>
 
                 <div class="card-body">
                     <form method="POST" action="{{ route('user.password.update') }}">

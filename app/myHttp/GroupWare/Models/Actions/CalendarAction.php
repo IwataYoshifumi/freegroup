@@ -38,32 +38,18 @@ class CalendarAction {
                 $calendar->not_use  = false;
                 $calendar->disabled = false;
                 $calendar->default_permission = $request->default_permission;
-        
                 $calendar->save();
 
+                //　アクセスリスト設定
+                //
                 $calendar->access_lists()->sync( [$request->access_list_id] );
 
                 //　全ユーザにCalPropを生成
                 //
                 InitCalendar::withCalendar( $calendar );
-                // $values = [ 'calendar_id'        => $calendar->id, 
-                //             'name'               => $calendar->name,
-                //             'memo'               => $calendar->memo,
-                //             'text_color'         => CalProp::default_text_color(),
-                //             'background_color'   => CalProp::default_background_color(),
-                //             'default_permission' => $calendar->default_permission,
-                //             ];
-                
-                // $colors = config( 'color' );
-                // foreach( User::all() as $i => $user ) {
-                //     // $values['background_color'] = Arr::random( $colors );                    
-                //     $values['user_id']          = $user->id;
-                //     $calprop = CalProp::create( $values );
-                // }
-                // if_debug( $values );
+
                 return $calendar;
             });
-        // dd( $calendar->calprops->first() );
         
         return $calendar;
     }

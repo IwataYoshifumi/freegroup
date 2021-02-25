@@ -91,9 +91,9 @@ return [
 
         'users' => [
             'driver' => 'eloquent',
-            // 'model' => App\Models\Vacation\User::class,
             'model' => App\myHttp\GroupWare\Models\User::class,
-            //'model' => App\Models\User::class,
+            // 'model' => App\Models\Vacation\User::class,
+            // 'model' => App\Models\User::class,
             // 'model' => App\User::class,
         ],
 
@@ -148,7 +148,7 @@ return [
 
         'admins' => [
             'provider' => 'admins',
-            'table' => 'password_resets',
+            'table' => 'admin_password_resets',
             'expire' => 60,
             'throttle' => 60,
         ],
