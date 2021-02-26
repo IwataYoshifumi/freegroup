@@ -45,8 +45,8 @@ class InitController extends Controller {
         
         session()->regenerateToken();
         session()->flash( 'flash_message', '初期化処理を実行しました。結果を確認してください。');
-        return view( 'groupware.init.init_all_users' );
-        // return redirect()->route( 'groupware.user.index' );
+        // return view( 'groupware.init.init_all_users' );
+        return redirect()->route( 'groupware.user.index' );
 
         
     }

@@ -15,13 +15,12 @@ return [
                             'retired'   => '退社',
                             'date_of_retired' => '退社日',
                         ],
-                        
-    'password_valicator'=> 3,  # config/passwordに設定
-
-    'locked_ids'          => [ 3 ],
+    
+    'locked_ids'          => [  ],
     
     // パスワードの設定
     //
+    'password_valicator'=> 3,  # config/passwordに設定
     'password'  => [ 'validator'  => 1,    // config.password ファイルのなかのバリデーションインジケータ
                      'time_limit' => 30,  // パスワードの有効日数
                     ],
