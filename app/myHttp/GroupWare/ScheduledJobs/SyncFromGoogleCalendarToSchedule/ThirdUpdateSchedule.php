@@ -84,6 +84,8 @@ class ThirdUpdateSchedule implements ShouldQueue
         $schedule->updator_id = $user->id;
         $schedule->save();
         
+        if_debug( $google_event );
+        
         $gcal_sync->google_etag = $google_event->etag;
         $gcal_sync->google_synced_at = $google_event->updated;
         $gcal_sync->save();

@@ -22,6 +22,9 @@ LOCK TABLES `depts` WRITE;
 ALTER TABLE `depts` DISABLE KEYS;
 DELETE FROM depts;
 INSERT INTO `depts` VALUES 
+/*
+ * 部署ID、部署名、 created_at, updated_at )
+ */
 (1,'総務部',NULL,NULL),
 (2,'企画部',NULL,NULL),
 (3,'営業部',NULL,NULL),
@@ -38,11 +41,32 @@ LOCK TABLES `users` WRITE;
 ALTER TABLE `users` DISABLE KEYS;
 DELETE FROM users;
 INSERT INTO `users` VALUES 
+/*
+ * ユーザID、名前、メールアドレス、email_valified must be null, hash password, 部署ID, 役職, 退社フラグ(0：在籍、1：退社、退社日、rememober_token must be null, created_at, updated_at )
+ */
 (1,'iwata','iwata@network-tokai.jp',NULL,'$2y$10$LR/jC2l4EcPlOldDFgZPIuGSLfYkegg1L99k1vPFtEHrPLvSKRY.6',1,'社員',0,NULL,NULL,NULL,NULL),
 (2,'user1','user1@your.domain',NULL,'$2y$10$LR/jC2l4EcPlOldDFgZPIuGSLfYkegg1L99k1vPFtEHrPLvSKRY.6',1,'社員',0,NULL,NULL,NULL,NULL),
 (3,'user2','user2@your.domain',NULL,'$2y$10$LR/jC2l4EcPlOldDFgZPIuGSLfYkegg1L99k1vPFtEHrPLvSKRY.6',2,'社員',0,NULL,NULL,NULL,NULL),
 (4,'user3','user3@your.domain',NULL,'$2y$10$LR/jC2l4EcPlOldDFgZPIuGSLfYkegg1L99k1vPFtEHrPLvSKRY.6',3,'社員',0,NULL,NULL,NULL,NULL);
 ALTER TABLE `users` ENABLE KEYS;
+UNLOCK TABLES;
+
+/*
+ *
+ * customers
+ *
+ */
+LOCK TABLES `customers` WRITE;
+ALTER TABLE `customers` DISABLE KEYS;
+DELETE FROM customers;
+INSERT INTO `customers` VALUES 
+/*
+ * 顧客ID,名前,メールアドレス,フリカナ,郵便番号','都道府県','市区町村','町名','建物名・部屋番号',TEL,FAX',携帯,誕生日,性別,備考,salseforce_id must be null,deleted_at,created_at,updated_at);
+ */
+(1,'株式会社ネットワーク東海','iwata@network-tokai.jp','ネットワークトウカイ','4710075','愛知県','豊田市','日之出町1-14-22','ビル名','0565356826','0565356827','',NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(2,'FreeGroup開発','freegroup@freegroup.work','フリーグループカイハツ','4710075','愛知県','豊田市','日之出町1-14-22','ビル名','0565356826','0565356827','',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+(3,'名前','email@your.domain','フリカナ','471-0071','都道府県','市区町村','町名','建物名・部屋番号','0565356826','0565356827','08012345647','2021-03-11','男',NULL,NULL,NULL,NULL,NULL);
+ALTER TABLE `customers` ENABLE KEYS;
 UNLOCK TABLES;
 
 /*

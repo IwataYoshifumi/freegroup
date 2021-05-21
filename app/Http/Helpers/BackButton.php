@@ -134,6 +134,7 @@ class BackButton {
     }
     
     // コントローラー（最初に戻る）
+    //
     static public function backAll() {
         
         $sessions = session()->get( 'back_button' );

@@ -5,6 +5,7 @@ use App\myHttp\GroupWare\Models\Report;
 $schedule_id = [ 'schedule' => $schedule->id ];
 $route_show       = route( 'groupware.schedule.show'  , $schedule_id ); 
 $route_edit       = route( 'groupware.schedule.edit'  , $schedule_id ); 
+$route_copy       = route( 'groupware.schedule.copy'  , $schedule_id );
 $route_delete     = route( 'groupware.schedule.delete', $schedule_id ); 
 $route_new_report = route( 'groupware.report.create'  , [ 'schedule_id' => $schedule_id] ); 
 $show_more_info   = ( $route_name == 'groupware.schedule.show' or $route_name == 'groupware.schedule.show_modal' ) ? 1 : 0;
@@ -22,12 +23,19 @@ $target = ( $route_name == 'groupware.schedule.show_modal' ) ? "target='_parent'
             <i class="fas fa-pen"></i>
         </a>
     @endcan
+    
+    <a class="btn col-1 m-1 uitooltip" style="font-size: 20px;" href="{{ $route_copy }}" title="複製"  {!! $target !!}>   {{-- htmlspecialchars OK --}}
+        <i class="fas fa-copy"></i>
+    </a>
+    
+    
         
     @can( 'delete', $schedule )
         <a class="btn col-1 m-1" style="font-size: 20px;" href="{{ $route_delete }}" title="削除"  {!! $target !!}>   {{-- htmlspecialchars OK --}}
             <i class="fas fa-trash-alt"></i>
         </a>
     @endcan
+    
 
     @if( $route_name == 'groupware.schedule.show_modal' )
         <a class="btn btn-outline-secondary m-1" href="{{ $route_show }}" {!! $target !!}>全画面表示</a>   {{-- htmlspecialchars OK --}}
@@ -38,7 +46,7 @@ $target = ( $route_name == 'groupware.schedule.show_modal' ) ? "target='_parent'
     @endif
     
     @if( $show_more_info )
-        <div class="ml-auto">
+        <div class="ml-auto" title="その他の情報">
             @if( $schedule->user_id == $auth->id )
                 @if( $schedule->permission == "attendees" )
                     関連社員も予定修正可

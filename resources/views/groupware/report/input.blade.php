@@ -129,11 +129,11 @@ $is_invalid['report_list_id'] = ( $errors->has( 'report_list_id'         ) ) ? '
                                         $date_class = 'date_input form-control col-6 mb-1 '.$is_invalid['date_time'];
                                         $time_class = 'time_input form-control col-4 mb-1 '.$is_invalid['date_time'];
                                     @endphp
-                                        {{ Form::text( 'start_date', old( 'start_date', $input->start_date ), [ 'class' => $date_class ,'autocomplete' => 'off','id' => 'start_date',  ] ) }}
-                                        {{ Form::text( 'start_time', old( 'start_time', $input->start_time ), [ 'class' => $time_class ,'autocomplete' => 'off'] ) }}
+                                        {{ Form::text( 'start_date', old( 'start_date', $input->start_date ), [ 'class' => $date_class ,'autocomplete' => 'off', 'id' => 'start_date' ] ) }}
+                                        {{ Form::text( 'start_time', old( 'start_time', $input->start_time ), [ 'class' => $time_class ,'autocomplete' => 'off', 'id' => 'start_time' ] ) }}
                                         
-                                        {{ Form::text( 'end_date',   old( 'end_date',   $input->end_date ),   [ 'class' => $date_class, 'autocomplete' => 'off', 'id' => 'end_date',  ] ) }}
-                                        {{ Form::text( 'end_time',   old( 'end_time',   $input->end_time ),   [ 'class' => $time_class, 'autocomplete' => 'off' ] ) }}
+                                        {{ Form::text( 'end_date',   old( 'end_date',   $input->end_date ),   [ 'class' => $date_class, 'autocomplete' => 'off', 'id' => 'end_date'  ] ) }}
+                                        {{ Form::text( 'end_time',   old( 'end_time',   $input->end_time ),   [ 'class' => $time_class, 'autocomplete' => 'off', 'id' => 'end_time'  ] ) }}
                                         
                                         <div class="controlgroup">
                                             <label for='all_day'>終日</label>
@@ -146,6 +146,98 @@ $is_invalid['report_list_id'] = ( $errors->has( 'report_list_id'         ) ) ? '
                             
                         @push( 'timepicker_script' )
                             <script>
+                            
+                            
+                                                            // 開始日時を変更したら、終了日時も変更するスクリプト
+                                //
+                                let d_span = 0; // 開始日と終了日の差分
+                                let o_start_date = $('#start_date');
+                                let o_end_date   = $('#end_date');
+                                
+                                function calulate_d_span() {
+                                    console.log( 'before d_span', d_span );
+                                    var start_date = new Date( o_start_date.val() );
+                                    var end_date   = new Date( o_end_date.val() );
+                                    d_span = end_date - start_date;
+                                    console.log( 'after d_span', d_span );
+                                }
+
+                                $(document).ready( function() {
+                                    calulate_d_span();
+                                });
+                                
+                                o_end_date.on( 'change', function() { calulate_d_span(); });
+                                
+                                o_start_date.on( 'change', function() {
+                                    var start_date = new Date( o_start_date.val() );
+                                    var end_date   = new Date( start_date.getTime() + d_span );
+                                    console.log( start_date.getDate(), end_date.getDate() );
+                                    var month = end_date.getMonth() + 1;
+                                    var date  = end_date.getDate();
+                                    if( month < 10 ) { month = "0" + month; }
+                                    if( date  < 10 ) { date  = "0" + date;  }
+                                    
+                                    var val = end_date.getFullYear() + "-" + month + "-" + date;
+                                    o_end_date.val( val );
+                                
+                                });
+                                
+                                
+                                //　開始時刻を変更したら、同じ時間間隔で終了時刻を自動変更するスクリプト
+                                //
+                                let t_span = 0; // 開始時刻と終了時刻の差分
+                                
+                                function calulate_t_span() {
+                                
+                                    var start_time = new Date( "2020-01-01T" + $('#start_time').val() + ":00" );
+                                    var end_time   = new Date( "2020-01-01T" + $('#end_time'  ).val() + ":00" );
+                                    var tmp = end_time.getTime() - start_time.getTime();
+                                    if( ! isNaN( tmp )) { t_span = tmp; }
+                                    
+                                    console.log( t_span );
+                                }
+
+                                $('#end_time').on( 'change', function() {
+                                    console.log( 'start_time.val()', $('#start_time').val() );
+                                    console.log( 'end_time.val()', $('#end_time').val() );
+                                    
+                                    if( $('#end_time').val() == 0 ) { $('#end_time').val( '00:00' ); }
+                                    console.log( 'end_time.val()', $('#end_time').val() );
+                                    calulate_t_span();
+                                });
+
+                                
+                                $(document).ready( function() {
+                                    calulate_t_span();
+                                });
+                            
+                                //　開始時刻を変更したら、終了時刻も更新
+                                //
+                                $('#start_time').on( 'change', function() {
+                                    console.log( 'start_time.val()', $(this).val() );
+                                    
+                                    var start_time_val = $(this).val();
+                                    if( start_time_val == 0 ) { // 00:00 を選ぶと数字の０が入りエラーになるための対策 
+                                        start_time_val = "00:00"; 
+                                        $(this).val( "00:00" ); 
+                                    }
+                                    console.log( 'start_time.val()', $(this).val(), t_span );
+
+                                    var t = "2020-01-01T" + start_time_val + ":00";
+                                    var start_time = new Date( t );
+                                    var end_time = new Date( start_time.getTime() + t_span );
+                                    var minutes = end_time.getMinutes();
+                                    if( minutes < 10 ) { minutes = "0" + minutes; }
+                                    
+                                    $('#end_time').val( end_time.getHours() + ':' + minutes );
+                                    
+                                    console.log( t, start_time.toString(), end_time.toString() );
+                                    
+                                });
+                            
+                            
+                                //　時刻間隔のセレクトフォーム
+                                //
                                 function time_span() {
                                     var span = $('#time_span_select').val();
                                     console.log( span );

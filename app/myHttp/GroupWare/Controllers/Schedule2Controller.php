@@ -59,10 +59,22 @@ class Schedule2Controller extends Controller {
     //
     public function create( Request $request ) {
         $this->authorize( 'create', Schedule::class );
-        
-        // if_debug( old() );
-        $schedule = new Schedule;
-        $schedule->calendar_id = ( $request->calendar_id ) ? $request->calendar_id : '';
+
+        if( is_null( $request->schedule )) { 
+            // 新規作成
+            //
+            $schedule = new Schedule;
+            $schedule->calendar_id = ( $request->calendar_id ) ? $request->calendar_id : '';
+            $input    = new DateTimeInput( );
+            
+        } else {
+            //　予定の複製
+            //
+            $schedule = Schedule::find( $request->schedule );
+            $request->calendar_id = $schedule->calendar_id;
+            $input = new DateTimeInput( $schedule );
+            
+        }
 
         if( $request->calendar_id ) {
             $calprop = CalProp::where( 'calendar_id', $request->calendar_id )->where( 'user_id', user_id() )->first();
@@ -70,10 +82,9 @@ class Schedule2Controller extends Controller {
         }
         
         $component_input_files = new ComponentInputFilesClass( 'attach_files'  );
-        
-        
-        $input    = new DateTimeInput( );
+        // $input    = new DateTimeInput( );
 
+        if_debug( $input );
         // return view( 'groupware.schedule2.create' )->with( 'defaults', $defaults );
         BackButton::stackHere( $request );
         return view( 'groupware.schedule2.input' )->with( 'schedule', $schedule )
@@ -195,8 +206,18 @@ class Schedule2Controller extends Controller {
         session()->regenerateToken();
         BackButton::removePreviousSession();
         session()->flash( 'info_message', "スケジュールを削除しました" );
-        return redirect()->route( 'groupware.schedule.index' );
+        return redirect()->route( 'back_one' );
+        // return redirect()->route( 'groupware.schedule.index' );
         // return $this->index( request() );
+    }
+    
+    public function copy( Schedule $schedule ) {
+        
+        $this->authorize( 'create', Schedule::class );
+        $url = route( 'groupware.schedule.create' );
+        $url .= '?schedule=' . $schedule->id;
+        return redirect( $url );
+    
     }
 
 

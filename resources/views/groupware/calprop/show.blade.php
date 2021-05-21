@@ -63,17 +63,17 @@ $info = "<i class='fas fa-minus-circle' style='color:lightgray'></i>";
                         @can( 'view', $calendar )
                             <a class="btn icon_btn" href="{{ $route_show_calendar }}" title="カレンダー管理情報"> @icon( config ) </a>
                         @endcan
+                        
                         @if( $calprop->google_sync_on ) 
                             <a class="btn btn_icon" href="{{ $route_gsync }}" title="Googleカレンダー手動同期"> @icon( sync ) </a>
                         @elseif( $calprop->google_sync_check )
 
-                        @if( $calprop->google_sync_bidirectional )
-                            <a class="btn btn-primary text-white" href="{{ $route_gsync_on }}">同期開始</a>
-                            <a class="btn btn-primary text-white" href="{{ $route_gsync_check }}">同期開始＆インポート</a>
-                        @else
-                            <a class="btn btn-primary text-white" href="{{ $route_gsync_on }}">Googleカレンダー同期開始</a>
-                        @endif
-
+                            @if( $calprop->google_sync_bidirectional )
+                                <a class="btn btn-primary text-white" href="{{ $route_gsync_on }}">同期開始</a>
+                                <a class="btn btn-primary text-white" href="{{ $route_gsync_check }}">同期開始＆インポート</a>
+                            @else
+                                <a class="btn btn-primary text-white" href="{{ $route_gsync_on }}">Googleカレンダー同期開始</a>
+                            @endif
 
                         @elseif( $calprop->is_filled_GoogleConfig() and $user->can( 'update', $calprop ) ) 
                             <a class="btn btn-warning border-dark" href="{{ $route_gsync_check }}">Googleカレンダー同期チェック</a>
@@ -165,8 +165,8 @@ $info = "<i class='fas fa-minus-circle' style='color:lightgray'></i>";
                 
                                             <div class="col-4 m-1 text-right">同期方向</div>
                                             <div class="col-7 m-1">
-                                                  @if( $calprop->google_sync_bidirectional ) 双方向同期（ FreeGroup <=> Googleカレンダー）
-                                                  @else 片方向同期（FreeGroup => Googleカレンダー） 
+                                                  @if( $calprop->google_sync_bidirectional ) 両方向（ FreeGroup <=> Googleカレンダー）
+                                                  @else 片方向（FreeGroup => Googleカレンダー） 
                                                   @endif
                                             </div>
                                             

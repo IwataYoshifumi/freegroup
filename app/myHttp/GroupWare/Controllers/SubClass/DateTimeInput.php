@@ -48,9 +48,13 @@ class DateTimeInput {
             
         } else {
             // if_debug( __METHOD__, 'null');
+
             $now = Carbon::now();
-            $this->start = new Carbon( $now->format( 'Y-m-d H:00'));
-            $this->end   = new Carbon( $now->addHour()->format( 'Y-m-d H:00' ));
+            // $this->start = new Carbon( $now->format( 'Y-m-d H:00'));
+            // $this->end   = new Carbon( $now->addHour()->format( 'Y-m-d H:00' ));
+            $this->start = new Carbon( $now->format( 'Y-m-d 10:00' ));
+            $this->end   = new Carbon( $now->format( 'Y-m-d 11:00' ));
+
             
             $this->start_date = $this->start->format( 'Y-m-d' );
             $this->start_time = $this->start->format( 'H:i'   );

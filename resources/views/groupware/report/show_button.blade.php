@@ -4,6 +4,7 @@ $report_id = [ 'report' => $report->id ];
 
 
 $route_edit       = route( 'groupware.report.edit'  , $report_id ); 
+$route_copy       = route( 'groupware.report.copy'  , $report_id ); 
 $route_delete     = route( 'groupware.report.delete', $report_id ); 
 $route_new_report = route( 'groupware.report.create'  , $report_id ); 
 $show_more_info   = ( $route_name == 'groupware.report.show' ) ? 1 : 0;
@@ -17,6 +18,11 @@ $show_more_info   = ( $route_name == 'groupware.report.show' ) ? 1 : 0;
             @icon( edit )
         </a>
     @endcan
+    
+    <a class="btn col-1 m-1 uitooltip" style="font-size: 20px;" href="{{ $route_copy }}" title="複製">
+        <i class="fas fa-copy"></i>
+    </a>
+    
         
     @can( 'delete', $report )
         <a class="btn btn_icon uitooltip" style="font-size: 20px;" href="{{ $route_delete }}" title="削除">

@@ -144,7 +144,16 @@ class MyGoogleCalendarClient {
 
         if( $schedule->all_day ) {
             $start->setDate( $schedule->start_date );
-            $end->setDate(   $schedule->end_date   );
+
+            // Googleカレンダーのend_date が１日後の日付にする
+            //
+            // $end->setDate(   $schedule->end_date   );
+
+            $end_date = new Carbon( $schedule->end_date );
+            $end_date->addDay();
+            $end->setDate( $end_date->toDateString() );
+            
+            
         } else {
             $start->setDateTime( $schedule->start );
             $end->setDateTime( $schedule->end );

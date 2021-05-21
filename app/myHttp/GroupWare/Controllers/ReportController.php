@@ -67,8 +67,6 @@ class ReportController extends Controller {
                                                ->with( 'request', $request );
     }
     
-    
-    
     public function create( Request $request ) {
         
         $this->authorize( 'create', Report::class );
@@ -77,28 +75,41 @@ class ReportController extends Controller {
         
         //　初期値設定
         //
-        $report = new Report;
-        $report->user_id = auth('user')->id();
+        if( is_null( $request->report )) {
+            //　新規日報作成
+            //
+            $report = new Report;
+            $report->user_id = auth('user')->id();
         
-        if( optional( $request )->schedule_id ) {
-        
-            $schedule = Schedule::where( 'id', $request->schedule_id )->first();
-            $schedule->load( 'users', 'customers');
-            $report->schedules[]    = $schedule;
-            $report->name           = $schedule->name;
-            $report->place          = $schedule->name;
-            $report->start_date     = $schedule->start_date;
-            $report->end_date       = $schedule->end_date;
-            $report->start          = $schedule->start;
-            $report->end            = $schedule->end;
-            $report->all_date       = $schedule->all_date;
-            $report->users        = $schedule->users;
-            $report->customers    = $schedule->customers;
+            if( optional( $request )->schedule_id ) {
+            
+                $schedule = Schedule::where( 'id', $request->schedule_id )->first();
+                $schedule->load( 'users', 'customers');
+                $report->schedules[]    = $schedule;
+                $report->name           = $schedule->name;
+                $report->place          = $schedule->name;
+                $report->start_date     = $schedule->start_date;
+                $report->end_date       = $schedule->end_date;
+                $report->start          = $schedule->start;
+                $report->end            = $schedule->end;
+                $report->all_date       = $schedule->all_date;
+                $report->users        = $schedule->users;
+                $report->customers    = $schedule->customers;
+            }
+            $input    = new DateTimeInput( );
+
+        } else {
+            //　複製
+            //
+            $report = Report::find( $request->report );
+            $report->user_id = user_id();
+            
+            $input = new DateTimeInput( $report );
+            
         }
         
         $component_input_files = new ComponentInputFilesClass( 'attach_files'  );
         
-        $input    = new DateTimeInput( );
         
         // if_debug( $report );
         BackButton::stackHere( request() );
@@ -211,67 +222,14 @@ class ReportController extends Controller {
         
     }
 
-    // public function csv( Request $request ) {
-    //     // if_debug( $request->all() );
-    //     $returns = SearchReport::search( $request );
+    public function copy( Report $report ) {
         
-    //     $reports = $returns['reports'];
-        
-    //     // if_debug( $reports );
-    //     $values = [];
-    //     foreach( $reports as $i => $r ) {
-    //         $start_time  = Carbon::parse( $r->start_time );
-    //         $end_time    = Carbon::parse( $r->end_time );
-    //         $period      = $start_time->diffInMinutes( $end_time );
-    //         $period_hour = round( $period / 60, 2 );
+        $this->authorize( 'create', Report::class );
+        $url = route( 'groupware.report.create' );
+        $url .= '?report=' . $report->id;
+        return redirect( $url );
     
-    //         $users = "";        
-    //         if( count( $r->users )) {
-    //             // if_debug( $r->users );
-    //             foreach( $r->users as $i => $user ) {
-    //                 if( $i == 0 ) {
-    //                     $users = $user->name;
-    //                 } else {
-    //                     $users .= ",".$user->name;
-    //                 }
-    //             }
-    //         }
-
-    //         $customers = "";        
-    //         if( count( $r->customers )) {
-    //             // if_debug( $r->customers );
-    //             foreach( $r->customers as $i => $customer ) {
-    //                 if( $i == 0 ) {
-    //                     $customers = $customer->name;
-    //                 } else {
-    //                     $customers .= ",".$customer->name;
-    //                 }
-    //             }
-    //         }
-
-    //         $v = [  $r->user->name, 
-    //                 $r->name, 
-    //                 $r->place, 
-    //                 $r->start_time->format( 'Y-n-j'), 
-    //                 $r->start_time->format( 'H:m' ),
-    //                 $r->end_time->format( 'Y-n-j H:m'), 
-    //                 $r->end_time->format( 'H:m'), 
-    //                 $period,
-    //                 $period_hour,
-    //                 $users,
-    //                 $customers,
-    //                 $r->memo,
-    //                 ];
-    //         array_push( $values, $v );
-            
-    //     }
-    //     $options['lists'] = $values;
-    //     // $options['column_name'] = [ '作成者', '件名', '場所', '開始日時', '終了日時', '所要時間（分）', '関連社員', '関連顧客', '報告内容' ];
-    //     $options['column_name'] = [ '作成者', '件名', '場所', '開始日', '開始時刻', '終了日', '終了時刻', '所要時間（分）','所要時間（時間）', '関連社員', '関連顧客', '報告内容' ];
-    //     // dd( $options );
-    //     return OutputCSV::input_array( $options );
-        
-    // }
+    }
 
 
 }

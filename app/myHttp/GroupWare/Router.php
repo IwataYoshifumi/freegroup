@@ -220,7 +220,9 @@ class Router {
             Route::post(  '/edit/{schedule}',       'Schedule2Controller@update'    )->name('update' )->where( 'schedule', '\d+' );
             Route::get(     '/delete/{schedule}',   'Schedule2Controller@delete'    )->name('delete' )->where( 'schedule', '\d+' );
             Route::delete(  '/delete/{schedule}',   'Schedule2Controller@deleted'   )->name('deleted')->where( 'schedule', '\d+' );
-    
+            
+            Route::get(   '/copy/{schedule}',       'Schedule2Controller@copy'      )->name('copy'   )->where( 'schedule', '\d+' );
+
             config(['groupware.schedule.index'    => '予定一覧',
             
                     'groupware.schedule.monthly'  => '月次表示',
@@ -231,6 +233,7 @@ class Router {
                     'groupware.schedule.show'     => '予定内容',
                     'groupware.schedule.detail'   => '予定詳細',
                     'groupware.schedule.edit'     => '予定　変更',
+                    'groupware.schedule.copy'     => '新規　予定登録（複製）',
                     'groupware.schedule.update'   => '予定　変更完了',
                     'groupware.schedule.delete'   => '予定　削除',
                     'groupware.schedule.deleted'  => '予定　削除完了',
@@ -260,6 +263,7 @@ class Router {
             Route::get(     '/delete/{report}',     'ReportController@delete'  )->name('delete' )->where( 'report', '\d+' );
             Route::delete(  '/delete/{report}',     'ReportController@deleted' )->name('deleted')->where( 'report', '\d+' );
 
+            Route::get(  '/copy/{report}',     'ReportController@copy' )->name( 'copy' )->where( 'report', '\d+' );
 
             config(['groupware.report.index'    => '日報一覧',
             
