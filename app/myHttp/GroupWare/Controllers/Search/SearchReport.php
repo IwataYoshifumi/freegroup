@@ -45,7 +45,6 @@ class SearchReport {
             ( ! ( isset( $request->report_lists )) and ! $request->report_list_id ))
             { return self::NULL_RETURN; }
         
-        if_debug( 'aaa');
         if( isset( $request->report_list_id )) {
             if( ! isset( $request->sorts )) { $request->sorts = [ 'created_at' ]; }
         }
@@ -83,6 +82,16 @@ class SearchReport {
         
         if( $request->report_list_id ) {
             $reports->where( 'report_list_id', $request->report_list_id );
+        }
+        
+        //　キーワード検索（件名・備考検索）
+        //
+        if( ! empty( $request->key_word )) {
+            $reports->where( function( $query ) use( $request ) {
+                $q = "%". $request->key_word . "%";
+                $query->where(   'name', 'like', $q )
+                      ->orWhere( 'memo', 'like', $q );
+            });
         }
 
         $reports_1 = clone $reports;  // 予定作成者用

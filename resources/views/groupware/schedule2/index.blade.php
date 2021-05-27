@@ -73,13 +73,18 @@ $route_name = Route::currentRouteName();
                                         {{ $schedules->links() }}
                                     @endif
                                 </th></tr>
+                                
+                                
+                                
+                                
                             @endif
                             
                         @endforeach
                     </table>
                     <div class="w-100"></div>
-                    @php
-                    @endphp
+                    @if( count( $schedules )) 
+                        {{ OutputCSV::button( [ 'route_name' => 'groupware.schedule.csv', 'inputs' => $request->all() , 'method' => 'GET' ]) }}
+                    @endif
         
                 </div>
             </div>

@@ -219,7 +219,59 @@ class Schedule2Controller extends Controller {
         return redirect( $url );
     
     }
+    
+    public function csv( Request $request ) {
+        
+        $returns = SearchSchedule::search( $request );
+        
+        $schedules = $returns['schedules'];
+        // dd( $schedules );
+        $values['column_name'] = [ '作成者', '件名', '場所', '開始日', '開始時刻', '終了日', '終了時刻', '終日フラグ', '所要時間（分）', '関連社員', '関連顧客', '報告内容' ];
+        $values['lists'] = [];
+        foreach( $schedules as $schedule ) {
 
+            $attendees = '';
+            $customers = '';            
+            $s = Schedule::with( ['users:name', 'customers:name'] )->find( $schedule->id );
+
+            foreach( $s->users as $attendee ) {
+                if( empty( $attendees )) { 
+                    $attendees = $attendee->name;
+                } else { 
+                    $attendees .= "," . $attendee->name;                    
+                }
+            }
+            
+            foreach( $s->customers as $customer ) {
+                if( empty( $customers )) {
+                    $customers = $customer->name;
+                } else {
+                    $customers .= $customer->name;
+                }
+            }
+
+            $value = [ 
+                op( $schedule->user )->name,
+                $schedule->name,
+                $schedule->place,
+                $schedule->start_date,
+                $schedule->start,
+                $schedule->end_date,
+                $schedule->end,
+                $schedule->all_day,
+                $schedule->duration(),
+                $attendees,
+                $customers,
+                $schedule->memo,
+                ];
+            array_push( $values['lists'], $value );            
+            
+        }
+        // return response()->json( $values );
+        return OutputCSV::input_array( $values );
+        
+        
+    }
 
 }
 

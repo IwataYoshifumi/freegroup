@@ -58,6 +58,18 @@ class SearchSchedule {
                                       ->where( 'end_date',   '>', $request->end_date   );
                                 });
                 });
+                
+        //　キーワード検索（件名・備考検索）
+        //
+        if( ! empty( $request->key_word )) {
+
+            $schedules->where( function( $query ) use( $request ) {
+                $q = "%". $request->key_word . "%";
+                $query->where(   'name', 'like', $q )
+                      ->orWhere( 'memo', 'like', $q );
+                
+            });
+        }
 
         $schedules_1 = clone $schedules;  // 予定作成者用
         $schedules_2 = clone $schedules;  // 関係者検索用
@@ -86,7 +98,8 @@ class SearchSchedule {
             $users->whereIn( 'id',      $request->users ); 
         }
         
-        $clone_users = clone $users; if_debug( $clone_users->select( 'id', 'name' )->get()->toArray() );
+        $clone_users = clone $users; 
+        // if_debug( $clone_users->select( 'id', 'name' )->get()->toArray() );
 
         // if( ! empty( $request->user_name )) { $users->where( 'name', 'like', '%'. $request->user_name . '%');  }
         // if_debug( $users, $users->get()->toArray() );
@@ -208,6 +221,7 @@ class SearchSchedule {
             $schedules->with( ['users' => function( $query ) use ( $users ) { $query->whereIn( 'id', $users ); } ]);
         }
 
+        
         $schedules = $schedules->get();
         
         //　対象のカレンダーとCalpropを検索
@@ -256,7 +270,7 @@ class SearchSchedule {
                     'calprops'  => $calprops
                     ];
         
-        if_debug( $return );
+        // if_debug( $return );
         return $return;
         
         

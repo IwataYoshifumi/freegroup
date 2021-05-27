@@ -192,26 +192,46 @@ class ReportController extends Controller {
         
         $reports = $returns['reports'];
         // dd( $reports );
-        $values['column_name'] = [ '作成者', '件名', '場所', '開始日', '開始時刻', '終了日', '終了時刻', '所要時間（分）','所要時間（時間）', '関連社員', '関連顧客', '報告内容' ];
+        $values['column_name'] = [ '作成者', '件名', '場所', '開始日', '開始時刻', '終了日', '終了時刻', '終日フラグ', '所要時間（分）', '関連社員', '関連顧客', '報告内容' ];
         $values['lists'] = [];
         foreach( $reports as $report ) {
+
             $attendees = '';
-            foreach( $report->users as $attendee ) {
+            $customers = '';            
+            $r = Report::with( ['users:name', 'customers:name'] )->find( $report->id );
+
+            foreach( $r->users as $attendee ) {
                 if( empty( $attendees )) { 
-                    $attendees .= $attendee->name;
+                    $attendees = $attendee->name;
                 } else { 
                     $attendees .= "," . $attendee->name;                    
                 }
+                // if_debug( $attendee->name );
             }
-            // dump( $attendees );
             
+            foreach( $r->customers as $customer ) {
+                if( empty( $customers )) {
+                    $customers = $customer->name;
+                } else {
+                    $customers .= $customer->name;
+                }
+            }
+            
+            // if_debug( $attendees );
+
             $value = [ 
                 op( $report->user )->name,
                 $report->name,
                 $report->place,
-                $report->p_dateTime(),
+                $report->start_date,
+                $report->start,
+                $report->end_date,
+                $report->end,
+                $report->all_day,
+                $report->duration(),
+                $attendees,
+                $customers,
                 $report->memo,
-                $attendees
                 ];
             array_push( $values['lists'], $value );            
             

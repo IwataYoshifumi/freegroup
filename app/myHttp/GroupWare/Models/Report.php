@@ -170,8 +170,19 @@ class Report extends Model {
             }
         }
     }
-    
-    
+
+    //　所要時間を分単位で出力
+    //
+    public function duration() {
+        if( $this->all_day ) {
+            $start = new Carbon( $this->start_date );
+            $end   = new Carbon( $this->end_date   );
+        } else {
+            $start = new Carbon( $this->start );
+            $end   = new Carbon( $this->end   );
+        }
+        return $end->diffInMinutes( $start );
+    }
 
 
 

@@ -18,10 +18,12 @@ use App\myHttp\GroupWare\Models\AccessListUserRole;
 use App\myHttp\GroupWare\Models\ACL;
 use App\myHttp\GroupWare\Models\CalProp;
 use App\myHttp\GroupWare\Models\Calendar;
+use App\myHttp\GroupWare\Models\TaskList;
 
 use App\myHttp\GroupWare\Models\Actions\AccessListUserRoleUpdate;
 use App\myHttp\GroupWare\Models\Actions\AccessListAction;
 use App\myHttp\GroupWare\Models\Actions\CalendarAction;
+use App\myHttp\GroupWare\Models\Actions\TaskListAction;
 
 use App\myHttp\GroupWare\Events\UserCreateEvent;
 use App\myHttp\GroupWare\Events\UserRetireEvent;
@@ -29,6 +31,7 @@ use App\myHttp\GroupWare\Events\UserReturnEvent;
 use App\myHttp\GroupWare\Events\UserTransferDeptEvent;
 
 use App\myHttp\GroupWare\Models\Initialization\InitCalendar;
+use App\myHttp\GroupWare\Models\Initialization\InitTaskList;
 use App\myHttp\GroupWare\Models\Initialization\InitReportProp;
 
 use App\myHttp\GroupWare\Notifications\GoogleCalendar\UnSyncGoogleCalendar;
@@ -62,10 +65,12 @@ class InitUser  {
             }
         }
         
-        //　Calprop, ReportProp クラスの初期化
+        //　Calender(CalProp), ReportProp, TaskList(TaskProp) クラスの初期化
         //
         InitCalendar::forUser( $user );
         InitReportProp::forUser( $user );
+        InitTaskList::forUser( $user );
+        
         
         //　アクセス権がなくなったカレンダーのGoogleカレンダー同期を解除
         //
@@ -103,8 +108,11 @@ class InitUser  {
     }
 
 
-    // ユーザ作成時に初期の（自分のみ管理者の）アクセスリストと（公開）カレンダーを生成
-    // 管理者権限のみ実行可能
+    // ユーザ作成時に初期化処理
+    //　自分のみが管理者のアクセスリストを作成
+    //　公開カレンダーを作成
+    //　非公開タスクリストを作成
+    //　管理者権限のみ実行可能
     //
     public static function whenUserHasCreatedFirst( User $user ) {
         
@@ -116,10 +124,12 @@ class InitUser  {
         //
         $access_list = self::initAccessList( $user );
         
-        //　自分の公開カレンダーを生成
-        //
         if( ! is_null( $access_list )) {
+            //　自分の公開カレンダーを生成
             self::initCalendar( $user, $access_list );
+    
+            //　自分のタスクリスト（プライベート）を生成
+            self::initTaskList( $user, $access_list );
         }
     }
 
@@ -194,6 +204,30 @@ class InitUser  {
         
         return $calendar;
     }
+    
+    //  自分のタスクリストを生成（自分のWrite権限カレンダーがない場合）
+    //  Write権限カレンダーがあれば、Null を返す
+    //
+    public static function initTaskList( User $user, AccessList $access_list ) {
+        
+        $tasklists = TaskList::getCanWrite( $user );
+        if( count( $tasklists )) { return null; }
+        
+        $request = new Request;
+        $request->name = $user->name . "のタスクリスト";
+        $request->memo = "自動生成タスクリスト";
+        $request->type = 'private';
+        $request->default_permission = 'creator';
+        $request->access_list_id = $access_list->id;
+
+        $calendar = TaskListAction::creates( $request );
+        
+        return $tasklists;
+    }
+
+  
+    
+    
 
 }
 

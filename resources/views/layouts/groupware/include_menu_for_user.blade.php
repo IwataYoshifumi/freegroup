@@ -8,7 +8,7 @@ $route = [  0  => route( 'groupware.user.home', $options  ),
             1  => route( 'customer.index', $options ),
             2  => route( 'groupware.schedule.monthly', $schedules_options ),
             3  => route( 'groupware.report.index', $options ),
-            4  => 'todo.index',
+            4  => route( 'groupware.tasklist.index', $options ),
             5  => route( 'groupware.file.index', $options ),
             6  => 'workflow.index',        
             7  => 'facility.index',
@@ -26,6 +26,10 @@ $route = [  0  => route( 'groupware.user.home', $options  ),
 <a class="nav-item nav-link" href="{{ $route[1] }}">顧客管理</a> 
 <a class="nav-item nav-link" href="{{ $route[2] }}">スケジュール</a>
 <a class="nav-item nav-link" href="{{ $route[3] }}">日報</a>
+<!--
+<a class="nav-item nav-link" href="{{ $route[4] }}">タスク</a>
+-->
+
 @if( is_debug() ) 
     <a class="nav-item nav-link" href="{{ $route[100] }}">RL</a>
 @endif

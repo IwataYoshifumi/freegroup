@@ -33,6 +33,9 @@ class Router {
             self::group_route();
             self::calendar_route();
             self::calprop_route();
+            
+            self::tasklist_route();
+            
 
             self::report_route();
             self::report_list_route();
@@ -202,6 +205,7 @@ class Router {
             Route::get(   '/daily',      'Schedule2IndexController@daily'    )->name('daily'       );
             Route::get(   '/show_modal/{schedule}',  'Schedule2IndexController@showModal' )->name('show_modal')->where( 'schedule', '\d+' );;
 
+            Route::get(   '/csv',        'Schedule2Controller@csv'           )->name('csv'   );
 
             // ScheduleController
             //
@@ -443,8 +447,8 @@ class Router {
             ]);
         });
     }
-
-    //  CalProp ルート
+    
+        //  CalProp ルート
     //
     static public function calprop_route() {
         Route::prefix( 'calprop/' )->name( 'calprop.')->namespace( '\App\myHttp\GroupWare\Controllers' )->group( function() {
@@ -467,6 +471,31 @@ class Router {
                 'groupware.calprop.gsync_all'      => 'カレンダーGoogle手動全同期',
                 'groupware.calprop.gsync'          => 'カレンダーGoogle手動同期',
                 'groupware.calprop.gsync_check'    => 'カレンダーGoogle同期チェック',
+            ]);
+        });
+    }
+
+    //  TaskListr ルート
+    //
+    static public function tasklist_route() {
+        Route::prefix( 'tasklist/' )->name( 'tasklist.')->namespace( '\App\myHttp\GroupWare\Controllers' )->group( function() {
+            
+            Route::get(  '/index',          'TaskListController@index'  )->name('index'   );
+            Route::get(  '/create',         'TaskListController@create' )->name( 'create'   );
+            Route::post( '/create',         'TaskListController@store'  )->name( 'create'   );
+
+            Route::get(  '/show/{tasklist}',        'TaskListController@show'    )->name( 'show'   )->where( 'tasklist', '\d+' );
+            Route::get(  '/update/{tasklist}',      'TaskListController@edit'    )->name( 'update' )->where( 'tasklist', '\d+' );
+            Route::post( '/update/{tasklist}',      'TaskListController@update'  )->name( 'update' )->where( 'tasklist', '\d+' );
+            Route::get(  '/delete/{tasklist}',      'TaskListController@delete'  )->name( 'delete' )->where( 'tasklist', '\d+' );
+            Route::delete(  '/delete/{tasklist}',   'TaskListController@deleted' )->name( 'delete' )->where( 'tasklist', '\d+' );
+
+            config([
+                'groupware.tasklist.index'          => 'タスクリストー一覧',
+                'groupware.tasklist.show'           => 'タスクリストー管理者設定',
+                'groupware.tasklist.create'         => 'タスクリストー新規作成',
+                'groupware.tasklist.update'         => 'タスクリストー管理者設定修正',
+                'groupware.tasklist.delete'         => 'タスクリストー削除',
             ]);
         });
     }

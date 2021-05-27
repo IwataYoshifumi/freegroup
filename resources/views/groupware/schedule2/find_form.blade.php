@@ -74,6 +74,14 @@ $depts = ( op( $request )->depts ) ? $request->depts : [];
                             @endif
                         @endif
                     </div>
+                    
+                    {{-- キーワード検索 --}}
+                    <fieldset class="col-11 border border-dark m-1 p-1">
+                        <div class="m-2">キーワード検索（件名・備考を検索）</div>
+                        {{ Form::text( 'key_word', $request->key_word, [ 'class' => 'form-control' ] ) }}
+                    </fieldset>
+
+                    
 
                     {{-- 部署検索 --}}
                     <fieldset class="col-4 border border-dark m-1 p-1">
