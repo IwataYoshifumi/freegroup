@@ -4,11 +4,14 @@ if( ! Auth( 'user' )) { return "no user_menu"; }
 $options = [ 'from_menu' => '1' ];
 $schedules_options = [ 'from_menu' => 1, 'search_mode' => 2 ];
 
+
 $route = [  0  => route( 'groupware.user.home', $options  ),
             1  => route( 'customer.index', $options ),
             2  => route( 'groupware.schedule.monthly', $schedules_options ),
             20 => route( 'groupware.show_all.monthly' ),
-            21 => route( 'groupware.show_all.index', [ 'writable_calender' => 1, 'set_defaults' => 1 ] ),
+            21 => route( 'groupware.show_all.index', [ 'writable_calender'    => 1, 'set_defaults' => 1 ] ),
+            22 => route( 'groupware.show_all.index', [ 'writable_tasklist'    => 1, 'set_defaults' => 1 ] ),
+            23 => route( 'groupware.show_all.index', [ 'writable_report_list' => 1, 'set_defaults' => 1 ] ),
             
             3  => route( 'groupware.report.index', $options ),
             4  => route( 'groupware.task.index', $options ),
@@ -30,8 +33,14 @@ $route = [  0  => route( 'groupware.user.home', $options  ),
 <a class="nav-item nav-link" href="{{ $route[1]  }}">顧客管理</a> 
 <a class="nav-item nav-link" href="{{ $route[20] }}">カレンダー</a>
 <a class="nav-item nav-link" href="{{ $route[21] }}">検索</a>
-<a class="nav-item nav-link" href="{{ $route[4]  }}">タクス</a>
-<a class="nav-item nav-link" href="{{ $route[3]  }}">日報</a>
+<a class="nav-item nav-link" href="{{ $route[22] }}">タクス</a>
+<a class="nav-item nav-link" href="{{ $route[23] }}">日報</a>
+
+
+@if( is_debug() )
+    <a class="nav-item nav-link" href="{{ $route[4]  }}">【旧】タクス</a>
+    <a class="nav-item nav-link" href="{{ $route[3]  }}">【旧】日報</a>
+@endif
 
 <div class="dropdown">
     <a id="dropdownMenuButton"
@@ -40,15 +49,15 @@ $route = [  0  => route( 'groupware.user.home', $options  ),
             aria-haspopup="true"
             aria-expanded="false">設定</a>
     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="z-index:9999;">
-            <a class="dropdown-item" href="{{ $route[10] }}">アクセスリスト設定</a>
-            <a class="dropdown-item" href="{{ $route[11] }}">グループ設定</a>
-            <a class="dropdown-item" href="{{ $route[5]  }}">ファイル管理</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="{{ $route[14]  }}">カレンダー設定</a>
-            <a class="dropdown-item" href="{{ $route[15]  }}">タスクリスト設定</a>
-            <a class="dropdown-item" href="{{ $route[16]  }}">日報リスト設定</a>
-            <div class="dropdown-divider"></div>        
-            <a class="dropdown-item" href="{{ $route[12] }}">社員一覧</a>
-            <a class="dropdown-item" href="{{ $route[13] }}">部署一覧</a>
+        <a class="dropdown-item" href="{{ $route[10] }}">アクセスリスト設定</a>
+        <a class="dropdown-item" href="{{ $route[11] }}">グループ設定</a>
+        <a class="dropdown-item" href="{{ $route[5]  }}">ファイル管理</a>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" href="{{ $route[14]  }}">カレンダー設定</a>
+        <a class="dropdown-item" href="{{ $route[15]  }}">タスクリスト設定</a>
+        <a class="dropdown-item" href="{{ $route[16]  }}">日報リスト設定</a>
+        <div class="dropdown-divider"></div>        
+        <a class="dropdown-item" href="{{ $route[12] }}">社員一覧</a>
+        <a class="dropdown-item" href="{{ $route[13] }}">部署一覧</a>
     </div>
 </div>

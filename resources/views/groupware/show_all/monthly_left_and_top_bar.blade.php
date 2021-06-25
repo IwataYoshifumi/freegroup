@@ -180,24 +180,32 @@ $tasklists = ( is_array( $request->tasklists )) ? $request->tasklists : [];
     <div class="row no-gutters">
         <div class="col-2 w-10 mr-auto">
             <div class="row">
+
+
+                {{--
+                  --
+                  --
+                  --  新規ボタン・検索ボタン
+                  --
+                  --
+                  --}}
                 @php
-                
+
                 $route_create_schedule = route( 'groupware.schedule.create' );
-
-                $route_create_task     = route( 'groupware.task.create' );
-
+                $route_create_task     = route( 'groupware.task.create'     );
+                $route_create_report   = route( 'groupware.report.create'   );
                 $route_index_schedule  = route( 'groupware.show_all.index', [ 'writable_calender' => 1, 'set_defaults' => 1 ] );
                 $route_index_task      = route( 'groupware.show_all.index', [ 'writable_tasklist' => 1, 'set_defaults' => 1 ] );
+
                 @endphp
                 
                 <div class="col btn ml-2 btn_icon" id="sidebar_opener">@icon( angle-double-right )</div>
-                <a class="col btn btn_icon text-primary uitooltip" title="新規スケジュール作成" href="{{ $route_create_schedule }}">@icon( plus-circle  )</a>
-                <a class="col btn btn_icon text-primary uitooltip" title="新規タスク作成"       href="{{ $route_create_task     }}">@icon( check-circle )</a>
+                <a class="col btn btn_icon text-primary uitooltip" title="スケジュール作成" href="{{ $route_create_schedule }}">@icon( schedule     )</a>
+                <a class="col btn btn_icon text-primary uitooltip" title="タスク作成"       href="{{ $route_create_task     }}">@icon( check-circle )</a>
+                <a class="col btn btn_icon text-primary uitooltip" title="日報作成"         href="{{ $route_create_report   }}">@icon( clipboard    )</a>
                 
-                <a class="col btn btn_icon uitooltip" title="スケジュール検索"  href="{{ $route_index_schedule }}">@icon( search )スケジュール検索</a>
-                <a class="col btn btn_icon uitooltip" title="タスク検索"        href="{{ $route_index_task     }}">@icon( search )タスク検索</a>
-
-                
+                <a class="col btn btn_icon uitooltip" title="スケジュール検索"              href="{{ $route_index_schedule }}">@icon( search )スケジュール検索</a>
+                <a class="col btn btn_icon uitooltip" title="タスク検索"                    href="{{ $route_index_task     }}">@icon( search )タスク検索</a>
             </div>
         </div>
         <div class="col-3">
@@ -206,7 +214,14 @@ $tasklists = ( is_array( $request->tasklists )) ? $request->tasklists : [];
                 $previous_month = $base_date->copy()->subMonth()->format( 'Y-m-d' );
                 $next_month     = $base_date->copy()->addMonth()->format( 'Y-m-d' ) 
                 @endphp
-                
+
+
+                {{--
+                  --
+                  --
+                  --　年月表示、月切替ボタン
+                  --
+                  --}}
                 <div class="col btn btn_icon month_button" data-date="{{ $previous_month }}">@icon( angle-left )</div>
                 <div class="col btn btn_icon font-weight-bold">{{ $base_date->format( 'Y年 m月' ) }}</div>
                 <div class="col btn btn_icon month_button" data-date="{{ $next_month }}"    >@icon( angle-right )</div>

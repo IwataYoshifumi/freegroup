@@ -28,9 +28,8 @@ $reports   = ( isset( $returns['reports']   )) ? $returns['reports']   : [];
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-12">
-            {{--
-            @include( 'groupware.show_all.menu_button' )
-            --}}
+            @include( 'groupware.show_all.index_menu_button' )
+            
             <div class="card">
                 <div class="card-header">{{ config( Route::currentRouteName() ) }}</div>
 

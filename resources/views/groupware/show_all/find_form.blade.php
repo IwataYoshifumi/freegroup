@@ -210,20 +210,31 @@ $depts = ( op( $request )->depts ) ? $request->depts : [];
                             <fieldset class="col-11 border border-dark m-1 p-1 other_condition_form">
                                 <div class="row">
                                     <div class="col-2">
+                                        {{--
+                                          --
+                                          --
+                                          -- ペジネーション
+                                          --
+                                          --
+                                          --}}
                                         <div class="m-2">ペジネーション</div>
                                         {{ Form::select( 'pagination', config( 'constant.pagination' ), $request->pagination, [ 'class' => 'form-control' ] ) }}
                                     </div>
                                     <div class="col-8">
+                                        {{--
+                                          --
+                                          --
+                                          -- ソート
+                                          --
+                                          --
+                                          --}}
                                         @php
                                         $array_sort = [ '' => '', 'time' => '日時', 'type' => 'タイプ', 'user_id' => '社員名' ];
-                                        $array_desc = [ 'asc' => '昇順', 'desc' => '降順' ]; 
-                                        
+                                        $array_desc = [ 'asc' => '昇順', 'desc' => '降順' ];
                                         @endphp
-                                        
-                                        
                                         <div class=" m-2">ソート</div>
                                             <div class="row">
-                                            @for( $i = 1; $i <= 3; $i++ )
+                                            @for( $i = 0; $i <= 2; $i++ )
                                                 <div class="col-4">
                                                     {{ Form::select( "order_by[$i]", $array_sort, op( $request->order_by )[$i], [ 'class' => 'form-control' ] ) }}
                                                     {{ Form::select( "asc_desc[$i]", $array_desc, op( $request->asc_desc )[$i], [ 'class' => 'form-control' ] ) }}
@@ -231,7 +242,6 @@ $depts = ( op( $request )->depts ) ? $request->depts : [];
                                             @endfor
                                         </div>
                                     </div>
-                                    
                                 </div>
                             </fieldset>
                         </div>
@@ -264,13 +274,13 @@ $depts = ( op( $request )->depts ) ? $request->depts : [];
             $(document).ready( function() { 
                 $(".customers_users_form").hide(); 
                 $(".other_condition_form").hide();
-                @if( ! isset( $request->writable_calender )) 
+                @if( ! isset( $request->writable_calender ) and ! ( is_array( $request->calendars ) and count( $request->calendars )) ) 
                     $(".calendars_form").hide();
                 @endif
-                @if( ! isset( $request->writable_tasklist )) 
+                @if( ! isset( $request->writable_tasklist ) and ! ( is_array( $request->tasklists ) and count( $request->tasklists ))) 
                     $(".tasklists_form").hide();
                 @endif
-                @if( ! isset( $request->writable_report_list )) 
+                @if( ! isset( $request->writable_report_list )  and ! ( is_array( $request->report_lists ) and count( $request->report_lists ))) 
                     $(".report_lists_form").hide();
                 @endif
             });
