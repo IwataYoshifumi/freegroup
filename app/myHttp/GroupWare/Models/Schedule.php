@@ -97,14 +97,15 @@ class Schedule extends Model {
     //  値取得メソッド
     //
     /////////////////////////////////////////////////////////////////////////////////////////////
-    public function calprop( $user = null ) {
-        $user    = ( empty( $user )) ? user_id() : $user ;
-        $user_id = ( $user instanceof User ) ? $user->id : $user;
-        return $this->calendar->calprops()->where( 'user_id', $user_id )->first();
+    public function calprop() {
+        // $user    = ( empty( $user )) ? user_id() : $user ;
+        // $user_id = ( $user instanceof User ) ? $user->id : $user;
+        // return $this->calendar()->calprops()->where( 'user_id', $user_id );
+        return $this->calendar->calprop;
     }
 
     public function my_calprop() {
-        return $this->calprop( user_id() );
+        return $this->calprop()->first();
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////
@@ -190,6 +191,27 @@ class Schedule extends Model {
             }
         }
     }
+    
+    public function p_time_in_daily_form() {
+        $num_day = $this->start->diffInDays( $this->end ) + 1;
+        
+        if( $this->all_day ) { 
+            if( $num_day >= 2 ) {
+                return "終日（" . $this->end_date . "までの予定）";
+            } else {
+                return "終日";
+            }
+        } else {
+            $return =  $this->start->format( 'H:i' ) . ' ～ '. $this->end->format( 'H:i' );                
+            
+            if( $num_day == 1 ) {
+                return $return;
+            } else {
+                return $return . "（ ". $this->end_date ." までの予定 ）";   
+            }
+        }
+    }
+    
 
     public function p_time() {
         return $this->p_dateTime();
@@ -215,6 +237,17 @@ class Schedule extends Model {
         
         $time = new Carbon( $this->end_time );
         return $time->format( 'Y-m-d\TH:i');
+    }
+    
+    //　カレンダー表示用のstyle css出力を取得
+    //
+    public function style() {
+        
+        return $this->my_calprop()->style();
+        // $calprop = $this->calendar->calprop->first();
+        // return $calprop->style();
+        
+        
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////

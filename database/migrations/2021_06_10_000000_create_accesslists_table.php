@@ -18,6 +18,14 @@ class CreateAccessListsTable extends Migration
             $table->string('name');
             $table->string('memo')->nullable();
             $table->timestamps();
+            
+            // 追加 2021.6.10
+            //
+            $table->integer('num_owners');
+            $table->integer('num_writers');
+            $table->integer('num_readers');
+            
+            
         });
     }
 

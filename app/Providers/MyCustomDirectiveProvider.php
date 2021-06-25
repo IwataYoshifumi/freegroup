@@ -120,6 +120,8 @@ class MyCustomDirectiveProvider extends ServiceProvider
                 'check'         => '<i class="fas fa-check"></i>',
                 'check-square'  => '<i class="fas fa-check-square"></i>',
                 'check-circle'  => '<i class="fas fa-check-circle"></i>',
+                'check-circle-r'  => '<i class="far fa-check-circle"></i>',
+                
                 'good'          => '<i class="fas fa-thumbs-up"></i>',
                 'bad'           => '<i class="fas fa-thumbs-down"></i>',
                 
@@ -149,7 +151,7 @@ class MyCustomDirectiveProvider extends ServiceProvider
                 'caret-down'   => '<i class="fas fa-caret-down"></i>',
                 
                 'arrow-right'   => '<i class="fas fa-arrow-right"></i>',
-                'arrow-left'   => '<i class="fas fa-arrow-left"></i>',
+                'arrow-left' => '<i class="fas fa-arrow-left"></i>',
                 'arrow-up'   => '<i class="fas fa-arrow-up"></i>',
                 'arrow-down'   => '<i class="fas fa-arrow-down"></i>',
                 'arrows-alt'   => '<i class="fas fa-arrows-alt"></i>',
@@ -248,7 +250,6 @@ class MyCustomDirectiveProvider extends ServiceProvider
             } else {
                 return $this->icons['times-circle'];
             }
-
         });      
 
         Blade::directive( 'all_icons', function( ) {

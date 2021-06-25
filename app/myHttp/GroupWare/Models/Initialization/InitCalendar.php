@@ -30,10 +30,9 @@ class InitCalendar  {
     public static function forUser( $user ) {
         $user = ( $user instanceof User ) ? $user : User::find( $user->id );
         
-        $calendars = Calendar::whereDoesntHave( 'calprops', function( $query ) {
-                    $query->where( 'user_id', user_id() );
+        $calendars = Calendar::whereDoesntHave( 'calprops', function( $query ) use( $user ) {
+                    $query->where( 'user_id', $user->id );
                 })->get();
-        
         foreach( $calendars as $calendar ) {
             self::init( $calendar, [ $user ] );
         }

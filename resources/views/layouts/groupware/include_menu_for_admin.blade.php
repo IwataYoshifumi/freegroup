@@ -10,8 +10,8 @@ $route = [  0  => route( 'admin.index' ),
 @endphp
 
 @if( Auth( 'admin' ) )
-    <a class="nav-item nav-link" href="{{ $route[1] }}">社員管理</a>
-    <a class="nav-item nav-link" href="{{ $route[3] }}">部署管理</a>
-    <a class="nav-item nav-link" href="{{ $route[4] }}">ロール設定</a>
-    <a class="nav-item nav-link" href="{{ $route[0] }}">管理者管理</a>
+    <a class="nav-item nav-link text-white" href="{{ $route[1] }}">社員管理</a>
+    <a class="nav-item nav-link text-white" href="{{ $route[3] }}">部署管理</a>
+    <a class="nav-item nav-link text-white" href="{{ $route[4] }}">ロール設定</a>
+    <a class="nav-item nav-link text-white" href="{{ $route[0] }}">管理者管理</a>
 @endif

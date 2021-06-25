@@ -63,9 +63,6 @@ class AccessListUserRole extends Model {
         return self::where( 'role', 'owner' )->where( 'user_id', $user_id );
     }
     
-
-    
-    
     
     public static function whereWriter( $user ) {
         if( $user instanceof User ) {

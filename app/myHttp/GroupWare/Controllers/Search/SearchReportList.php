@@ -61,7 +61,8 @@ class SearchReportList {
             if(   $request->name )        { $query->where( 'name', 'like', '%'. $request->name . '%' ); }
             if( ! $request->show_hidden ) { $query->where( 'hide', 0 );                                 }
         });
-        $report_lists->with([ 'report_props' => function( $query ) { $query->where( 'user_id', user_id() ); }]);
+        // $report_lists->with([ 'report_props' => function( $query ) { $query->where( 'user_id', user_id() ); }]);
+        $report_lists->with( 'report_prop' );
 
         //　デフォルトでは、無効にした日報リストは検索対象外
         //

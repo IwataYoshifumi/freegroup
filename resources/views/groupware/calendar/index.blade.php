@@ -62,15 +62,18 @@ $default_permissions['writers'] = '参加者・カレンダー編集者全員';
                         @endphp
                         @foreach( $calendars as $i => $calendar )
                             @php
-                            
-                                #$href = route( 'groupware.calendar.show', [ 'calendar' => $calendar->id ] );
 
+
+                                $calprop = $calendar->my_calprop();
+                                                            
                                 $route_new_schedule  = route( 'groupware.schedule.create', [ 'calendar' => $calendar->id ] );
-                                $route_show_calprop  = route( 'groupware.calprop.show',    [ 'calprop'  => $calendar->calprop()->id ] );
+                                $route_show_calprop  = route( 'groupware.calprop.show',    [ 'calprop'  => $calprop->id  ] );
                                 $route_show_calendar = route( 'groupware.calendar.show',   [ 'calendar' => $calendar->id ] );
 
-                                $calprop = $calendar->calprop();
-                                $style = "color: ". $calprop->text_color . "; background-color:" . $calprop->background_color . ";";
+                                #$calprop = $calendar->calprop();
+                                #dd( $calprop );
+                                // $style = "color: ". $calprop->text_color . "; background-color:" . $calprop->background_color . ";";
+                                $style = $calprop->style();
                                 
                                 if( $calendar->isOwner( $user->id )) {
                                     $authority = "管理者";
@@ -129,8 +132,9 @@ $default_permissions['writers'] = '参加者・カレンダー編集者全員';
                         @endforeach
                         
                     </table>
-
-                    <div class="w-100"></div>
+                    
+                    <hr>
+                    <div class="m-1 w-100">{{ BackButton::form() }}</div>
                 </div>
             </div>
         </div>

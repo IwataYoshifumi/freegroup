@@ -16,6 +16,11 @@ use App\myHttp\GroupWare\Models\User;
         <div class="col-8">
             {{ $schedule->place }}
         </div>
+        
+        <label for="place" class="col-4 col-form-label text-md-right">作成者</label>
+        <div class="col-8">
+            {{ $schedule->user->dept->name }} {{ $schedule->user->name }}
+        </div>
     
         <label for="place" class="col-4 col-form-label text-md-right">カレンダー</label>
         <div class="col-8">

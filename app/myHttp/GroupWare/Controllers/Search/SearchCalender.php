@@ -22,7 +22,8 @@ class SearchCalender {
         
         if( ! is_array( $find ) or ! count( $find )) { return Calendar::all(); }
         
-        $query = new Calendar;
+        $query = Calendar::with( [ 'calprop' ] );
+        
 
         //  アクセスリスト権限検索
         //

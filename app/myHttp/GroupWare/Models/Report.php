@@ -78,6 +78,16 @@ class Report extends Model {
         return $this->hasMany( ReportProp::class );
     }
     
+    public function report_prop() {
+        return $this->report_list->report_prop;
+    }
+    
+    public function my_report_prop() {
+        return $this->report_prop()->first();
+    }
+    
+    
+    
     ////////////////////////////////////////////////////////////////////////////////////////////
     //
     //  値取得メソッド
@@ -141,6 +151,9 @@ class Report extends Model {
     //  表示用関数
     //
     /////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
     public function start_time() {
         if( $this->all_day ) { return "【終日】"; }
         return $this->start->format( 'H:i' );
@@ -171,7 +184,18 @@ class Report extends Model {
         }
     }
     
+    public function p_time() {
+        return $this->p_dateTime();
+    }
     
+    //　表示用のstyle css出力を取得
+    //
+    public function style() {
+        
+        return $this->my_report_prop()->style();
+    }
+    
+
 
 
 

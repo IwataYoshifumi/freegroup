@@ -50,23 +50,33 @@ class Calendar extends Model {
     public function calprops() {
         return $this->hasMany( CalProp::class );
     }
-
+    
     /////////////////////////////////////////////////////////////////////////////////////////////
     //
     //  検索メソッド
     //
     /////////////////////////////////////////////////////////////////////////////////////////////
-    public function calprop( $user = null ) {
+    // public function calprop( $user = null ) {
+    public function calprop() {
         
-        $user    = ( empty( $user )) ? user_id() : $user ;
-        $user_id = ( $user instanceof User ) ? $user->id : $user;
+        // $user    = ( empty( $user )) ? user_id() : $user ;
+        // $user_id = ( $user instanceof User ) ? $user->id : $user;
         // if_debug( $this->calendar()->calprop->where( 'user_id', $user_id )->first() );
-        return $this->calprops()->where( 'user_id', $user_id )->first();
+        // return $this->calprops()->where( 'user_id', $user_id )->first();
+        return $this->calprops()->where( 'user_id', user_id() );
+    }
+    
+    public function my_calprop() {
+        return $this->calprop()->first();
     }
 
     public function access_list() {
         return $this->access_lists->first();
         // return $this->access_lists()->first();
+    }
+
+    public function user_role() {
+        return $this->access_lists()->user_role()->where( 'user_id', user_id() );
     }
     
     public static function getOwner( $user_id ) {

@@ -18,10 +18,12 @@ use App\myHttp\GroupWare\Models\AccessListUserRole;
 use App\myHttp\GroupWare\Models\ACL;
 use App\myHttp\GroupWare\Models\CalProp;
 use App\myHttp\GroupWare\Models\Calendar;
+use App\myHttp\GroupWare\Models\TaskList;
 
 use App\myHttp\GroupWare\Models\Actions\AccessListUserRoleUpdate;
 use App\myHttp\GroupWare\Models\Actions\AccessListAction;
 use App\myHttp\GroupWare\Models\Actions\CalendarAction;
+use App\myHttp\GroupWare\Models\Actions\TaskListAction;
 
 use App\myHttp\GroupWare\Events\UserCreateEvent;
 use App\myHttp\GroupWare\Events\UserRetireEvent;
@@ -30,16 +32,19 @@ use App\myHttp\GroupWare\Events\UserTransferDeptEvent;
 
 use App\myHttp\GroupWare\Models\Initialization\InitCalendar;
 use App\myHttp\GroupWare\Models\Initialization\InitReportProp;
+use App\myHttp\GroupWare\Models\Initialization\InitTaskProp;
 
 use App\myHttp\GroupWare\Notifications\GoogleCalendar\UnSyncGoogleCalendar;
 
 class InitUser  {
     
-    // protected $table = 'groups';
-    
-    //　検索
     //
     //　何かしらのエラーがあれば false を返す
+    //
+    //　デフォルトのロールを割り当てる
+    //　初期設定の公開カレンダーを自動生成する
+    //　公開日報を作成する
+    //　非公開タスクリストを作成する
     //
     public static function init( $user ) {
 
@@ -62,10 +67,11 @@ class InitUser  {
             }
         }
         
-        //　Calprop, ReportProp クラスの初期化
+        //　Calprop, ReportProp, TaskProp クラスの初期化
         //
         InitCalendar::forUser( $user );
         InitReportProp::forUser( $user );
+        InitTaskProp::forUser( $user );
         
         //　アクセス権がなくなったカレンダーのGoogleカレンダー同期を解除
         //
@@ -117,14 +123,17 @@ class InitUser  {
         $access_list = self::initAccessList( $user );
         
         //　自分の公開カレンダーを生成
+        //　自分の非公開タスクリストを生成
         //
         if( ! is_null( $access_list )) {
             self::initCalendar( $user, $access_list );
+            self::initTaskList( $user, $access_list );
         }
     }
 
 
     //　ユーザ用アクセスリストの初期化（ユーザが管理者のアクセスリストがなければ、作成）
+    //　ユーザ自分のみが管理者のアクセスリストを生成
     //
     public static function initAccessList( User $user ) {
 
@@ -154,10 +163,10 @@ class InitUser  {
             }
         } 
         
-        // 　自分のみ管理者のアクセスリストを生成
+        // 　自分のみ管理者のアクセスリストを生成（同一部署内は閲覧可能）
         //
         $request = new Request;
-        $request->name = $user->name . 'のみ管理者';
+        $request->name = $user->name . 'のみ管理者（' . $user->dept->name . '内に公開）';
         $request->memo = '初期自動生成';
         
         $i = 1;
@@ -165,10 +174,19 @@ class InitUser  {
         $roles[$i]  = 'owner';
         $types[$i]  = 'user';
         $users[$i]  = $user->id;
+        $i++;
+        $orders[$i] = $i;
+        $roles[$i]  = 'reader';
+        $types[$i]  = 'dept';
+        $depts[$i]  = $user->dept_id;
+
         $request->orders = $orders;
         $request->roles  = $roles;
         $request->types  = $types;
         $request->users  = $users;
+        $request->depts  = $depts;
+        
+        if_debug( $request );
         
         $access_list = AccessListAction::creates( $request );
         
@@ -184,15 +202,36 @@ class InitUser  {
         if( count( $calendars )) { return null; }
         
         $request = new Request;
-        $request->name = $user->name . "の公開カレンダー";
+        $request->name = $user->name . "のカレンダー";
         $request->memo = "初期自動生成カレンダー";
-        $request->type = 'public';
+        // $request->type = 'public';
+        $request->type = 'private';
+        
         $request->default_permission = 'creator';
         $request->access_list_id = $access_list->id;
 
         $calendar = CalendarAction::creates( $request );
         
         return $calendar;
+    }
+    
+    //　自分のみで使えるタスクリスト（非公開）を生成
+    // 
+    public static function initTaskList( User $user, AccessList $access_list ) {
+        
+        $tasklists = TaskList::getCanWrite( $user );
+        if( count( $tasklists )) { return null; }
+        
+        $request = new Request;
+        $request->name = $user->name . "のタスク";
+        $request->memo = "初期自動生成タスク（非公開）";
+        $request->type = 'private';
+        $request->default_permission = 'creator';
+        $request->access_list_id = $access_list->id;
+
+        $tasklist = TaskListAction::creates( $request );
+        
+        return $tasklist;
     }
 
 }

@@ -28,6 +28,9 @@ if( is_debug() ) {
         1001   => route( 'groupware.test.test'),
         1002   => route( 'groupware.test.custome_blade_icons'),
         1003   => route( 'groupware.test.depts_users_customers'),
+        1004   => route( 'groupware.show_all.monthly' ),
+        1005 => route( 'groupware.test.search_report_lists' ),
+        
         ];
 }
 @endphp
@@ -45,6 +48,7 @@ if( is_debug() ) {
                     <li><a class="dropdown-item" href="{{ $route[1002] }}">Blade Icons</a></li>
                     <li><a class="dropdown-item" href="{{ $route[1003] }}">Depts Users Customers</a></li>
                     <li><a class="dropdown-item" href="{{ $route[100]  }}">Search ReportList</a></li>
+                    <li><a class="dropdown-item" href="{{ $route[100] }}">RL</a><li>
                     
                 </ul>
             </li>

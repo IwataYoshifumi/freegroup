@@ -54,11 +54,17 @@ class ReportList extends Model {
     //  検索メソッド
     //
     /////////////////////////////////////////////////////////////////////////////////////////////
-    public function report_prop( $user = null ) {
+    // public function report_prop( $user = null ) {
+    public function report_prop() {
         
-        $user    = ( empty( $user )) ? user_id() : $user ;
-        $user_id = ( $user instanceof User ) ? $user->id : $user;
-        return $this->report_props()->where( 'user_id', $user_id )->first();
+        // $user    = ( empty( $user )) ? user_id() : $user ;
+        // $user_id = ( $user instanceof User ) ? $user->id : $user;
+        // return $this->report_props()->where( 'user_id', $user_id )->first();
+        return $this->report_props()->where( 'user_id', user_id() );
+    }
+    
+    public function my_report_prop() {
+        return $this->report_prop()->first();
     }
 
     public function access_list() {

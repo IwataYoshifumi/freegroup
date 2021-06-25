@@ -33,7 +33,7 @@ class InitController extends Controller {
 
     public function showForminitAllUsers() {
         
-        dump( old() );
+        if_debug( old() );
         return view( 'groupware.init.init_all_users' );
     }
 

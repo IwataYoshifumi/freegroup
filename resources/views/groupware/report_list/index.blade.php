@@ -73,14 +73,17 @@ $default_permissions = ReportProp::getPermissions();
                             
                                 #$href = route( 'groupware.report_list.show', [ 'report_list' => $report_list->id ] );
 
+                                $report_prop = $report_list->my_report_prop();
+
                                 $route_new_report  = route( 'groupware.report.create', [ 'report_list' => $report_list->id ] );
-                                $route_show_report_prop  = route( 'groupware.report_prop.show',    [ 'report_prop'  => $report_list->report_prop()->id ] );
+                                $route_show_report_prop  = route( 'groupware.report_prop.show',    [ 'report_prop'  => $report_prop->id ] );
                                 $route_show_report_list = route( 'groupware.report_list.show',   [ 'report_list' => $report_list->id ] );
                                 $route_to_index_reports = route( 'groupware.report.index', [ 'report_list_id' => $report_list->id ] );
 
                                 //$report_prop = $report_list->report_prop();
-                                $report_prop = $report_list->report_props->first();
-                                $style = "color: ". $report_prop->text_color . "; background-color:" . $report_prop->background_color . ";";
+
+                                # $style = "color: ". $report_prop->text_color . "; background-color:" . $report_prop->background_color . ";";
+                                $style = $report_prop->style();
                                 
                                 if( $report_list->isOwner( $auth->id )) {
                                     $authority = "管理者";
