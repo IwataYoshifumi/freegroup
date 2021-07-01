@@ -64,27 +64,65 @@ setlocale(LC_ALL, 'ja_JP.UTF-8');
                 
                 <td>
                     <div class="row">
+                        {{--
                         @foreach( [ $returns['multi'], $returns['single'], $returns['time'], $returns['task'] ] as $items )
+                        @foreach( [ $returns['task'], $returns['all_day'], $returns['multi_not_all_day'], $returns['time'] ] as $items )
+                        --}}
+                        @foreach( [ $returns['task'], $returns['all_day'] ] as $items )
                             @foreach( $items as $item )
                                 @if( $item->user_id != $user_id ) @continue @endif
                                 @php
                                 $style = $item->style();
+                                
                                 if( $item instanceof Schedule ) {
                                     $url = route( 'groupware.schedule.show', [ 'schedule' => $item->id ] );
-                                    $data = "data-class='schedule' data-id=" . $item->id;
+                                    $data = "data-object='schedule' data-object_id=" . $item->id;
                                 } else {
                                     $url = route( 'groupware.task.show', [ 'task' => $item->id ] );
-                                    $data = "data-class='task' data-id=" . $item->id;
+                                    $data = "data-object='task' data-object_id=" . $item->id;
+                                    // if( $item->status == "完了" ) { $style .= " text-decoration: line-through;"; }
                                 }
                                 @endphp
                             
                                 <div class="event_item col-4" {!! $data !!}>
-                                    <a href="{{ $url }}" class="btn btn-sm text-left w-100" style="{{ $style }}">
-                                        @if( $item instanceof Schedule) @icon(calendar) @else @icon( check-circle-r )  @endif
-                                        {{ $item->name }}
-                                    </a>
+                                    <div class="row">
+                                        <div class="col-1 mr-2">
+                                            @if( $item instanceof Schedule) @icon(calendar) @else @icon( check )  @endif
+                                        </div>
+                                        <span class="col btn btn-sm text-left w-100 object_to_show_detail" {!! $data !!} style="{{ $style }}">
+                                            {{ $item->name }}
+                                        </span>
+                                    </div>
                                 </div>
-                                <div class="col-6">{{ $item->p_time_in_daily_form() }}</div>
+                                <div class="col-6">{{ $item->p_time( 'daily' ) }}</div>
+                            @endforeach
+                        @endforeach
+                        
+                        {{--
+                          --
+                          --
+                          -- 終日でない予定
+                          --
+                          --}}
+                        @foreach( $returns['time_for_daily'] as $time => $items )
+                            @foreach( $items as $i => $item )
+                                @if( $item->user_id != $user_id ) @continue @endif
+                                @php
+                                $style = $item->style();
+                                $url = route( 'groupware.schedule.show', [ 'schedule' => $item->id ] );
+                                $data = "data-object='schedule' data-object_id=" . $item->id;
+                                @endphp
+                                <div class="event_item col-4" {!! $data !!}>
+                                    <div class="row">
+                                        <div class="col-1 mr-2">
+                                            @if( $item instanceof Schedule) @icon(calendar) @else @icon( check-circle-r )  @endif
+                                        </div>
+                                        <span class="col btn btn-sm text-left w-100 object_to_show_detail" {!! $data !!}  style="{{ $style }}">
+                                            {{ $item->name }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-6">{{ $item->p_time_for_daily_form() }}</div>
                             @endforeach
                         @endforeach
                     </div>
@@ -93,4 +131,6 @@ setlocale(LC_ALL, 'ja_JP.UTF-8');
         </tr>
     @endforeach
 </table>
+
+@include( 'groupware.show_all.modal_to_show_detail' )
             

@@ -40,7 +40,7 @@ $col = 1;
 
     @if( $loop->first or $date->isSunday() ) <div class="row no-gutters"> @endif
 
-        <div class="col border border-dark date_box shadow {{ $box_class }} row{{ $row }} col{{ $col }}">
+        <div class="col border border-dark date_box shadow {{ $box_class }} row{{ $row }} col{{ $col }}" data-date="{{ $date->format( 'Y-m-d' ) }}">
             <div class="row no-gutters">
                 <div class="col-12 date_item" data-date="{{ $date->format( 'Y-m-d' ) }}">
                     {{ $date->format( 'd' ) }}
@@ -60,3 +60,29 @@ $col = 1;
     @endif
 @endforeach
 
+@push( 'script_to_move_daily_page' )
+<script>
+    //   日付をクリックするとデイリー表示へ移動
+    //
+    $('.date_item').on( 'click', function() {
+        var date = $(this).data( 'date' );
+        var url  = "{{ url( '/groupware/show_all/daily/' ) }}";
+        // var url  = "{{ url( '/groupware/show_all/dialog/daily/' ) }}";
+        $('#base_date').val( date );
+        $('#search_form').attr( 'action', url );
+        $('#search_form').submit();
+        
+    });
+    
+    //　日付の空白部分をダブルクリックすると週表示へ移動
+    //
+    $(".date_box").dblclick( function() {
+        var date = $(this).data('date');
+
+        var url  = "{{ route( 'groupware.show_all.weekly' ) }}";
+        $('#base_date').val( date );
+        $('#search_form').attr( 'action', url );
+        $('#search_form').submit();
+    });
+</script>
+@endpush

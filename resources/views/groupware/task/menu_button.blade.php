@@ -6,6 +6,7 @@ $options = [ 'from_menu' => 1 ];
 $auth = auth( 'user' )->user();
 
 #$route_to_search_tasks = route( 'groupware.task.index', $options  ); 
+#$route_to_search_tasks = route( 'groupware.show_all.index', [ 'writable_tasklist' => 1, 'set_defaults' => 1 ] );
 $route_to_search_tasks = route( 'groupware.show_all.index', [ 'writable_tasklist' => 1, 'set_defaults' => 1 ] );
 
 @endphp
@@ -27,7 +28,7 @@ $route_to_search_tasks = route( 'groupware.show_all.index', [ 'writable_tasklist
         
     @endif
     
-
+    
     <a class="btn btn-menu col col-lg-3 m-1" href="{{ $route_to_search_tasks }}">
         <div class="d-block d-lg-none">検索</div>
         <div class="d-none d-lg-block">タスク検索</div>

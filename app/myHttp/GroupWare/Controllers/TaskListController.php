@@ -54,7 +54,8 @@ class TaskListController extends Controller {
         $tasklists->load( [ 'taskprops' => function( $query ) { $query->where( 'user_id', user_id() ); } ] );
         
         // dd( $tasklists );
-        BackButton::setHere( $request );
+        // BackButton::setHere( $request );
+        BackButton::stackHere( $request );
         return view( 'groupware.tasklist.index' )->with( 'tasklists', $tasklists )
                                                  ->with( 'find',      $find );
     }

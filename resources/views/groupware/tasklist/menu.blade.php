@@ -9,9 +9,9 @@ use App\myHttp\GroupWare\Models\TaskList;
         
         {{--
         <a class="btn btn-outline-secondary col-3 m-1" href="{{ route( 'groupware.task.index'  ) }}">タスク一覧</a>
-        --}}
         <a class="btn btn-outline-secondary col-3 m-1" href="{{ route( 'groupware.show_all.index', [ 'writable_tasklist' => 1, 'set_defaults' => 1 ]  ) }}">タスク検索</a>
-        
+        --}}
+
         <a class="btn btn-outline-secondary col-3 m-1" href="{{ route( 'groupware.tasklist.index'  ) }}">タスクリスト一覧</a>
         
         @if( $user->can( 'create', TaskList::class )) 

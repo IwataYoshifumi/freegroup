@@ -127,7 +127,8 @@ $default_permissions['writers'] = '参加者・タスクリスト編集者全員
                         
                     </table>
 
-                    <div class="w-100"></div>
+                    <hr>
+                    <div class="w-100 m-1">{{ BackButton::form() }}</div>
                 </div>
             </div>
         </div>

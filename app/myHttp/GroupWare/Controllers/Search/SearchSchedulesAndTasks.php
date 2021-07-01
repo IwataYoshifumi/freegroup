@@ -5,6 +5,7 @@ namespace App\myHttp\GroupWare\Controllers\Search;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Route;
 use DB;
 use Carbon\Carbon;
 
@@ -104,12 +105,14 @@ class SearchSchedulesAndTasks {
         //
         $tasks = self::searchTasks( $request, $dates );
 
-
-
         //　カレンダー表示用データの作成
         //
-        
-        $returns = self::arrange_outputs( $dates, $schedules, $tasks, $list_of_calendars, $list_of_tasklists );
+        $current_route_name = Route::currentRouteName();
+        if( $current_route_name == "groupware.show_all.weekly" ) {
+            $returns = self::arrange_outputs_for_weekly( $dates, $schedules, $tasks, $list_of_calendars, $list_of_tasklists  );   
+        } else {
+            $returns = self::arrange_outputs( $dates, $schedules, $tasks, $list_of_calendars, $list_of_tasklists );
+        }
 
         return $returns;
     }
@@ -159,6 +162,30 @@ class SearchSchedulesAndTasks {
         //     });
         //     $calendars = $calendars->whereIn( 'id', $calendars_ids )->get()->pluck( 'id' );
         // }
+        
+        //　部署・社員検索
+        //
+        if( $request->users and $request->depts ) {
+            $sub_query = User::select('id')->whereIn( 'id', $request->users )
+                                           ->orWhere( function( $query ) use ( $request ) {
+                                                $query->whereIn( 'dept_id', $request->depts );
+                                           });
+            $schedules = $schedules->whereIn( 'user_id', $sub_query );
+        } elseif( ! $request->users and $request->depts ) {
+            $schedules = $schedules->whereHas( 'user', function( $query ) use ( $request ) {
+                                        $query->whereIn( 'dept_id', $request->depts );
+                            });
+        } elseif( $request->users and ! $request->depts ) {
+            $schedules = $schedules->whereIn( 'user_id', $request->users );
+            
+        }
+        //　関連顧客で検索
+        //
+        if( $request->customers ) {
+            $schedules = $schedules->whereHas( 'customers', function( $query ) use ( $request ) {
+                                        $query->whereIn( 'id', $request->customers ); 
+                                    });
+        }
 
         $schedules->whereHas( 'calendar', function( $query ) use ( $calendars ) {
             $query->whereIn( 'id', $calendars );
@@ -191,9 +218,35 @@ class SearchSchedulesAndTasks {
         $tasks = $tasks->where( 'due_date', '>=', $start_date )
                        ->where( 'due_date', '<=', $end_date   );
         
+        //　ステータス検索
+        //
         if( isset( $request->task_status )) {
             $tasks = $tasks->where( 'status', $request->task_status );
-        }        
+        }
+        
+        //　部署・社員検索
+        //
+        if( $request->users and $request->depts ) {
+            $sub_query = User::select('id')->whereIn( 'id', $request->users )
+                                           ->orWhere( function( $query ) use ( $request ) {
+                                                $query->whereIn( 'dept_id', $request->depts );
+                                           });
+            $tasks = $tasks->whereIn( 'user_id', $sub_query );
+        } elseif( ! $request->users and $request->depts ) {
+            $tasks = $tasks->whereHas( 'user', function( $query ) use ( $request ) {
+                                        $query->whereIn( 'dept_id', $request->depts );
+                            });
+        } elseif( $request->users and ! $request->depts ) {
+            $tasks = $tasks->whereIn( 'user_id', $request->users );
+            
+        }
+        //　関連顧客で検索
+        //
+        if( $request->customers ) {
+            $tasks = $tasks->whereHas( 'customers', function( $query ) use ( $request ) {
+                                        $query->whereIn( 'id', $request->customers ); 
+                                    });
+        }
 
         $tasks->whereHas( 'tasklist', function( $query ) use ( $tasklists ) {
             $query->whereIn( 'id', $tasklists );
@@ -295,10 +348,36 @@ class SearchSchedulesAndTasks {
         return $dates;
     }
 
+    //　日付のマスの位置
+    //
+    private static function calc_date_col_and_row( $dates ) {
+        
+        $cols = [];
+        $rows = [];
+        
+        $col = 1;
+        $row = 1;
+        foreach( $dates as $d => $date ) {
+            $cols[$d] = $col;
+            $rows[$d] = $row;
+            
+            if( $date->isSaturday() ) {
+                $row++;
+                $col = 1;
+            } else {
+                $col++;
+            }
+        }
+        return [  $cols,  $rows ];
+    }
+
     //
     //　出力データの整形
     //
     //  $returns['dates'] キーが日付テキスト、値がCarbon
+
+    //　下記はマンスリー表示用データ
+    //
     //  $returns['multi']　２日間以上の予定の配列
     //  $returns['single'] １日終日の予定
     //  $returns['task']   タスク
@@ -306,13 +385,44 @@ class SearchSchedulesAndTasks {
     //  $returns['others'] その他　何件
     //  $returns['others']['Y-m-d'] 値はその他の件数（７件目以上はその他表示）
     //
+    //  下記はデイリー表示用のデータ
+    //  $returns['all_day']　終日の予定フラグがついている予定
+    //  $returns['multi_not_all_day'] 複数日の予定で終日フラグがついてない予定
+    //  $returns['time_for_daily'][時刻] 　終日フラグでない予定（１日以内、複数日含む）
+    // 
+    //  下記はウイークリー表示
+    //
+    //  $returns['depts']  キー；dept_id , 値：部署のインスタンス
+    //  $returns['users']  キー：user_id , 値：ユーザのインスタンス
+    //  $returns['objects_that_has_user'][user_id][[Y-m-d]] ユーザのある日に何個オブジェクトがあるか
+    //  $returns['others'][user_id][[Y-m-d]]　〇〇件以上はその他表示させるため
+    //    
+    //  $returns[user_id][Y-m-d]['multi']　２日間以上の予定の配列
+    //  $returns[user_id][Y-m-d]['single'] １日終日の予定
+    //  $returns[user_id][Y-m-d]['task']   タスク
+    //  $returns[user_id][Y-m-d]['time']  １日以内の予定
+    //  $returns[user_id][Y-m-d]['others'] その他　何件
+    
+    
     private static function arrange_outputs( $dates, $schedules, $tasks, $list_of_calendars, $list_of_tasklists ) {
 
         //　カレンダー表示用データの作成
         //
         $start_date = Arr::first( $dates )->format( 'Y-m-d' );
         $end_date   = Arr::last(  $dates )->format( 'Y-m-d' );
-        $returns = [ 'dates' => $dates, 'multi' => [], 'single' => [], 'task' => [], 'time' => [], 'list_of_calendars' => [], 'list_of_tasklists' => [] ];
+        $returns = [ 'dates' => $dates, 
+                     'multi' => [], 
+                     'single' => [], 
+                     'task' => [], 
+                     'time' => [], 
+                     'list_of_calendars' => [], 
+                     'list_of_tasklists' => [],
+                     
+                     'all_day' => [],
+                     'time_for_daily' => [],
+                     'multi_not_all_day' => [],
+                     
+                     ];
         list( $returns['cols'], $returns['rows'] ) = self::calc_date_col_and_row( $dates );
         
         foreach( $schedules as $schedule ) {
@@ -325,16 +435,37 @@ class SearchSchedulesAndTasks {
 
             if( $num_day >= 2 ) {
 
-                //　予定が複数日の場合の処理
+                //　月・週表示用データ（予定が複数日の場合の処理）
                 //
                 array_push( $returns['multi'], $schedule ); 
+                
+                //　デイリー表示用のデータ
+                //
+                if( $schedule->all_day ) { 
+                    array_push( $returns['all_day'], $schedule );
+                } else {
+                    $time = $schedule->start->format('H:i');
+                    if( ! isset( $returns['time_for_daily'][$time]) ) { $returns['time_for_daily'][$time] = []; }
+                    array_push( $returns['time_for_daily'][$time], $schedule );
+                    array_push( $returns['multi_not_all_day'], $schedule );
+                }
+                
             } else {
                 //　１日だけの予定の処理
                 //
                 if( $schedule->all_day ) {
-                    array_push( $returns['single'], $schedule );
+                    array_push( $returns['single' ], $schedule );
+                    array_push( $returns['all_day'], $schedule );
                 } else {
+                    //　月・週表示用データ
+                    //
                     array_push( $returns['time'], $schedule );
+                    
+                    //　デイリー表示用データ
+                    //
+                    $time = $schedule->start->format('H:i');
+                    if( ! isset( $returns['time_for_daily'][$time]) ) { $returns['time_for_daily'][$time] = []; }
+                    array_push( $returns['time_for_daily'][$time], $schedule );
                 }
             }
         }
@@ -371,33 +502,139 @@ class SearchSchedulesAndTasks {
                 
             }
         }
+        
+        //　デイリー表示用に時間でデータをソート
+        //
+        // if_debug( $returns['time_for_daily'], ksort( $returns['time_for_daily'] ), $returns['time_for_daily'], $returns );
+        ksort( $returns['time_for_daily' ] );
+
         return $returns;
         
     }
     
-    //　日付のマスの位置
+        //
+    //　出力データの整形
     //
-    private static function calc_date_col_and_row( $dates ) {
-        
-        $cols = [];
-        $rows = [];
-        
-        $col = 1;
-        $row = 1;
-        foreach( $dates as $d => $date ) {
-            $cols[$d] = $col;
-            $rows[$d] = $row;
-            
-            if( $date->isSaturday() ) {
-                $row++;
-                $col = 1;
-            } else {
-                $col++;
+    //  $returns['dates'] キーが日付テキスト、値がCarbon
+    // 
+    //  下記はウイークリー表示
+    //
+    //  $returns['depts']  キー；dept_id , 値：部署のインスタンス
+    //  $returns['users']  キー：user_id , 値：ユーザのインスタンス
+    //  $returns[user_id]['num_of_objects'][Y-m-d] ユーザのある日に何個オブジェクトがあるか
+    //  $returns[user_id]['max_num_of_objects']      ユーザの最大オブジェクト数
+    //
+    //  $returns[user_id][Y-m-d]['multi']　２日間以上の予定の配列（表示初日のみインスタンス、２日目以降は１を入力）
+    //  $returns[user_id][Y-m-d]['single'] １日終日の予定
+    //  $returns[user_id][Y-m-d]['task']   タスク
+    //  $returns[user_id][Y-m-d]['time']  １日以内の予定
+    //  $returns[user_id][Y-m-d]['others'] その他　何件 ２０件以上はその他
+    //
+    private static function arrange_outputs_for_weekly( $dates, $schedules, $tasks, $list_of_calendars, $list_of_tasklists  ) {
+
+        //　カレンダー表示用データの作成
+        //
+        $start_date = Arr::first( $dates )->format( 'Y-m-d' );
+        $end_date   = Arr::last(  $dates )->format( 'Y-m-d' );
+        $returns['dates'] = $dates;
+
+        //　ユーザ・部署　配列
+        //
+        $users = [];
+        $depts = [];
+        foreach( [ $schedules, $tasks ] as $objects ) {
+            foreach( $objects as $object ) {
+                $user = $object->user;
+                $users[$user->id] = $user;
+                $depts[$user->dept->id] = $user->dept;
             }
         }
-        return [  $cols,  $rows ];
+        $returns['users'] = $users;
+        $returns['depts'] = $depts;
         
-    }
+        //　出力値の初期化
+        //
+        foreach( $users as $user ) {
+            foreach( $dates as $date ) {
+                $returns[$user->id]['num_of_objects'][$date->format('Y-m-d')] = 0;
+                $returns[$user->id][$date->format('Y-m-d')] = [ 'multi' => [], 'single' => [], 'task' => [], 'time' => [], 'others' => [] ];        
+            }
+            $returns[$user->id]['max_num_of_objects'] = 0;                
+        }
 
+        list( $returns['cols'], $returns['rows'] ) = self::calc_date_col_and_row( $dates );
+
+        if_debug( $returns );
+
+        //　スケジュールを週表示用にデータ処理
+        // 
+        foreach( $schedules as $schedule ) {
+            //　予定の日数（１日以内 or 複数日か　)
+            //
+            $num_day = $schedule->end->diffInDays( $schedule->start ) + 1;
+            $user = $schedule->user;
+
+            if( $num_day >= 2 ) {
+
+                //　予定が複数日の場合
+                //
+                $start = 0;
+                foreach( $dates as $date ) {
+                    if( $start == 0 and ( $date->gte( $schedule->start ) or $date->format('Y-m-d') == $schedule->start->format('Y-m-d') )) {
+                        $start = 1;
+                        // dd($returns[$user->id][$date->format('Y-m-d')]['multi'] );
+                        array_push( $returns[$user->id][$date->format('Y-m-d')]['multi'] , $schedule );
+                        $returns[$user->id]['num_of_objects'][$date->format('Y-m-d')]++;    
+                        
+                    } elseif( $start == 1 and ( $date->lte( $schedule->end ) or $date->format('Y-m-d') == $schedule->end->format('Y-m-d') )) {
+                        $returns[$user->id]['num_of_objects'][$date->format('Y-m-d')]++;                        
+                        // array_push( $returns[$user->id][$date->format('Y-m-d')]['multi'] , $schedule );
+                        array_push( $returns[$user->id][$date->format('Y-m-d')]['multi'] , 1 );
+                    }
+                }
+            } else {
+                //　１日だけの予定の処理
+                //
+                if( $schedule->all_day ) {
+                    array_push( $returns[$user->id][$schedule->start->format('Y-m-d')]['single'], $schedule );
+                } else {
+                    array_push( $returns[$user->id][$schedule->start->format('Y-m-d')]['time'], $schedule );
+                }
+                $returns[$user->id]['num_of_objects'][$schedule->start->format('Y-m-d')]++;
+            }
+        }
+
+        //　タスクを週表示用にデータ処理
+        //
+        foreach( $tasks as $task ) {
+            $user = $task->user;
+            $date = $task->due_time->format( 'Y-m-d' );
+        
+            array_push( $returns[$user->id][$date]['task'], $task );
+            $returns[$user->id]['num_of_objects'][$date]++;
+        }
+        
+        //　ユーザ別　最大オブジェクト表示数
+        //
+        foreach( $users as $user ) {
+            $nums = $returns[$user->id]['num_of_objects'];
+            $returns[$user->id]['max_num_of_objects'] = max( $nums );
+        }
+
+        //　カレンダー・タスクリストの表示用データ
+        //
+        $returns['list_of_calendars'] = [];
+        $returns['list_of_tasklists'] = [];
+        foreach( $list_of_calendars as $calendar ) {
+            array_push( $returns['list_of_calendars'], $calendar );
+        }
+        foreach( $list_of_tasklists as $tasklist ) {
+            array_push( $returns['list_of_tasklists'], $tasklist );
+        }
+        
+        
+        if_debug( $returns );
+        return $returns;
+    }
 }
 

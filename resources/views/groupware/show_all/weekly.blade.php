@@ -35,33 +35,42 @@ $base_date = new Carbon( $request->base_date );
 $today = new Carbon( 'today' );
 $num_of_weeks = count( $returns['dates'] ) / 7; 
 
+if_debug( $request->all() );
+
 @endphp
 
 @extends('layouts.app')
 @section('content')
 <div class="main_body">
+    {{--
+    include( 'groupware.show_all.monthly_left_and_top_bar' )
+    --}}
     
-    @include( 'groupware.show_all.monthly_left_and_top_bar' )
+    @include( 'groupware.show_all.menu_bar_left' )
+    @include( 'groupware.show_all.menu_bar_top' )
 
     <div class="head_area bg-light" id="head_area">
         <div class="row no-gutters">
-            <div class="col border border-dark heddings col1">日</div>
-            <div class="col border border-dark heddings col2">月</div>
-            <div class="col border border-dark heddings col3">火</div>
-            <div class="col border border-dark heddings col4">水</div>
-            <div class="col border border-dark heddings col5">木</div>
-            <div class="col border border-dark heddings col6">金</div>
-            <div class="col border border-dark heddings col7">土</div>
+            <div class="col border border-dark heddings col01">部署・社員名</div>
+            <div class="col border border-dark heddings col02">日</div>
+            <div class="col border border-dark heddings col03">月</div>
+            <div class="col border border-dark heddings col04">火</div>
+            <div class="col border border-dark heddings col05">水</div>
+            <div class="col border border-dark heddings col06">木</div>
+            <div class="col border border-dark heddings col07">金</div>
+            <div class="col border border-dark heddings col08">土</div>
         </div>
     </div>
 
     <div class="main_area" id="main_area">
 
-        @include( 'groupware.show_all.monthly_body' )
-        @include( 'groupware.show_all.monthly_body_schedules_tasks' )
+        @include( 'groupware.show_all.weekly_body' )
+        @include( 'groupware.show_all.weekly_body_items' )
 
     </div>
 </div>
+
+@include( 'groupware.show_all.weekly_scripts' )
 
 <!-- スケジュール詳細ダイアログ -->
 @include( 'groupware.show_all.modal_to_show_detail' )

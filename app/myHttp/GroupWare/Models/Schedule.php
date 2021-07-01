@@ -192,28 +192,73 @@ class Schedule extends Model {
         }
     }
     
-    public function p_time_in_daily_form() {
+    public function p_time_for_montly_form() {
         $num_day = $this->start->diffInDays( $this->end ) + 1;
-        
-        if( $this->all_day ) { 
-            if( $num_day >= 2 ) {
-                return "終日（" . $this->end_date . "までの予定）";
+        if( $num_day >= 2 ) { return ""; }  
+        if( $this->all_day ) { return "終日"; }
+        return $this->start->format( 'G:i' );   
+    }
+
+    public function p_time_for_weekly_form() {
+        return $this->p_time_for_montly_form();
+    }
+    
+    public function p_time_for_daily_form( ) {
+        // dump( $date->format( 'Y-m-d' ) );
+        $num_day = $this->start->diffInDays( $this->end ) + 1;
+
+        if( $num_day >= 2 ) {
+            if( $this->all_day ) {
+                return "終日" . $this->end->format( ' 【 ～ Y年 n月 j日 】');
             } else {
-                return "終日";
+                return $this->start->format( 'H:i' ) . '～' . $this->end->format( 'H:i' ) . $this->end->format( ' 【 ～ Y年 n月 j日 】');   
+            }
+        }
+        if( $this->all_day ) {
+            return "終日";
+        } else {
+            return $this->start->format( 'H:i' ) . '～' . $this->end->format( 'H:i' );   
+        }
+
+    }
+    
+    public function p_end_time() {
+
+        $num_day = $this->start->diffInDays( $this->end ) + 1;
+
+        if( $this->all_day ) {
+            if( $this->start->year == $this->end->year ) {
+                if( $this->start->month == $this->end->month ) {
+                    return $this->end->format( 'j日' );
+                } else {
+                    return $this->end->format('n月j日');
+                }
+            } else {
+                return $this->end->format( 'Y年n月j日' );
             }
         } else {
-            $return =  $this->start->format( 'H:i' ) . ' ～ '. $this->end->format( 'H:i' );                
-            
-            if( $num_day == 1 ) {
-                return $return;
-            } else {
-                return $return . "（ ". $this->end_date ." までの予定 ）";   
-            }
+        
         }
     }
     
 
-    public function p_time() {
+    public function p_time( $form_type = 'daily' ) {
+        
+        if( $form_type == 'daily' ) {
+            return $this->p_time_for_daily_form();
+            
+        } elseif( $form_type == 'weekly' ) {
+            return $this->p_time_for_daily_form();
+
+        } elseif( $form_type == 'monthly' ) {
+            return $this->p_time_for_montly_form();
+
+        } elseif( $form_type == 'index' ) {
+
+        } elseif( $form_type == 'detail' ) {
+            
+        } 
+        
         return $this->p_dateTime();
     }
 

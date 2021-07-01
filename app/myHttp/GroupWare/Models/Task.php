@@ -166,7 +166,41 @@ class Task extends Model {
         }
     }
     
-    public function p_time() {
+    public function p_time_for_daily_form() {
+    
+        if( $this->all_day ) { 
+            $return = "終日"; 
+        } else {
+           $return = $this->due_time->format( 'G:i' );
+        }
+        if( $this->status == "完了" ) {
+            $return .= "【済】";
+        }
+        return $return;
+    }
+    
+    public function p_time_for_montly_form() {
+        if( $this->all_day ) { return "aa"; }
+        return $this->due_time->format( 'G:i' );
+    }
+    
+    public function p_time( $form_type = null ) {
+        
+        if( $form_type == 'daily' ) {
+            return $this->p_time_for_daily_form();
+            
+        } elseif( $form_type == 'weekly' ) {
+            return $this->p_time_for_daily_form();
+
+        } elseif( $form_type == 'monthly' ) {
+            return $this->p_time_for_montly_form();
+
+        } elseif( $form_type == 'index' ) {
+
+        } elseif( $form_type == 'detail' ) {
+            
+        } 
+        
         return $this->p_due();
     }
     

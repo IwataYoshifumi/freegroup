@@ -5,12 +5,7 @@ use App\myHttp\GroupWare\Models\ReportList;
 
 <div class="m-2">
     <div class="d-none d-lg-block">
-        {{--
-        <a class="btn btn-outline-secondary col-3 m-1" href="{{ route( 'groupware.report.index'       ) }}">日報一覧</a>
-        --}}
-        <a class="btn btn-menu col col-lg-2 m-1" href="{{ route( 'groupware.show_all.index', [ 'writable_report_list' => 1, 'set_defaults' => 1 ]  ) }}">日報検索</a>
-        
-        
+
         <a class="btn btn-outline-secondary col-3 m-1" href="{{ route( 'groupware.report_list.index'  ) }}">日報リスト一覧</a>
         
         @if( $auth->can( 'create', ReportList::class ))

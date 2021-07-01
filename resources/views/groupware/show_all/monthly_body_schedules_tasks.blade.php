@@ -101,7 +101,8 @@ $others = [];  // 表示しきれずその他何件と表示するための配�
         $orders[$d_date] = $order;
         
         $schedule_class = "schedule schedule_item calendar_" . $schedule->calendar_id;
-        $data_schedule = " data-schedule_id='$schedule->id' data-calendar_id='$schedule->calendar_id' ";
+        // $data_schedule = " data-schedule_id='$schedule->id' data-calendar_id='$schedule->calendar_id' ";
+        $data = "data-object='schedule' data-object_id=" . $schedule->id;
         
         @endphp
     
@@ -113,8 +114,8 @@ $others = [];  // 表示しきれずその他何件と表示するための配�
             $style = $schedule->style();
             @endphp
         
-            <div class="row{{ $start_row }} col{{ $start_col }} span{{ $span }} cal3">
-                <div class="calendar_item order{{ $order }} {{ $schedule_class }} multi_schedule order{{ $order }}" style="{{ $style }}" {!! $data_schedule !!}> {{-- htmlspecialchars OK --}}
+            <div class="row{{ $start_row }} col{{ $start_col }} span{{ $span }} cal3" style="pointer-events: none;">
+                <div class="calendar_item order{{ $order }} {{ $schedule_class }} multi_schedule object_to_show_detail" style="{{ $style }}" {!! $data !!}> {{-- htmlspecialchars OK --}}
                     @if( $user_id != $schedule->user_id ) 【{{ $schedule->user->name }}】 @endif
                 
                     {{ $schedule->name }}
@@ -130,8 +131,8 @@ $others = [];  // 表示しきれずその他何件と表示するための配�
             @php
             $style = $schedule->style();
             @endphp
-            <div class="row{{ $start_row }} col{{ $start_col }} span{{ $span }} cal3">
-                <div class="calendar_item order{{ $order }} multi_schedule {{ $schedule_class }} order{{ $order }}" style="{{ $style }}" {!! $data_schedule !!}> {{-- htmlspecialchars OK --}}
+            <div class="row{{ $start_row }} col{{ $start_col }} span{{ $span }} cal3" style="pointer-events: none;">
+                <div class="calendar_item order{{ $order }} multi_schedule {{ $schedule_class }} order{{ $order }} object_to_show_detail" style="{{ $style }}" {!! $data !!}> {{-- htmlspecialchars OK --}}
                     <div>
                         @if( $user_id != $schedule->user_id ) 【{{ $schedule->user->name }}】 @endif
                         {{ $schedule->name }}
@@ -149,7 +150,7 @@ $others = [];  // 表示しきれずその他何件と表示するための配�
 
 {{-- 終日予定、タスク、１日以内の予定　を表示 --}}
 
-@foreach( [ $returns['single'], $returns['task'], $returns['time'] ] as $return_values )
+@foreach( [ $returns['single'], $returns['time'], $returns['task'] ] as $return_values )
     @foreach( $return_values as $Item )
 
         @if( $Item instanceof Schedule )    
@@ -168,17 +169,18 @@ $others = [];  // 表示しきれずその他何件と表示するための配�
             $orders[$d_date] = $order;
             
             $schedule_class = "schedule schedule_item calendar_" . $schedule->calendar_id;
-            $data_schedule = " data-schedule_id='$schedule->id' data-calendar_id='$schedule->calendar_id' ";
+            // $data_schedule = " data-schedule_id='$schedule->id' data-calendar_id='$schedule->calendar_id' ";
+            $data = "data-object='schedule' data-object_id=" . $schedule->id;
             
             @endphp
             
-            <div class="row{{ $start_row }} col{{ $start_col }} span1 cal3">
-                <div class="calendar_item order{{ $order }} {{ $schedule_class }} single_schedule" style="{{ $style }}" {!! $data_schedule !!}> {{-- htmlspecialchars OK --}}
+            <div class="row{{ $start_row }} col{{ $start_col }} span1 cal3" style="pointer-events: none;">
+                <div class="calendar_item order{{ $order }} {{ $schedule_class }} single_schedule object_to_show_detail" style="{{ $style }}" {!! $data !!}> {{-- htmlspecialchars OK --}}
                     @if( $order < 6 )
                         
                         @if( $user_id != $schedule->user_id ) 【{{ $schedule->user->name }}】 @endif
                         {{ $schedule->name }} 
-                        {{ $schedule->start_time() }}
+                        {{ $schedule->p_time( 'monthly' ) }} 
                     @else
                         {{-- その他〇〇件 --}}
                         @php
@@ -204,12 +206,15 @@ $others = [];  // 表示しきれずその他何件と表示するための配�
             $order = $orders[$d_date] + 1;
             $orders[$d_date] = $order;
 
-            $task_class = "task task_item tasklist_" . $task->tasklist_id;
-            $data_task  = " data-task_id='$task->id' data-tasklist_id='$task->tasklist_id' ";
             $complete   = ( $task->status == "完了" ) ? "task_complete" : "";
+
+            $task_class = "task task_item tasklist_" . $task->tasklist_id;
+            // $data_task  = " data-task_id='$task->id' data-tasklist_id='$task->tasklist_id' ";
+            $data = "data-object='task' data-object_id=" . $task->id;
+
             @endphp
-            <div class="row{{ $start_row }} col{{ $start_col }} span1 cal3">
-                <div class="calendar_item order{{ $order }} {{ $task_class }} {{ $complete }} single_schedule" {!! $data_task !!} style="{{ $style }}">
+            <div class="row{{ $start_row }} col{{ $start_col }} span1 cal3" style="pointer-events: none;">
+                <div class="calendar_item order{{ $order }} {{ $task_class }} {{ $complete }} single_schedule object_to_show_detail" {!! $data !!} style="{{ $style }}">
                     @if( $order < 6 )
                         @if( $task->status == "完了" )
                             @icon( check )
@@ -218,6 +223,7 @@ $others = [];  // 表示しきれずその他何件と表示するための配�
                         @endif
                         @if( $user_id != $task->user_id ) 【{{ $task->user->name }}】 @endif
                         {{ $task->name }}
+                        {{ $task->p_time('daily') }}
                     @else
                         {{-- その他〇〇件 --}}
                         @php
@@ -243,8 +249,6 @@ $others = [];  // 表示しきれずその他何件と表示するための配�
             その他 {{ $num }} 件・・・
         </div>
     </div>    
-
-
 @endforeach
 
 </div>

@@ -85,7 +85,7 @@ $depts = ( op( $request )->depts ) ? $request->depts : [];
                     <div class="col-12">
                         <div class="row">
                             <div class="col-12 m-1 p-2">
-                                <div class="btn btn-sm btn-outline-dark openers" data-target="calendars_form">カレンダー検索</div>
+                                <div class="btn btn-sm btn-outline-dark openers" data-target="calendars_form">カレンダー</div>
                             </div>
                             
                             <fieldset class="col-4 border border-dark m-1 p-1 calendars_form">
@@ -98,26 +98,6 @@ $depts = ( op( $request )->depts ) ? $request->depts : [];
                     {{-- 
                       --
                       --
-                      --    日報リスト
-                      --
-                      --
-                      --}}
-                    <div class="col-12">
-                        <div class="row">
-                            <div class="col-12 m-1 p-2">
-                                <div class="btn btn-sm btn-outline-dark openers" data-target="report_lists_form">日報リスト</div>
-                            </div>
-                            
-                            <fieldset class="col-4 border border-dark m-1 p-1 report_lists_form">
-                                <x-report_list_checkboxes :reportLists="op( $request )->report_lists" name="report_lists" button="日報リスト検索検索" />
-                            </fieldset>
-                        </div>
-                    </div>
-
-                    
-                    {{-- 
-                      --
-                      --
                       --    タスクリスト
                       --
                       --
@@ -125,7 +105,7 @@ $depts = ( op( $request )->depts ) ? $request->depts : [];
                     <div class="col-12">
                         <div class="row">
                             <div class="col-12 m-1 p-2">
-                                <div class="btn btn-sm btn-outline-dark openers" data-target="tasklists_form">検索対象タスク</div>
+                                <div class="btn btn-sm btn-outline-dark openers" data-target="tasklists_form">タスクリスト</div>
                             </div>
                             <div class="col-12 m-1 p-1 tasklists_form">                            
                                 <fieldset class="col-4 border border-dark m-1 p-1">
@@ -150,6 +130,25 @@ $depts = ( op( $request )->depts ) ? $request->depts : [];
                             </div>
                         </div>
                     </div>
+
+                    {{-- 
+                      --
+                      --
+                      --    日報リスト
+                      --
+                      --
+                      --}}
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-12 m-1 p-2">
+                                <div class="btn btn-sm btn-outline-dark openers" data-target="report_lists_form">日報リスト</div>
+                            </div>
+                            
+                            <fieldset class="col-4 border border-dark m-1 p-1 report_lists_form">
+                                <x-report_list_checkboxes :reportLists="op( $request )->report_lists" name="report_lists" button="日報リスト検索検索" />
+                            </fieldset>
+                        </div>
+                    </div>
                     
                     {{-- 
                       --
@@ -161,7 +160,7 @@ $depts = ( op( $request )->depts ) ? $request->depts : [];
                     <div class="col-12">
                         <div class="row">
                             <div class="col-12 m-1 p-2">
-                                <div class="btn btn-sm btn-outline-dark openers" data-target="customers_users_form">顧客・部署・社員検索</div>
+                                <div class="btn btn-sm btn-outline-dark openers" data-target="customers_users_form">顧客・部署・社員</div>
                             </div>
                             
                             {{-- 顧客検索 --}}
@@ -272,7 +271,10 @@ $depts = ( op( $request )->depts ) ? $request->depts : [];
         <script>
 
             $(document).ready( function() { 
-                $(".customers_users_form").hide(); 
+            
+                @if( empty( $request->users ) and empty( $request->depts ) and empty( $request->customers ))
+                    $(".customers_users_form").hide(); 
+                @endif
                 $(".other_condition_form").hide();
                 @if( ! isset( $request->writable_calender ) and ! ( is_array( $request->calendars ) and count( $request->calendars )) ) 
                     $(".calendars_form").hide();

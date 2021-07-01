@@ -75,6 +75,37 @@ class ShowAllController extends Controller {
     }
     
     public function weekly( Request $request ) {
+
+        //　検索初期条件の設定
+        //
+        // dump( $request->all() );
+        
+        $today = new Carbon( 'today' );
+        if( ! isset( $request->base_date )) { 
+            $request->base_date =  $today->format( 'Y-m-d' );
+            $request->show_hidden_calendars = 0;
+            $request->show_hidden_tasklists = 0;
+            $request->calendar_permission = "writer";
+            $request->tasklist_permission = "writer";
+            $request->task_status = '未完';
+
+            // $request->calendars = Calendar::getCanWrite( user_id() )->pluck('id')->toArray();
+            // $request->tasklists = TaskList::getCanWrite( user_id() )->pluck('id')->toArray();
+            $request->calendars = SearchSchedulesAndTasks::searchCalendars( $request )->pluck('id')->toArray();
+            $request->tasklists = SearchSchedulesAndTasks::searchTaskLists( $request )->pluck('id')->toArray();
+        }
+        if( ! isset( $request->span )) {
+            $request->span = "weekly";
+        }
+        
+        //　スケジュールとタスクを件枠
+        //
+        $returns = SearchSchedulesAndTasks::search( $request );
+        // dump( $returns );
+        BackButton::setHere( $request );
+        return view( 'groupware.show_all.weekly' )->with( 'request', $request )
+                                                  ->with( 'returns', $returns );
+        
     }
     
     public function daily( Request $request ) {
@@ -123,7 +154,6 @@ class ShowAllController extends Controller {
             $request->tasklist_permission = "writer";
             $request->task_status = '未完';
             $request->users = [ user_id() ];
-            $request->order_by = [ 'time' ];
             $request->calendars = Calendar::getCanWrite( user_id() )->pluck('id')->toArray();
             $request->tasklists = [];
             $request->report_lists = [];
@@ -144,6 +174,8 @@ class ShowAllController extends Controller {
             $request->tasklists = [];
             $request->task_status = '未完';
         }
+        if( empty( $request->order_by )) { $request->order_by = [ 'time' ]; }
+        
         if( ! $request->pegination ) { $request->pagination = 30; }
 
         //　スケジュールとタスクを件枠
@@ -157,8 +189,8 @@ class ShowAllController extends Controller {
     
     public function indexExecSearch( ShowAllIndexRequest $request ) {
 
-        // if_debug( $request->all(), old() );
-        // dd( $request->all(), old() );
+        if( empty( $request->order_by )) { $request->order_by = [ 'time' ]; }
+        if( ! $request->pegination ) { $request->pagination = 30; }
 
         //　スケジュール・タスク・（報告書）の検索
         //

@@ -3,6 +3,7 @@
 @php
 
 use Illuminate\Support\Arr;
+use Carbon\Carbon;
 
 use App\Models\Dept;
 
@@ -22,6 +23,13 @@ $array_roles[''] = '-';
 $auth = auth( 'user' )->user();
 $report_list_types   = ReportList::getTypes();
 $default_permissions = ReportProp::getPermissions();
+
+$today = Carbon::now();
+
+$options = [ 'start_date' => Carbon::parse( 'first day of January' )->format( 'Y-m-d' ), 
+             'end_date'   => Carbon::parse( 'last day of December' )->format( 'Y-m-d' ), 
+             'users'      => [ user_id() ] 
+             ];
 
 #dump( $find );
 
@@ -78,7 +86,11 @@ $default_permissions = ReportProp::getPermissions();
                                 $route_new_report  = route( 'groupware.report.create', [ 'report_list' => $report_list->id ] );
                                 $route_show_report_prop  = route( 'groupware.report_prop.show',    [ 'report_prop'  => $report_prop->id ] );
                                 $route_show_report_list = route( 'groupware.report_list.show',   [ 'report_list' => $report_list->id ] );
-                                $route_to_index_reports = route( 'groupware.report.index', [ 'report_list_id' => $report_list->id ] );
+                                #$route_to_index_reports = route( 'groupware.report.index', [ 'report_list_id' => $report_list->id ] );
+                                
+                                
+                                $options['report_lists'] = [ $report_list->id ];
+                                $route_to_index_reports = route( 'groupware.show_all.indexEexecSearch', $options );
 
                                 //$report_prop = $report_list->report_prop();
 

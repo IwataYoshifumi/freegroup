@@ -12,6 +12,8 @@ $route = [  0  => route( 'groupware.user.home', $options  ),
             21 => route( 'groupware.show_all.index', [ 'writable_calender'    => 1, 'set_defaults' => 1 ] ),
             22 => route( 'groupware.show_all.index', [ 'writable_tasklist'    => 1, 'set_defaults' => 1 ] ),
             23 => route( 'groupware.show_all.index', [ 'writable_report_list' => 1, 'set_defaults' => 1 ] ),
+            25 => route( 'groupware.show_all.weekly' ),
+
             
             3  => route( 'groupware.report.index', $options ),
             4  => route( 'groupware.task.index', $options ),
@@ -32,6 +34,8 @@ $route = [  0  => route( 'groupware.user.home', $options  ),
                     
 <a class="nav-item nav-link" href="{{ $route[1]  }}">顧客管理</a> 
 <a class="nav-item nav-link" href="{{ $route[20] }}">カレンダー</a>
+<!--<a class="nav-item nav-link" href="{{ $route[25] }}">週表示</a>-->
+
 <a class="nav-item nav-link" href="{{ $route[21] }}">検索</a>
 <a class="nav-item nav-link" href="{{ $route[22] }}">タクス</a>
 <a class="nav-item nav-link" href="{{ $route[23] }}">日報</a>

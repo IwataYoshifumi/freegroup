@@ -10,7 +10,7 @@ $tasklists = ( is_array( $request->tasklists )) ? $request->tasklists : [];
 @endphp
 
 
-<div class="cal3 left_area" id="left_area">
+<div class="cal3 left_area border border-light shadow " id="left_area">
     {{ Form::open( [ 'route' => $current_route, 'method' => 'GET', 'id' => 'search_form' ] ) }}
         @csrf
         {{ Form::hidden( 'base_date', $request->base_date, ['id' => 'base_date' ] ) }}
@@ -21,34 +21,10 @@ $tasklists = ( is_array( $request->tasklists )) ? $request->tasklists : [];
                     <span class="btn btn_icon m-1 mr-auto" id="sidebar_closer">@icon( arrow-left ) </span>
                 </div>
  
-                {{--
-                  --
-                  -- カレンダー・タスクの検索条件
-                  --
-                  --
-                  --}}
-                <div class="col-12 shadow btn btn-light sidebar_headar left_menus m-1 font-weight-bold" data-target="config">検索条件</div>
-                <div class="config shadow" style="width: 100%">
-                    <div class="col-12 m-2">
-                        @php
-                        $permissions = [ 'owner' => 'カレンダー管理者', 'writer' => '予定追加可', 'reader' => '予定閲覧可' ];
-                        @endphp
-
-                        <label for="show_hidden_calendars">非表示カレンダーを表示</label>
-                        {{ Form::checkbox( 'show_hidden_calendars', 1, $request->show_hidden_calendars, [ 'id' => 'show_hidden_calendars', 'class' => 'checkboxradio' ] ) }}
-                        {{ Form::select( 'calendar_permission', $permissions, $request->calendar_permission, [ 'class' => 'form-control' ] ) }}
-                    </div>
-                    <div class="col-12 m-2">
-                        @php
-                        $permissions = [ 'owner' => 'タスクリスト管理者', 'writer' => 'タスク追加可', 'reader' => 'タスク閲覧可' ];
-                        @endphp
-
-                        <label for="show_hidden_tasklists">非表示タスクリストを表示</label>
-                        {{ Form::checkbox( 'show_hidden_tasklists', 1, $request->show_hidden_tasklists, [ 'id' => 'show_hidden_tasklists', 'class' => 'checkboxradio' ] ) }}
-                        {{ Form::select( 'tasklist_permission', $permissions, $request->tasklist_permission, [ 'class' => 'form-control' ] ) }}
-                    </div>
-                </div>
  
+                <div class="col-12 shadow-lg p-2">
+                    <div class="btn btn-outline-dark btn-light shadow col-11" onClick="search_form_submit()">再表示</div>
+                </div>
                 {{--
                   --
                   -- カレンダー　表示フォーム
@@ -58,43 +34,9 @@ $tasklists = ( is_array( $request->tasklists )) ? $request->tasklists : [];
                 <div class="col-12 shadow btn btn-light sidebar_headar left_menus m-1 font-weight-bold" data-target="calendars">カレンダー</div>
                 <div class="calendars" style="width: 100%">
                     <div class="col-12 shadow border p-2">
-                        <div class="btn btn-sm btn-outline-dark" id="toggle_schedules_btn" data-show='0'>予定を表示</div>
-                        <script>
-                            $("#toggle_schedules_btn").on( 'click', function() {
-                                var show = $(this).data('show');
-                                if( show == 1 ) {
-                                    show = 0;
-                                    $(this).html( '予定を表示' );                                    
-                                } else {
-                                    show = 1;
-                                    $(this).html( '予定を非表示' );
-                                }
-                                $(this).data('show', show );
-                                $('.calendar_checkboxes').each( function() {
-                                    $(this).prop('checked', show );
-                                });
-                            });
-                        </script>
-                    </div>
-                    @foreach( $returns['list_of_calendars'] as $i => $calendar )
-                        @php
-                            $calprop = $calendar->my_calprop();
-                            $id = 'calendar_' . $calendar->id;
-                            $h = 50 +  $sidebar_height * $i;
-                            $style = $calprop->style();
-                            $checked = ( in_array( $calendar->id, $calendars )) ? 1 : 0;
-                            $url_to_calprop = route( 'groupware.calprop.show', [ 'calprop' => $calprop->id ] );
-                        @endphp
-                        <div class="col-12 sidebar_lists left_menus border border-light" style="{{ $style }}">
-                            <div class="d-flexa">
-                                {{ Form::checkbox( 'calendars[]', $calendar->id, $checked, [ 'id' => $id, 'class' => 'calendar_checkboxes' ] ) }}
-                                <span class="checkbox-area flex-grow-1 " data-id="{{ $id }}">{{ $calprop->name }}</span>
-                                <a class="btn btn-sm uitooltip" title="カレンダー「{{ $calprop->name }}」表示設定" href="{{ $url_to_calprop }}">@icon( config )</a>
-                            </div>
-                        </div>
-                    @endforeach
+                        <x-calendar_checkboxes :calendars="op( $request )->calendars" name="calendars" button="カレンダー検索" />
+                    </div>      
                 </div>
-
 
                 {{--
                   --
@@ -103,65 +45,47 @@ $tasklists = ( is_array( $request->tasklists )) ? $request->tasklists : [];
                   --
                   --}}
                 @php
-                    $array_task_status = [ '完了' => '完了', '未完' => '未完のみ', '' => '完了・未完' ];                
-                
+                $array_task_status = [ '完了' => '完了', '未完' => '未完のみ', '' => '完了・未完' ];                
                 @endphp
                 <div class="col-12 shadow btn btn btn-light sidebar_headar left_menus m-1 font-weight-bold" data-target="tasklists">タスクリスト</div>
                 <div class="tasklists" style="width: 100%">
                     <div class="col-12 shadow border p-2">
-                        <div class="btn btn-sm btn-outline-dark" id="toggle_tasks_btn" data-show='0'>タスクを表示</div>
-                        <script>
-                            $("#toggle_tasks_btn").on( 'click', function() {
-                                var show = $(this).data('show');
-                                if( show == 1 ) {
-                                    show = 0;
-                                    $(this).html( 'タスクを表示' );                                    
-                                } else {
-                                    show = 1;
-                                    $(this).html( 'タスクを非表示' );
-                                }
-                                $(this).data('show', show );
-                                $('.tasklists_checkboxes').each( function() {
-                                    $(this).prop('checked', show );
-                                });
-                            });
-                        </script>
                         {{ Form::select( 'task_status', $array_task_status, $request->task_status, [ 'class' => 'formcontrol' ] ) }}
+                        <x-tasklist_checkboxes :tasklists="op( $request )->tasklists" name="tasklists" button="タスクリスト検索" />
                     </div>
-                    
-                    
-                    @foreach( $returns['list_of_tasklists'] as $i => $tasklist )
-                        @php
-                            $taskprop = $tasklist->my_taskprop();
-                            $id = 'tasklist_' . $tasklist->id;
-                            $h = 50 +  $sidebar_height * $i;
-                            $style = $taskprop->style();
-                            $checked = ( in_array( $tasklist->id, $tasklists )) ? 1 : 0;
-                            $url_to_taskprop = route( 'groupware.taskprop.show', [ 'taskprop' => $taskprop->id ] );
-                        @endphp
-                        <div class="col-12 sidebar_lists left_menus border border-light" style="{{ $style }}">
-                            {{ Form::checkbox( 'tasklists[]', $tasklist->id, $checked, [ 'id' => $id, 'class' => 'tasklists_checkboxes' ] ) }}
-                            <span class="checkbox-area" data-id="{{ $id }}">{{ $taskprop->name }}</span>
-                            <a class="btn btn-sm uitooltip" title="タスクリスト「{{ $taskprop->name }}」表示設定" href="{{ $url_to_taskprop }}">@icon( config )</a>
-                        </div>
-                    @endforeach
                 </div>
-                <script>
-                    $('.checkbox-area').on( 'click', function() {
-                        var id = $(this).data('id');
-                        console.log( id );
-                        id = "#" + id;
-                        console.log( id, $(id).prop('checked'), $(id).val() );
-                        
-                        
-                        if( $(id).prop('checked') ) {
-                            $(id).prop('checked', false );
-                        } else {
-                            $(id).prop('checked', true );
-                        }
-                    });              
-                </script>
+
+            
+                {{--
+                  --
+                  -- 社員・部署検索
+                  --
+                  --
+                  --}}
+                <div class="col-12 shadow btn btn btn-light sidebar_headar left_menus m-1 font-weight-bold" data-target="users">社員・部署</div>
+                <div class="users" style="width: 100%">
+                    <div class="col-12 shadow border m-2 p-1">
+                        <x-checkboxes_users :users="op( $request )->users" button="社員" />
+                        <hr>
+                        <x-checkboxes_depts :depts="op( $request )->depts" name="depts" button="部署" />
+                    </div>
+                </div>
+                
+                {{--
+                  --
+                  -- 顧客検索
+                  --
+                  --
+                  --}}
+                <div class="col-12 shadow btn btn btn-light sidebar_headar left_menus m-1 font-weight-bold" data-target="customers">顧客</div>
+                <div class="customers" style="width: 100%">
+                    <div class="col-12 shadow border m-2 p-1">
+                        <x-checkboxes_customers :customers="op( $request )->customers" name="customers" button="顧客" />
+                    </div>
+                </div>
+                
             </div>
+
         </div>
         <div class="col-12 shadow-lg p-2">
             <div class="btn btn-outline-dark shadow col-11" onClick="search_form_submit()">再表示</div>
@@ -181,7 +105,6 @@ $tasklists = ( is_array( $request->tasklists )) ? $request->tasklists : [];
         <div class="col-2 w-10 mr-auto">
             <div class="row">
 
-
                 {{--
                   --
                   --
@@ -194,8 +117,6 @@ $tasklists = ( is_array( $request->tasklists )) ? $request->tasklists : [];
                 $route_create_schedule = route( 'groupware.schedule.create' );
                 $route_create_task     = route( 'groupware.task.create'     );
                 $route_create_report   = route( 'groupware.report.create'   );
-                $route_index_schedule  = route( 'groupware.show_all.index', [ 'writable_calender' => 1, 'set_defaults' => 1 ] );
-                $route_index_task      = route( 'groupware.show_all.index', [ 'writable_tasklist' => 1, 'set_defaults' => 1 ] );
 
                 @endphp
                 
@@ -204,15 +125,23 @@ $tasklists = ( is_array( $request->tasklists )) ? $request->tasklists : [];
                 <a class="col btn btn_icon text-primary uitooltip" title="タスク作成"       href="{{ $route_create_task     }}">@icon( check-circle )</a>
                 <a class="col btn btn_icon text-primary uitooltip" title="日報作成"         href="{{ $route_create_report   }}">@icon( clipboard    )</a>
                 
-                <a class="col btn btn_icon uitooltip" title="スケジュール検索"              href="{{ $route_index_schedule }}">@icon( search )スケジュール検索</a>
-                <a class="col btn btn_icon uitooltip" title="タスク検索"                    href="{{ $route_index_task     }}">@icon( search )タスク検索</a>
+                <a class="col btn btn_icon uitooltip" title="週表示" id="show_all_weekly_btn">週</a>
             </div>
         </div>
         <div class="col-3">
             <div class="row">
                 @php
-                $previous_month = $base_date->copy()->subMonth()->format( 'Y-m-d' );
-                $next_month     = $base_date->copy()->addMonth()->format( 'Y-m-d' ) 
+                if( $request->span == "monthly" ) {
+                    $previous_date = $base_date->copy()->subMonth()->format( 'Y-m-d' );
+                    $next_date     = $base_date->copy()->addMonth()->format( 'Y-m-d' );
+                    $date_title    = $base_date->format( 'Y年 n月' );
+                } elseif( $request->span == "weekly" ) {
+                    $previous_date = $base_date->copy()->subDays( 7 )->format( 'Y-m-d' );
+                    $next_date     = $base_date->copy()->addDays( 7 )->format( 'Y-m-d' );
+                    $d             = Arr::first( $returns['dates'] );
+                    // dump( $d, $d->weekNumberInMonth, $base_date->weekNumberInMonth );
+                    $date_title    = $base_date->format( 'Y年n月' ) . $base_date->weekNumberInMonth. "週目";
+                }
                 @endphp
 
 
@@ -222,9 +151,9 @@ $tasklists = ( is_array( $request->tasklists )) ? $request->tasklists : [];
                   --　年月表示、月切替ボタン
                   --
                   --}}
-                <div class="col btn btn_icon month_button" data-date="{{ $previous_month }}">@icon( angle-left )</div>
-                <div class="col btn btn_icon font-weight-bold">{{ $base_date->format( 'Y年 m月' ) }}</div>
-                <div class="col btn btn_icon month_button" data-date="{{ $next_month }}"    >@icon( angle-right )</div>
+                <div class="col btn btn_icon month_button" data-date="{{ $previous_date }}">@icon( angle-left )</div>
+                <div class="col-5 btn btn_icon font-weight-bold w-100">{{ $date_title }}</div>
+                <div class="col btn btn_icon month_button" data-date="{{ $next_date }}"    >@icon( angle-right )</div>
                 <script>
                     $('.month_button').on( 'click', function() {
                         var date = $(this).data('date');
@@ -234,21 +163,19 @@ $tasklists = ( is_array( $request->tasklists )) ? $request->tasklists : [];
                 </script>
             </div>
         </div>
-        @php 
-        $url = route( 'groupware.calendar.index' );
-        @endphp
-        <a class="col-1 btn btn_icon ml-auto w-10" title="カレンダー設定" href="{{ $url }}">@icon( config )</a>
+
+        <a class="col-1 btn btn_icon ml-auto w-10" title="タスクリスト設定" href="{{ route( 'groupware.tasklist.index' ) }}">@icon( config )</a>
+        <a class="col-1 btn btn_icon w-10" title="カレンダー設定"           href="{{ route( 'groupware.calendar.index' ) }}">@icon( config )</a>
     </div>
 </div>
 
-<!--
-<div class="font-weight-bold">
-    <div id="window-size"></div>
-    <div id="main-size"></div>
-</div>
--->
-
 <script>
+
+    $("#show_all_weekly_btn").on( 'click', function() {
+        var search_form = $('#search_form');
+        search_form.attr( 'action', "{{ route( 'groupware.show_all.weekly' ) }}" );
+        search_form.submit();
+    });
 
     $('.sidebar_headar').on( 'click', function() {
         var target = $(this).data( 'target' );
@@ -291,7 +218,25 @@ $tasklists = ( is_array( $request->tasklists )) ? $request->tasklists : [];
             setTimeout( function() { sidebar_opener.show(); } , 500 );
         }
         top_area.scrollLeft( 0 );
+    });
+    
+    $(window).on( 'load', function() {
+        console.log( 'load' );
+        @if(( ! is_array( $request->calendars ) or count( $request->calendars ) == 0 )) 
+            $(".calendars").toggle();
+        @endif
         
+        @if(( ! is_array( $request->tasklists ) or count( $request->tasklists ) == 0 )) 
+            $(".tasklists").toggle();
+        @endif
+        
+        @if(( ! is_array( $request->users ) or count( $request->users ) == 0 ) and ( ! is_array( $request->depts ) or count( $request->depts ) == 0 )) 
+            $(".users").toggle();
+        @endif
+        
+        @if( ! is_array( $request->customers ) or count( $request->customers ) == 0 ) 
+            $(".customers").toggle();
+        @endif
     });
     
     sidebar_closer.on( 'click', function() { hide_sidebar(); });
@@ -303,9 +248,9 @@ $tasklists = ( is_array( $request->tasklists )) ? $request->tasklists : [];
         var head_area = $('#head_area');
 
         is_left_area_hidden = true;        
-        var css = { width: "0px", left: "20px" };        
-        left_menus.animate( css, 500 );
-        
+        // var css = { width: "0px", left: "20px" };        
+        // left_menus.animate( css, 500 );
+        left_area.hide( 'blind', 500 );
         
         var css = { left: "5px" };        
         main_area.animate( css, 500 );
@@ -316,7 +261,9 @@ $tasklists = ( is_array( $request->tasklists )) ? $request->tasklists : [];
         top_area.css( 'width', width + 'px' );
         head_area.css( 'width', width + 'px' );
         main_area.css( 'width', width + 'px' );
-        setTimeout( function() { sidebar_opener.show(); } , 500 );
+        
+        
+        setTimeout( function() { sidebar_opener.show(); } , 200 );
 
 
     }
@@ -328,8 +275,9 @@ $tasklists = ( is_array( $request->tasklists )) ? $request->tasklists : [];
         var head_area = $('#head_area');
 
         is_left_area_hidden = false;
-        var css = { width: left_offset + 'px', left: "0px" };
-        left_menus.animate( css, 500 ); 
+        // var css = { width: left_offset + 'px', left: "0px" };
+        // left_menus.animate( css, 500 );
+
 
         var css = { left: left_offset + 'px' };
         main_area.animate( css, 500 );
@@ -337,6 +285,7 @@ $tasklists = ( is_array( $request->tasklists )) ? $request->tasklists : [];
         head_area.animate(  css, 500 );
         setTimeout( function() { resize_main_area(); }, 500 );
         sidebar_opener.hide();
+        setTimeout( function() { left_area.show( 'blind', 50 ); } , 500 );
 
     }
 
