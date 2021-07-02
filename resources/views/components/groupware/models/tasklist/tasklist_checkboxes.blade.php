@@ -70,8 +70,15 @@ $tasklist_check_toggler = "component_" . $name . "_tasklist_check_toggler";
                 var show_hidden_tasklists = 0;
             }
             var tasklist_permission   = $('#{{ $name_of_tasklist_permission }}').val();
-            console.log( show_hidden_tasklists, tasklist_permission );
-
+            
+            // {{ $array_of_tasklist_ids }} = [];
+            $('.{{ $name }}').each( function() {
+                if( $(this).prop( 'checked' ) ) {
+                     {{ $array_of_tasklist_ids }}.push( $(this).val() );
+                }
+            });
+            console.log( show_hidden_tasklists, tasklist_permission, {{ $array_of_tasklist_ids }} );
+            
             //　タスクリストを検索
             //
             $.ajax( {
@@ -79,9 +86,9 @@ $tasklist_check_toggler = "component_" . $name . "_tasklist_check_toggler";
                 type: "GET",
                 data: { show_hidden_tasklists : show_hidden_tasklists,
                         auth : tasklist_permission,
+                        tasklists : {{ $array_of_tasklist_ids }},
                         user_id : {{ user_id() }}
                         }
-            
             }).done( function( data, status, xhr ) {
                 console.log( data, status );
                 update_tasklists( data );

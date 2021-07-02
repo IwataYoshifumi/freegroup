@@ -54,7 +54,6 @@ $tasklists = ( is_array( $request->tasklists )) ? $request->tasklists : [];
                         <x-tasklist_checkboxes :tasklists="op( $request )->tasklists" name="tasklists" button="タスクリスト検索" />
                     </div>
                 </div>
-
             
                 {{--
                   --

@@ -39,14 +39,13 @@ $reports   = ( isset( $returns['reports']   )) ? $returns['reports']   : [];
                     
                     @include( 'groupware.show_all.find_form' )
 
-                    <table class="table table-striped table-sm">
+                    <table class="table table-striped table-hover table-sm">
                         @foreach( $data as $d )
                             @if( $loop->first )
                                 <tr>
                                     <th>&nbsp;</th>
                                     <th>作成者（関連社員）</th>
                                     <th>件名</th>
-                                    <th>場所</th>
                                     <th>日時</th>
                                 </tr>
                             @endif
@@ -59,7 +58,7 @@ $reports   = ( isset( $returns['reports']   )) ? $returns['reports']   : [];
                             } elseif( $d->type == "task" ) {
                                 $obj  = $tasks->find( $d->id );
                                 $href = route( 'groupware.task.show', [ 'task' => $d->id ] );
-                                $task_complete_style = ( $obj->status == "完了" ) ? "text-decoration:line-through;" : "";
+                                $task_complete_style = ( $obj->status == "完了" ) ? "text-decoration:line-through; color: gray;" : "";
                             } elseif( $d->type == "report" ) {
                                 $obj  = $reports->find( $d->id );
                                 $href = route( 'groupware.report.show', [ 'report' => $d->id ] );
@@ -80,8 +79,8 @@ $reports   = ( isset( $returns['reports']   )) ? $returns['reports']   : [];
                                         <span class="uitooltip" title="{{ $title }}">@icon( user-friends )</span>
                                     @endif
                                 </td>
-                                <td style="{{ $style }}" class="p-1">
-                                    <a class='btn' href="{{ $href }}" style="{{ $style }}">
+                                <td style="" class="p-1">
+                                    <a class='btn' href="{{ $href }}" style="">
                                         <span class="">
                                             @if( $d->type == "schedule" )
                                                 @icon( calendar )
@@ -94,7 +93,6 @@ $reports   = ( isset( $returns['reports']   )) ? $returns['reports']   : [];
                                         <span style="{{ $task_complete_style }}">{{ $obj->name }}</span>
                                     </a>
                                 </td>
-                                <td>{{ $d->type   }}</td>
                                 <td>{{ $obj->p_time() }}</td>
                             </tr>
                             @if( $loop->last )

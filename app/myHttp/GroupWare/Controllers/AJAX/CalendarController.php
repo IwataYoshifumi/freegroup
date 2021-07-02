@@ -38,7 +38,7 @@ class CalendarController extends Controller   {
         }
         $ids = toArray( $query, 'id' );
         $calendars = $calendars->whereIn('id', $ids );
-
+        
         //　公開種別の検索
         //
         if( $request->types ) {
@@ -53,12 +53,20 @@ class CalendarController extends Controller   {
 
         //　非表示タスクの表示（calpropを検索）
         //
-        
         if( ! $request->show_hidden_calendars ) {
             $calendars = $calendars->whereHas( 'calprop', function( $query ) {
                             $query->where( 'hide', 0 );
             });
         }
+        
+        // 選択されているカレンダーも検索
+        //
+        if( isset( $request->calendars ) and ! empty( $request->calendars )) {
+            $calendars = $calendars->orWhere( function( $query ) use ( $request ) { 
+                $query->whereIn( 'id', $request->calendars );
+            }); 
+        }
+        
 
         // dump( $calendars );
         $calendars = $calendars->get();

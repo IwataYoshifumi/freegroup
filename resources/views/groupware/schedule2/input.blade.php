@@ -119,7 +119,6 @@ $is_invalid['calendar_id'] = ( $errors->has( 'calendar_id'         ) ) ? 'is-inv
 
                                 @if( $input_calendar_enable ) 
                                     {{ Form::select( 'calendar_id', $calendars, $schedule->calendar_id, [ 'class' => 'form-control', 'id' => 'calendar_form' ] ) }}
-                                    aaaaaaaaaaaaaaaaaaaaaa
                                     <script>
                                         //　カレンダーを切り替えたときに、変更権限を自動的に設定する
                                         //

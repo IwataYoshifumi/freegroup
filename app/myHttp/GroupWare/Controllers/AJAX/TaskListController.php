@@ -73,6 +73,13 @@ class TaskListController extends Controller   {
             }
         }
         
+        if( isset( $request->tasklists ) and ! empty( $request->tasklists )) {
+            $tasklists = $tasklists->orWhere( function( $query ) use ( $request ) {
+                    $query->whereIn( 'id', $request->tasklists );    
+            }); 
+            
+        }
+        
 
         $tasklists = $tasklists->get();
         $return = [];

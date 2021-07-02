@@ -40,9 +40,9 @@ $col = 1;
 
     @if( $loop->first or $date->isSunday() ) <div class="row no-gutters"> @endif
 
-        <div class="col border border-dark date_box shadow {{ $box_class }} row{{ $row }} col{{ $col }}" data-date="{{ $date->format( 'Y-m-d' ) }}">
-            <div class="row no-gutters">
-                <div class="col-12 date_item" data-date="{{ $date->format( 'Y-m-d' ) }}">
+        <div class="border border-dark date_box shadow {{ $box_class }} row{{ $row }} col{{ $col }}" data-date="{{ $date->format( 'Y-m-d' ) }}">
+            <div class="row order1 no-gutters">
+                <div class="w-100 date_item" data-date="{{ $date->format( 'Y-m-d' ) }}">
                     {{ $date->format( 'd' ) }}
                 </div>
             </div>
@@ -71,6 +71,7 @@ $col = 1;
         $('#base_date').val( date );
         $('#search_form').attr( 'action', url );
         $('#search_form').submit();
+        console.log( date );
         
     });
     

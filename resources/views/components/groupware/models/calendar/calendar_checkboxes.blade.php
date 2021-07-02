@@ -41,6 +41,7 @@ $calendar_check_toggler = "component_" . $name . "_calendar_check_toggler";
         //　選択されカレンダーID（ calendar_id の配列）
         //
         let {{ $array_of_calendar_ids }} = [{{ implode( ",", $calendars ) }}];
+        
         console.log( {{ $array_of_calendar_ids }} );
         
         $("#{{ $calendar_search_form_opener }}").on( 'click', function() {
@@ -70,7 +71,17 @@ $calendar_check_toggler = "component_" . $name . "_calendar_check_toggler";
                 var show_hidden_calendars = 0;
             }
             var calendar_permission   = $('#{{ $name_of_calendar_permission }}').val();
-            console.log( show_hidden_calendars, calendar_permission );
+            
+            // {{ $array_of_calendar_ids }} = [];
+            $('.{{ $name }}').each( function() {
+                if( $(this).prop( 'checked' )) {
+                    {{ $array_of_calendar_ids }}.push( $(this).val() )
+                }
+            });
+                        
+            
+            console.log( show_hidden_calendars, calendar_permission, {{ $array_of_calendar_ids }} );
+            
 
             //　カレンダーを検索
             //
@@ -79,6 +90,7 @@ $calendar_check_toggler = "component_" . $name . "_calendar_check_toggler";
                 type: "GET",
                 data: { show_hidden_calendars : show_hidden_calendars,
                         calendar_permission   : calendar_permission,
+                        calendars             : {{ $array_of_calendar_ids }},
                         user_id : {{ user_id() }}
                         }
             

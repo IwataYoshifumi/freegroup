@@ -162,6 +162,8 @@
 .col7 { left: 85.714285714285716%;
         width: 14.285714285714286%;
         right: auto;
+
+    
 }
 
 .span1 { width: 14.285714285714286%; }
@@ -272,7 +274,7 @@
 
 .date_item {
     cursor: pointer;
-    z-index: 99;
+    pointer-events: auto;
 }
 
 .calendar_item {
@@ -288,19 +290,22 @@
     -ms-content-zooming: none;
     overflow: hidden;
     cursor: pointer;
-    z-index: 99;
+    z-index: 100;
+    pointer-events: auto;
+    
 }
 
 .schedule_time {
     /*position: static;*/
-    text-align-last: end
+    text-align-last: end;
+    /*z-index: 99;*/
 }
 
-.other_item {
+.other_item  {
     position: absolute;
     color: #555;
     font-size: 13px;
     font-weight: 500;
     right: auto;
-    
 }
+

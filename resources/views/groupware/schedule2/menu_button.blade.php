@@ -39,7 +39,7 @@ $auth = auth( 'user' )->user();
         <div class="">予定検索</div>
     </a>
     
-    <a class="btn btn-menu m-1" href="{{ route( 'groupware.show_all.monthly' ]  ) }}">
+    <a class="btn btn-menu m-1" href="{{ route( 'groupware.show_all.monthly'  ) }}">
         <div class="">
             <span class="d-block d-lg-none">月</span>
             <span class="d-none d-lg-block">月次</span>

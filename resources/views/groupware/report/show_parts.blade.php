@@ -34,7 +34,7 @@ use App\myHttp\GroupWare\Models\User;
     
         <label for="email" class="col-md-4 col-form-label text-md-right">日時</label>
         <div class="col-md-8">
-            {{ $report->p_dateTime() }}
+            {{ $report->p_time() }}
         </div>
     
         @if( count( $customers ))

@@ -133,11 +133,8 @@ $others = [];  // 表示しきれずその他何件と表示するための配�
             @endphp
             <div class="row{{ $start_row }} col{{ $start_col }} span{{ $span }} cal3" style="pointer-events: none;">
                 <div class="calendar_item order{{ $order }} multi_schedule {{ $schedule_class }} order{{ $order }} object_to_show_detail" style="{{ $style }}" {!! $data !!}> {{-- htmlspecialchars OK --}}
-                    <div>
-                        @if( $user_id != $schedule->user_id ) 【{{ $schedule->user->name }}】 @endif
-                        {{ $schedule->name }}
-                    
-                    </div>
+                    @if( $user_id != $schedule->user_id ) 【{{ $schedule->user->name }}】 @endif
+                    {{ $schedule->name }}
                 </div>
             </div>
         @endif
@@ -177,7 +174,6 @@ $others = [];  // 表示しきれずその他何件と表示するための配�
             <div class="row{{ $start_row }} col{{ $start_col }} span1 cal3" style="pointer-events: none;">
                 <div class="calendar_item order{{ $order }} {{ $schedule_class }} single_schedule object_to_show_detail" style="{{ $style }}" {!! $data !!}> {{-- htmlspecialchars OK --}}
                     @if( $order < 6 )
-                        
                         @if( $user_id != $schedule->user_id ) 【{{ $schedule->user->name }}】 @endif
                         {{ $schedule->name }} 
                         {{ $schedule->p_time( 'monthly' ) }} 
@@ -252,3 +248,4 @@ $others = [];  // 表示しきれずその他何件と表示するための配�
 @endforeach
 
 </div>
+

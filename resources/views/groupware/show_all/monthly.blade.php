@@ -66,6 +66,8 @@ $num_of_weeks = count( $returns['dates'] ) / 7;
 <!-- スケジュール詳細ダイアログ -->
 @include( 'groupware.show_all.modal_to_show_detail' )
 
+
+
 @stack( 'left_and_top_bar_script' )
 @stack( 'script_to_move_daily_page' )
 

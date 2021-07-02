@@ -270,6 +270,8 @@ class Router {
             Route::delete(  '/delete/{report}',     'ReportController@deleted' )->name('deleted')->where( 'report', '\d+' );
 
             Route::get(  '/copy/{report}',     'ReportController@copy' )->name( 'copy' )->where( 'report', '\d+' );
+            
+            Route::get(   '/show_modal/{report}',  'ReportController@showModal' )->name('show_modal')->where( 'report', '\d+' );;
 
             config(['groupware.report.index'    => '日報一覧',
             

@@ -270,7 +270,15 @@ class SearchSchedulesAndTasks {
         }
 
         $calendars = Calendar::with( ['calprop' ] )->whereIn( 'id', $calendars->pluck('id')->toArray() );
-        
+
+        //　スケジュール検索対象のカレンダーも検索する
+        //
+        if( ! empty( $request->calendars )) {
+            $calendars = $calendars->orWhere( function( $query ) use ( $request ) {
+                $query->whereIn( 'id', $request->calendars );
+            });
+        }
+
         if( ! $request->show_hidden_calendars ) {
             $calendars = $calendars->whereHas( 'calprop', function( $query ) { $query->where( 'hide', 0 );  });
         }

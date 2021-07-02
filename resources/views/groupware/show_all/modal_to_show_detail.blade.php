@@ -20,6 +20,11 @@
                 closeOnEscape: true,
                 buttons: [ { text: '閉じる', click: function() { $(this).dialog( 'close' ); }} ]
             });
+
+//            $('.object_to_show_detail').each( function() {
+//              $(this).css( 'z-index', 100 );
+//              console.log( $(this).data( 'object_id' ) );
+//              });
         });
 
         

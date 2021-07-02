@@ -174,6 +174,18 @@ class SearchForShowALLIndex {
                                         $query->whereIn( 'id', $request->customers ); 
                                     });
         }
+        //　ソート
+        //
+        $order_bys = ( isset( $request->order_by )) ? $request->order_by : [];
+        $asc_desc  = ( isset( $request->asc_desc )) ? $request->asc_desc : [];
+        foreach( $order_bys as $i => $order_by ) {
+            if( ! empty( $order_by )) {
+                $order_by = ( $order_by == "time" ) ? "start" : $order_by;
+                $sort = ( ! empty( $asc_desc[ $i ] )) ? $asc_desc[ $i ] : "asc";
+                $schedules = $schedules->orderBy( $order_by, $sort );
+            }
+        }
+        
 
 
         // if_debug( $schedules );
@@ -325,6 +337,18 @@ class SearchForShowALLIndex {
         //
         if( ! empty( $request->task_status )) {
             $tasks = $tasks->where( 'status', $request->task_status );
+        }
+        
+        //　ソート
+        //
+        $order_bys = ( isset( $request->order_by )) ? $request->order_by : [];
+        $asc_desc  = ( isset( $request->asc_desc )) ? $request->asc_desc : [];
+        foreach( $order_bys as $i => $order_by ) {
+            if( ! empty( $order_by )) {
+                $order_by = ( $order_by == "time" ) ? "due_time" : $order_by;
+                $sort = ( ! empty( $asc_desc[ $i ] )) ? $asc_desc[ $i ] : "asc";
+                $tasks = $tasks->orderBy( $order_by, $sort );
+            }
         }
   
         // if_debug( $tasks );
