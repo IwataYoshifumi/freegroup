@@ -6,20 +6,20 @@ use App\myHttp\GroupWare\Menu as GroupwareMenu;
 
 @endphp
 
-<nav class="navbar navbar-expand-md navbar-light bg-light shadow-sm">
-    <div class="container">
-        <a class="navbar-brand" href="@auth('admin') {{ route( 'admin.home' ) }} @endauth @guest {{ route( 'admin.home' ) }} @endguest">
+<nav class="navbar navbar-expand-md navbar-light bg-primary shadow-sm">
+    <div class="container text-white">
+        <a class="navbar-brand text-white" href="@auth('admin') {{ route( 'admin.home' ) }} @endauth @guest {{ route( 'admin.home' ) }} @endguest">
         @if( is_debug() ) @icon( debug ) @endif  {{ config('app.name', 'myApp') }} 
 
         </a>
 
         @auth( 'admin' )
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
+            <button class="navbar-toggler text-white" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <!-- Left Side Of Navbar -->
-                <ul class="navbar-nav mr-auto">
+                <ul class="navbar-nav mr-auto text-white">
                     
                     <!--
                     // 予定・日報システム　管理者メニュー
@@ -86,8 +86,8 @@ use App\myHttp\GroupWare\Menu as GroupwareMenu;
                     @endif
                 @else
                     <li class="nav-item dropdown">
-                        <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                            <span class="caret">{{ optional( auth('admin')->user())->name }}</span>
+                        <a id="navbarDropdown" class="nav-link dropdown-toggle text-white" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                            <span class="caret text-white">{{ optional( auth('admin')->user())->name }}</span>
                         </a>
                     
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">

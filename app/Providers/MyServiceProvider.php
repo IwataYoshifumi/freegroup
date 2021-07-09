@@ -23,6 +23,11 @@ use App\myHttp\GroupWare\View\Components\User\UsersCheckboxComponent;
 use App\myHttp\GroupWare\View\Components\Customer\CustomersCheckboxComponent;
 use App\myHttp\GroupWare\View\Components\ReportList\CheckboxReportListComponent;
 
+use App\myHttp\GroupWare\View\Components\TaskList\TaskListCheckboxComponent;
+
+use App\myHttp\GroupWare\View\Components\Calendar\CalendarCheckboxesComponent;
+use App\myHttp\GroupWare\View\Components\TaskList\TaskListCheckboxesComponent;
+use App\myHttp\GroupWare\View\Components\ReportList\ReportListCheckboxesComponent;
 
 class MyServiceProvider extends ServiceProvider
 {
@@ -70,6 +75,16 @@ class MyServiceProvider extends ServiceProvider
         
         // 2021.02.04 追加
         Blade::component( 'checkbox_report_lists', CheckboxReportListComponent::class );
+        
+        // 2021.06.02 追加
+        Blade::component( 'checkbox_tasklists', TaskListCheckboxComponent::class );
+        
+        // 2021.06.23 追加
+        Blade::component( 'calendar_checkboxes', CalendarCheckboxesComponent::class );
+        Blade::component( 'tasklist_checkboxes', TaskListCheckboxesComponent::class );
+        Blade::component( 'report_list_checkboxes', ReportListCheckboxesComponent::class );
+        
+        
 
     }
 }

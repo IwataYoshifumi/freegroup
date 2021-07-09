@@ -143,6 +143,13 @@ class ReportController extends Controller {
         return view( 'groupware.report.show' )->with( 'report', $report );
     }
     
+    
+    public function showModal( Report $report ) {
+        $this->authorize( 'view', $report );
+        
+        return view( 'groupware.report.show_modal' )->with( 'report', $report );
+    }
+    
     public function edit( Report $report ) {
         
         $this->authorize( 'update', [ $report, auth('user')->user() ]);

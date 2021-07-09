@@ -52,6 +52,12 @@ if( $route_name == 'groupware.schedule.create' ) {
     $input_calendar_enable = false;
 }
 
+//　変更権限を自動的にカレンダーのデフォルト値に設定するためのデータ
+//
+if( isset( $calendars )) {
+    $Calendars = Calendar::whereIn( 'id', array_keys( $calendars ) )->get();
+}
+
 
 #dd( $creator->name, $updator );
 #if_debug( $attached_files, old( 'attached_files' ) );
@@ -112,7 +118,25 @@ $is_invalid['calendar_id'] = ( $errors->has( 'calendar_id'         ) ) ? 'is-inv
                             <div class="col-md-8">
 
                                 @if( $input_calendar_enable ) 
-                                    {{ Form::select( 'calendar_id', $calendars, $schedule->calendar_id, [ 'class' => 'form-control '. $is_invalid['calendar_id']  ] ) }}
+                                    {{ Form::select( 'calendar_id', $calendars, $schedule->calendar_id, [ 'class' => 'form-control', 'id' => 'calendar_form' ] ) }}
+                                    <script>
+                                        //　カレンダーを切り替えたときに、変更権限を自動的に設定する
+                                        //
+                                        var calendar_form = $('#calendar_form');
+                                        var permission  = $('#permission' );
+                                        var permissions = [];
+                                        @foreach( $Calendars as $calendar )
+                                            permissions[{{ $calendar->id }}] = "{{ $calendar->default_permission }}";
+                                        @endforeach
+                                        
+                                        calendar_form.on( 'change', function() {
+                                            var calendar_id = $(this).val();
+                                            var permission = permissions[ calendar_id ];
+                                            console.log( calendar_id, permission );
+                                            $('#default_permission').val( permission );
+                                        });
+                                    </script>
+                                    
                                 @else 
                                     {{ $schedule->calendar->name }}
                                     {{ Form::hidden( 'calendar_id', $schedule->calendar_id ) }}
@@ -296,7 +320,7 @@ $is_invalid['calendar_id'] = ( $errors->has( 'calendar_id'         ) ) ? 'is-inv
                             <div class="form-group row">
                                 <label for="place" class="col-md-4 col-form-label text-md-right">変更権限</label>
                                 <div class="col-md-8">
-                                    {{ Form::select( 'permission', $permissions, $schedule->permission, [ 'class' => 'form-control col-6' ] ) }}
+                                    {{ Form::select( 'permission', $permissions, $schedule->permission, [ 'class' => 'form-control col-6', 'id' => 'default_permission' ] ) }}
                                 </div>
                             </div>
                         @endif

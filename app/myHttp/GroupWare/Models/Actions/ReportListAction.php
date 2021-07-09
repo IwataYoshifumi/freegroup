@@ -73,6 +73,11 @@ class ReportListAction {
                 if( $request->init_users_default_permission ) {
                     $report_list->report_props()->update( [ 'default_permission' => $request->default_permission ] );
                 }
+                //　変更管理者のReportPropの名前のみ変更
+                //
+                $report_list->report_props()->where( 'user_id', user_id() )->update( ['name' => $request->name ] );
+                
+                
 
                 return $report_list;
         });

@@ -1,40 +1,66 @@
+@php
+
+#if_debug( $schedules );
+
+@endphp
+
 <div class="col-12">&nbsp;</div>
 @if( count( $schedules ))             
     <div class="card">
         <div class="card-header">
-            <div class="btn " data-toggle="collapse" data-target="#schedule_list" aria-expand="false" aria-controls="schedule_list">
-                <i class="fas fa-caret-square-down fa-2x color-inherit link"></i> &nbsp; スケジュール 
+            <div class="row">
+                <span class="col   btn btn_icon text-left" id="btn_toggle_schedule_item">@icon( caret-square-down )  今後の予定　＆　過去１年の予定</span>
             </div>
+            <script>
+                $('#btn_toggle_schedule_item').on( 'click', function() {
+                     $('#schedule_list').toggle( 'blind', 100 );
+                });
+            </script>
+            
         </div>
-        <div class="card-body collapse" id="schedule_list">
-            <div >
-                <div class="row">
-                    <div class="col-3 d-none d-lg-block">件名</div>
-                    <div class="col-4 d-none d-lg-block">日時</div>
-                    <div class="col-4 d-none d-lg-block">社員</div>
-                </div>
-                <hr class="d-none d-lg-block">
-                @foreach( $schedules as $s ) 
-                    <div class="row">
-                        <div class="col-3 d-block d-lg-none">件名</div>
-                        <div class="col-8 col-lg-3">
-                            <a class="d-block text-trancate" href="{{ route( 'groupware.schedule.show', [ 'schedule' => $s->id ] ) }}">{{ $s->name }}</a>
-                        </div>
-                        <div class="col-3 d-block d-lg-none">日時</div>
-                        <div class="col-8 col-lg-4 d-block text-truncate">{{ $s->p_dateTime() }}</div>
-                        
-                        <div class="col-3 d-block d-lg-none">社員</div>
-                        <div class="col-8 col-lg-4 d-block text-truncate">{{ $s->user->name }} </div>
-                        
-                        
-                    </div>
-                    <hr class="d-block d-none-lg">
-                
-                @endforeach
+        <table class="card-body m-2 table table-border table-sm" id="schedule_list">
+            <tr>
+                <th>件名</th>
+                <th>月日</th>
+                <th>時間</th>
+            </tr>
+            
+            @php
+            $date = "";
+            @endphp
+            
+            @foreach( $schedules as $schedule ) 
+                @php
+                $style = $schedule->style();
+                @endphp
+            
+                <tr class="show_modal_detail_object date_item" data-object_type='schedule' data-object_id={{ $schedule->id }}>
+                    <td style="">
+                        <span>
+                            @icon( schedule ) {{ $schedule->name }}
+                        </span>
+                    </td>
+                    <td>
+                        @if( $date != $schedule->start->format( 'Y-m-d' )) 
+                            {{ $schedule->start->format( 'n月j日' ) }}【{{ p_date_jp( $schedule->start->format('w') ) }}】               
+                        @endif
+                        @if( $schedule->end->diffInDays( $schedule->start ) >= 1 )
+                            ～{{ $schedule->end->format( 'n月j日' ) }}【{{ p_date_jp( $schedule->end->format('w') ) }}】
+                        @endif
+                    </td>
+                    <td>
+                        @if( $schedule->all_day ) 
+                            終日
+                        @else
+                            {{ $schedule->start->format( 'G:i' ) }}～ {{ $schedule->end->format( 'G:i' ) }}
+                        @endif
+                    </td>
+                </tr>
+            @endforeach
             </div>
-        </div>
+        </table>
     </div>
 @else
-    <div class="col-12">関連スケジュールなし</div>
+    <div class="col-12">本日以降の予定はありません</div>
 @endif
 

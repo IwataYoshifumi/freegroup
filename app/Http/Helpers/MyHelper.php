@@ -160,3 +160,21 @@ if (! function_exists('p_day_of_week')) {
         return config( 'constant.days_of_week' )[ $date->dayOfWeek ];
     }
 }
+
+//　日本語の漢字で曜日を表示する関数( 引数　曜日数値　０日曜日、６　土曜日)
+//
+if( ! function_exists( 'p_date_jp' )) {
+    function p_date_jp( $w ) {
+        switch( $w ) {
+            case 0: return "日"; 
+            case 1: return "月";
+            case 2: return "火";
+            case 3: return "水";
+            case 4: return "木";
+            case 5: return "金";
+            case 6: return "土";
+        }
+        return "";        
+    }
+    
+}

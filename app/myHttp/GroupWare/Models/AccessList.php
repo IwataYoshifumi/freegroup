@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use DB;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 
 use App\myHttp\GroupWare\Models\User;
 use App\myHttp\GroupWare\Models\Group;
@@ -14,7 +16,8 @@ use App\myHttp\GroupWare\Models\Dept;
 use App\myHttp\GroupWare\Models\ACL;
 use App\myHttp\GroupWare\Models\AccessListUserRole;
 use App\myHttp\GroupWare\Models\Calendar;
-// use App\myHttp\GroupWare\Models\ReportList;
+use App\myHttp\GroupWare\Models\ReportList;
+use App\myHttp\GroupWare\Models\TaskList;
 use App\myHttp\GroupWare\Models\File as MyFile;
 
 
@@ -43,6 +46,10 @@ class AccessList extends Model {
     public function report_lists() {          
         return $this->morphedByMany( ReportList::class, 'accesslistable' );
     }
+    
+    public function task_lists() {
+        return $this->morphedByMany( TaskList::class, 'accesslistable' );
+    }
 
     public function files() {  
         return $this->morphedByMany( MyFile::class, 'accesslistable' );
@@ -56,13 +63,17 @@ class AccessList extends Model {
         // return $this->hasMany( AccessListUserRole::class  );
         return $this->hasMany( AccessListUserRole::class, 'access_list_id' , 'id' );
     }
-
+    
     public function accesslistables() {
-        $groups    = $this->groups;
-        $calendars = $this->calendars;
-        $report_lists = $this->report_lists;
 
-        return $groups->merge( $calendars )->merge( $report_lists );
+        $groups       = $this->groups->all();
+        $calendars    = $this->calendars->all();
+        $report_lists = $this->report_lists->all();
+        $task_lists   = $this->task_lists->all();
+
+        $models = Arr::collapse( [ $groups, $calendars, $report_lists, $task_lists ]);
+        
+        return $models;
     }
 
 

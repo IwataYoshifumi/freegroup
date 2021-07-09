@@ -40,6 +40,12 @@ class Router {
             self::report_route();
             self::report_list_route();
             self::report_prop_route();
+            
+            self::tasklist_route();
+            self::taskprop_route();
+            self::task_route();
+            
+            self::show_all_route();
 
             self::test_route();            
             self::route_json();
@@ -268,6 +274,8 @@ class Router {
             Route::delete(  '/delete/{report}',     'ReportController@deleted' )->name('deleted')->where( 'report', '\d+' );
 
             Route::get(  '/copy/{report}',     'ReportController@copy' )->name( 'copy' )->where( 'report', '\d+' );
+            
+            Route::get(   '/show_modal/{report}',  'ReportController@showModal' )->name('show_modal')->where( 'report', '\d+' );;
 
             config(['groupware.report.index'    => '日報一覧',
             
@@ -474,8 +482,11 @@ class Router {
             ]);
         });
     }
-
-    //  TaskListr ルート
+    
+    
+    
+    
+    //   TaskListルート
     //
     static public function tasklist_route() {
         Route::prefix( 'tasklist/' )->name( 'tasklist.')->namespace( '\App\myHttp\GroupWare\Controllers' )->group( function() {
@@ -489,16 +500,107 @@ class Router {
             Route::post( '/update/{tasklist}',      'TaskListController@update'  )->name( 'update' )->where( 'tasklist', '\d+' );
             Route::get(  '/delete/{tasklist}',      'TaskListController@delete'  )->name( 'delete' )->where( 'tasklist', '\d+' );
             Route::delete(  '/delete/{tasklist}',   'TaskListController@deleted' )->name( 'delete' )->where( 'tasklist', '\d+' );
+            
+
 
             config([
-                'groupware.tasklist.index'          => 'タスクリストー一覧',
-                'groupware.tasklist.show'           => 'タスクリストー管理者設定',
-                'groupware.tasklist.create'         => 'タスクリストー新規作成',
-                'groupware.tasklist.update'         => 'タスクリストー管理者設定修正',
-                'groupware.tasklist.delete'         => 'タスクリストー削除',
+                'groupware.tasklist.index'          => 'タスクリスト一覧',
+                'groupware.tasklist.show'           => 'タスクリスト管理者設定',
+                'groupware.tasklist.create'         => 'タスクリスト新規作成',
+                'groupware.tasklist.update'         => 'タスクリスト管理者設定修正',
+                'groupware.tasklist.delete'         => 'タスクリスト削除',
             ]);
         });
     }
+    
+    //  TaskProp ルート
+    //
+    static public function taskprop_route() {
+        Route::prefix( 'taskprop/' )->name( 'taskprop.')->namespace( '\App\myHttp\GroupWare\Controllers' )->group( function() {
+            
+            Route::get(  '/index',                 'TaskPropController@index'  )->name('index'   );
+
+            Route::get(  '/show/{taskprop}',        'TaskPropController@show'    )->name( 'show'   )->where( 'taskprop', '\d+' );
+            Route::get(  '/update/{taskprop}',      'TaskPropController@edit'    )->name( 'update' )->where( 'taskprop', '\d+' );
+            Route::post( '/update/{taskprop}',      'TaskPropController@update'  )->name( 'update' )->where( 'taskprop', '\d+' );
+
+            config([
+                'groupware.taskprop.index'          => '【個人設定】タスク表示設定　一覧',
+                'groupware.taskprop.show'           => '【個人設定】タスク表示設定',
+                'groupware.taskprop.update'         => '【個人設定】タスク表示設定　変更',
+            ]);
+        });
+    }
+    
+    //  Task ルート
+    //
+    static public function task_route() {
+        
+        Route::prefix( 'task')->name( 'task.')->namespace( '\App\myHttp\GroupWare\Controllers' )->group( function() {
+                
+            Route::get(   '/index',      'TaskController@index'          )->name('index'   );
+            Route::get(   '/csv',        'TaskController@csv'            )->name('csv'   );
+            
+            Route::get(   '/create',     'TaskController@create'          )->name('create');
+            Route::post(  '/create',     'TaskController@store'           )->name('store' );
+            
+            Route::get(   '/show/{task}',     'TaskController@show'   )->name('show'  )->where( 'task', '\d+' );
+            Route::get(   '/show',                'TaskController@show_m' )->name('show_m');
+            
+            Route::get(   '/edit/{task}',     'TaskController@edit'   )->name('edit'   )->where( 'task', '\d+' );
+            Route::post(  '/edit/{task}',     'TaskController@update' )->name('update' )->where( 'task', '\d+' );
+
+            Route::get(     '/delete/{task}',     'TaskController@delete'  )->name('delete' )->where( 'task', '\d+' );
+            Route::delete(  '/delete/{task}',     'TaskController@deleted' )->name('deleted')->where( 'task', '\d+' );
+
+            Route::get(  '/copy/{task}',     'TaskController@copy' )->name( 'copy' )->where( 'task', '\d+' );
+            
+            Route::post(  '/complete/{task}', 'TaskController@complete' )->name( 'complete' )->where( 'task', '\d+' );
+            
+            Route::get(   '/show_modal/{task}',  'TaskController@showModal' )->name('show_modal')->where( 'task', '\d+' );;
+
+
+            config(['groupware.task.index'    => 'タスク一覧',
+            
+                    'groupware.task.create'   => 'タスク　新規作成',
+                    'groupware.task.store'    => 'タスク　新規作成完了',
+                    'groupware.task.show'     => 'タスク内容',
+                    'groupware.task.detail'   => 'タスク詳細',
+                    'groupware.task.edit'     => 'タスク　変更',
+                    'groupware.task.update'   => 'タスク　変更完了',
+                    'groupware.task.delete'   => 'タスク　削除',
+                    'groupware.task.deleted'  => 'タスク　削除完了',
+                    'groupware.task.select'   => 'タスク　選択',
+                    'groupware.task.show_modal'   => 'タスク詳細',
+                    ]);
+        });
+    
+    }
+
+    //　スケジュール・タスク一覧表示（月次・週次・日次表示）
+    //
+    static public function show_all_route() {
+        Route::prefix( 'show_all')->name( 'show_all.')->namespace( '\App\myHttp\GroupWare\Controllers' )->group( function() {
+            Route::get( '/monthly', 'ShowAllController@monthly' )->name( 'monthly' );
+            Route::get( '/weekly',  'ShowAllController@weekly'  )->name( 'weekly' );
+            Route::get( '/daily',   'ShowAllController@daily'   )->name( 'daily' );
+            Route::get( '/dialog/daily',   'ShowAllController@dailyDiallog'   )->name( 'dialog.daily' );
+            Route::get( '/index',               'ShowAllController@index'            )->name( 'index' );
+            Route::get( '/index/exec_search',   'ShowAllController@indexExecSearch'  )->name( 'indexEexecSearch' );
+            
+            
+        });
+        
+        config(['groupware.show_all.monthly'    => 'スケジュール・タスク　月次表示',
+                'groupware.show_all.weekly'     => 'スケジュール・タスク　週次表示',
+                'groupware.show_all.daily'     => 'スケジュール・タスク　日次表示',
+                'groupware.show_all.index'      => 'スケジュール・タスク・日報　検索',
+                'groupware.show_all.indexExecSearch'  => 'スケジュール・タスク・日報　検索',
+                ]);
+    }
+    
+
+
 
     //　初期化ルート
     //
@@ -585,7 +687,14 @@ class Router {
             Route::get('/ajax/dept/search',         'DeptController@search'         )->name( 'ajax.dept.search'     );
             Route::get('/ajax/user/search',         'UserController@search'         )->name( 'ajax.user.search'     );
             Route::get('/ajax/customer/search',     'CustomerController@search'     )->name( 'ajax.customer.search' );
-            Route::get('/ajax/report_list/search',  'ReportListController@search'   )->name( 'ajax.report_list.search' );
+            Route::get('/ajax/report_list/search',   'ReportListController@search'   )->name( 'ajax.report_list.search' );
+            Route::get('/ajax/report_list/search2',  'ReportListController@searchForCheckboxes' )->name( 'ajax.report_list.search2' );
+
+            
+            Route::get( '/ajax/tasklist/search', 'TaskListController@search' )->name( 'ajax.tasklist.search' );
+            
+            Route::get( '/ajax/calendar/search', 'CalendarController@search' )->name( 'ajax.calendar.search' );
+            
             
             
         });

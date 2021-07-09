@@ -17,6 +17,8 @@ $url   = route( 'ajax.customer.search' );
 
 
 $customer_ids = ( count( $customers )) ? $customers->pluck('id')->toArray() : [];
+//dump( 'pluck', $customers, old( 'customers' ), is_array( $customers ), count( $customers ), count( $customers ) >= 1 );
+//$customer_ids = ( is_array( $customers ) and count( $customers ) >= 1 ) ? $customers->pluck('id')->toArray() : [];
 $customer_ids = implode( ",", $customer_ids );
 
 @endphp

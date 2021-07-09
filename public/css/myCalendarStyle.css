@@ -1,0 +1,312 @@
+.main_body {
+    position:relative;
+    top: 0px;
+    left: 0px;
+    
+    /* Medium */
+    /*width: 1700px;*/
+    min-width: 800px;
+    max-width: 1700px;
+
+    /*height: 800px;*/
+    min-height: 540px;
+    max-height: 1500px;
+
+    /* Large */
+    /*min-width: 960px;*/
+    /*min-height: 720px;*/
+
+    /* Extra Large */
+    /*min-width: 1140px;*/
+    /*min-height: 855px;*/
+    
+}
+
+.left_area {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    bottom: 0px;
+    min-width: 245px;
+    width: 245px;
+    height: 100%;
+    min-height: 100%;
+}
+
+.sidebar_headar {
+    /*position: absolute;*/
+    height: 40px;
+    /*left: 0px;*/
+    width: 100%
+}
+
+.sidebar_lists {
+    /*position:  absolute;*/
+    min-width: 100%;
+    min-height: 30px;
+    height: 30px;
+    /*cursor: pointer;*/
+}
+
+.checkbox-area {
+    cursor: pointer;
+}
+
+.left_menu_zone {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 245px;
+    height: 100%;
+    min-width: 50px;
+}
+
+.top_area {
+    position: absolute;
+    left: 250px;
+    top: 0px;
+    bottom: 0px;
+    /*min-width: px;*/
+    width: 1550px;
+    height: 40px;
+    /*min-height: 100%;*/
+}
+
+.head_area {
+    position: absolute;
+    left: 250px;
+    top: 40px;
+    width: 1550px;
+    height: 40px;
+}
+
+.main_area {
+    position: absolute;
+    left: 250px;
+    top: 65px;
+    /*min-width: px;*/
+    min-width: 800px;
+    min-height: 500px;
+    height: 760px;
+    max-height: 900px;
+    max-width:1900px;
+
+    
+}
+
+.cal3 {
+    position:  absolute;
+    pointer-events: none;
+}
+
+.date_box {
+    background-color: #ffffff;
+    position: absolute;
+    
+}
+
+.today_box {
+    background-color: lightcyan;
+    
+}
+
+.other_month_box {
+    background-color: lightyellow;
+}
+
+
+
+.task_complete {
+    text-decoration: line-through;
+}
+
+.cal_cell { position: absolute; }
+
+.row1 { top: 0;    height: 20%; }
+.row2 { top: 20%;  height: 20%; }
+.row3 { top: 40%;  height: 20%; }
+.row4 { top: 60%;  height: 20%; }
+.row5 { top: 80%;  height: 20%; }
+.row6 { top: 100%; height: 20%; }
+
+.col1 { left: 0%;
+        width: 14.285714285714286%;
+        right: auto;
+}
+
+.col2 { left: 14.285714285714286%;
+        width: 14.285714285714286%;
+        right: auto;
+}
+
+.col3 { left: 28.571428571428572%;
+        width: 14.285714285714286%;
+        right: auto;
+}
+
+.col4 { left: 42.857142857142858%;
+        width: 14.285714285714286%;
+        right: auto;
+}
+
+.col5 { left: 57.142857142857144%;
+        width: 14.285714285714286%;
+        right: auto;
+}
+
+
+.col6 { left: 71.42857142857143%;
+        width: 14.285714285714286%;
+        right: auto;
+}
+
+.col7 { left: 85.714285714285716%;
+        width: 14.285714285714286%;
+        right: auto;
+
+    
+}
+
+.span1 { width: 14.285714285714286%; }
+.span2 { width: 28.571428571428572%; }
+.span3 { width: 42.857142857142858%; }
+.span4 { width: 57.142857142857144%; }
+.span5 { width: 71.42857142857143%;  }
+.span6 { width: 85.714285714285716%; }
+.span7 { width: 100%; }
+
+.col01 { left: 0%;
+         right: auto;
+}
+
+.col02 { left: 12.5%;
+        right: auto;
+}
+
+.col03 { left: 25%;
+        right: auto;
+}
+
+.col04 { left: 37.5%;
+        right: auto;
+}
+
+.col05 { left: 50%;
+        right: auto;
+}
+
+
+.col06 { left: 62.5%;
+        right: auto;
+}
+
+.col07 { left: 75%;
+        right: auto;
+}
+
+.col08 { left: 87.5%;
+        right: auto;
+}
+
+.span01 { width: 12.5%; }
+.span02 { width: 25.0%; }
+.span03 { width: 37.5%; }
+.span04 { width: 50.0%; }
+.span05 { width: 62.5%; }
+.span06 { width: 75.0%; }
+.span07 { width: 87.5%; }
+.span08 { width: 100%;  }
+
+.order0  { top:   0px; }
+.order1  { top:  28px; }
+.order2  { top:  48px; }
+.order3  { top:  68px; }
+.order4  { top:  88px; }
+.order5  { top: 108px; }
+.order6  { top: 128px; }
+.order7  { top: 148px; }  /* 月表示は５件以上は「その他〇件 */
+.order8  { top: 168px; }
+.order9  { top: 188px; }
+.order10 { top: 208px; }
+.order11 { top: 228px; }
+.order12 { top: 248px; }
+.order13 { top: 268px; }
+.order14 { top: 288px; }
+.order15 { top: 308px; }
+.order16 { top: 328px; }
+.order17 { top: 348px; }
+.order18 { top: 368px; }
+.order19 { top: 388px; }
+.order20 { top: 408px; }  /* 週表示でもマックス３０件まで　それ以降はその他〇件　*/
+.order21 { top: 428px; }
+.order22 { top: 448px; }
+.order23 { top: 468px; }
+.order24 { top: 488px; }
+.order25 { top: 508px; }
+.order26 { top: 528px; }
+.order27 { top: 548px; }
+.order28 { top: 568px; }
+.order29 { top: 588px; }
+.order30 { top: 608px; }
+
+/*.container{ */
+/*    height: 18px;*/
+/*    position: absolute;*/
+/*    right: 0;*/
+/*    left: 1px;*/
+/*    overflow: hidden;*/
+/*}*/
+
+/*.title { text-overflow: ellipsis; }*/
+/*.time {}*/
+
+.heddings {
+    position: absolute;
+    height: 27px;
+}
+
+.multi_schedule {
+    width: 100%;
+}
+
+.single_schedule {
+    width: 100%;
+}
+
+.date_item {
+    cursor: pointer;
+    pointer-events: auto;
+}
+
+.calendar_item {
+    position: absolute;
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 1.2;
+    font-family: 'SFNSText', 'Helvetica Neue', "Meiryo UI", "MS PGothic", sans-serif;
+    margin: 0px;
+    padding: 0px;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -ms-content-zooming: none;
+    overflow: hidden;
+    cursor: pointer;
+    z-index: 100;
+    pointer-events: auto;
+    
+}
+
+.schedule_time {
+    /*position: static;*/
+    text-align-last: end;
+    /*z-index: 99;*/
+}
+
+.other_item  {
+    position: absolute;
+    color: #555;
+    font-size: 13px;
+    font-weight: 500;
+    right: auto;
+}
+

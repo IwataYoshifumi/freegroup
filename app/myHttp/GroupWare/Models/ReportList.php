@@ -54,11 +54,17 @@ class ReportList extends Model {
     //  検索メソッド
     //
     /////////////////////////////////////////////////////////////////////////////////////////////
-    public function report_prop( $user = null ) {
+    // public function report_prop( $user = null ) {
+    public function report_prop() {
         
-        $user    = ( empty( $user )) ? user_id() : $user ;
-        $user_id = ( $user instanceof User ) ? $user->id : $user;
-        return $this->report_props()->where( 'user_id', $user_id )->first();
+        // $user    = ( empty( $user )) ? user_id() : $user ;
+        // $user_id = ( $user instanceof User ) ? $user->id : $user;
+        // return $this->report_props()->where( 'user_id', $user_id )->first();
+        return $this->report_props()->where( 'user_id', user_id() );
+    }
+    
+    public function my_report_prop() {
+        return $this->report_prop()->first();
     }
 
     public function access_list() {
@@ -92,7 +98,10 @@ class ReportList extends Model {
         $access_lists = $access_lists->pluck( 'id' )->toArray();
         $subquery = DB::table( 'accesslistables' )->select('accesslistable_id' )->whereIn( 'access_list_id', $access_lists )->where( 'accesslistable_type', ReportList::class );
         // if_debug( 'getCanRead', $subquery, $subquery->get() );
-        return self::whereIn( 'id', $subquery )->get();
+        //　公開カレンダーも検索
+        //
+        // return self::whereIn( 'id', $subquery )->get();
+        return self::whereIn( 'id', $subquery )->orWhere( 'type', 'company-wide' )->get();
     }
     
 

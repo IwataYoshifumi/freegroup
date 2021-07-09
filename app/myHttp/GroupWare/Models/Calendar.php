@@ -50,23 +50,33 @@ class Calendar extends Model {
     public function calprops() {
         return $this->hasMany( CalProp::class );
     }
-
+    
     /////////////////////////////////////////////////////////////////////////////////////////////
     //
     //  検索メソッド
     //
     /////////////////////////////////////////////////////////////////////////////////////////////
-    public function calprop( $user = null ) {
+    // public function calprop( $user = null ) {
+    public function calprop() {
         
-        $user    = ( empty( $user )) ? user_id() : $user ;
-        $user_id = ( $user instanceof User ) ? $user->id : $user;
+        // $user    = ( empty( $user )) ? user_id() : $user ;
+        // $user_id = ( $user instanceof User ) ? $user->id : $user;
         // if_debug( $this->calendar()->calprop->where( 'user_id', $user_id )->first() );
-        return $this->calprops()->where( 'user_id', $user_id )->first();
+        // return $this->calprops()->where( 'user_id', $user_id )->first();
+        return $this->calprops()->where( 'user_id', user_id() );
+    }
+    
+    public function my_calprop() {
+        return $this->calprop()->first();
     }
 
     public function access_list() {
         return $this->access_lists->first();
         // return $this->access_lists()->first();
+    }
+
+    public function user_role() {
+        return $this->access_lists()->user_role()->where( 'user_id', user_id() );
     }
     
     public static function getOwner( $user_id ) {
@@ -92,8 +102,10 @@ class Calendar extends Model {
 
         $access_lists = $access_lists->pluck( 'id' )->toArray();
         $subquery = DB::table( 'accesslistables' )->select('accesslistable_id' )->whereIn( 'access_list_id', $access_lists )->where( 'accesslistable_type', Calendar::class );
+        //　全社公開カレンダーも検索する
+        //
         // if_debug( 'getCanRead', $subquery, $subquery->get() );
-        return self::whereIn( 'id', $subquery )->get();
+        return self::whereIn( 'id', $subquery )->orWhere( 'type', 'company-wide' )->get();
         
         
     }

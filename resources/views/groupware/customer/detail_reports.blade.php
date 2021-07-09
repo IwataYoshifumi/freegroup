@@ -1,39 +1,69 @@
+@php
+
+#if_debug( $reports );
+
+@endphp
+
 <div class="col-12">&nbsp;</div>
 @if( count( $reports ))             
     <div class="card">
         <div class="card-header">
-            <div class="btn " data-toggle="collapse" data-target="#report_list" aria-expand="false" aria-controls="report_list">
-                <i class="fas fa-caret-square-down fa-2x color-inherit link"></i> &nbsp; 日報
+            <div class="row">
+                <span class="col   btn btn_icon text-left" id="btn_toggle_report_item">@icon( caret-square-down )  直近の関連日報</span>
             </div>
+            <script>
+                $('#btn_toggle_report_item').on( 'click', function() {
+                     $('#report_list').toggle( 'blind', 100 );
+                });
+            </script>
+            
         </div>
-        <div class="card-body collapse" id="report_list">
-            <div >
-                <div class="row">
-                    <div class="col-3 d-none d-lg-block">件名</div>
-                    <div class="col-4 d-none d-lg-block">日時</div>
-                    <div class="col-4 d-none d-lg-block">社員</div>
-                </div>
-                <hr class="d-none d-lg-block">
-                @foreach( $reports as $r ) 
-                    <div class="row">
-                        <div class="col-3 d-block d-lg-none">件名</div>
-                        <div class="col-8 col-lg-3">
-                            <a class="d-block text-trancate" href="{{ route( 'groupware.report.show', [ 'report' => $r->id ] ) }}">{{ $r->name }}</a>
-                        </div>
-                        <div class="col-3 d-block d-lg-none">日時</div>
-                        <div class="col-8 col-lg-4 d-block text-truncate">{{ $r->p_dateTime() }}</div>
-                        
-                        <div class="col-3 d-block d-lg-none">社員</div>
-                        <div class="col-8 col-lg-4 d-block text-truncate">{{ $r->user->name }} </div>
-                        
-                    </div>
-                    <hr class="d-block d-none-lg">
-                
-                @endforeach
+        <table class="card-body m-2 table table-border table-sm" id="report_list">
+            <tr>
+                <th>件名</th>
+                <th>月日</th>
+                <th>時間</th>
+            </tr>
+            
+            @php
+            $date = "";
+            @endphp
+            
+            @foreach( $reports as $report ) 
+                @php
+                $style = $report->style();
+                @endphp
+            
+                <tr class="" data-object_type='report' data-object_id={{ $report->id }}>
+                    <td style="">
+                        @php
+                        $url = route( 'groupware.report.show', [ 'report' => $report->id ] );
+                        @endphp
+                        <a href="{{ $url }}" class="btn ">
+                            @icon( clipboard ) {{ $report->name }}
+                        </a>
+                    </td>
+                    <td>
+                        @if( $date != $report->start->format( 'Y-m-d' )) 
+                            {{ $report->start->format( 'n月j日' ) }}【{{ p_date_jp( $report->start->format('w') ) }}】               
+                        @endif
+                        @if( $report->end->diffInDays( $report->start ) >= 1 )
+                            ～{{ $report->end->format( 'n月j日' ) }}【{{ p_date_jp( $report->end->format('w') ) }}】
+                        @endif
+                    </td>
+                    <td>
+                        @if( $report->all_day ) 
+                            終日
+                        @else
+                            {{ $report->start->format( 'G:i' ) }}～ {{ $report->end->format( 'G:i' ) }}
+                        @endif
+                    </td>
+                </tr>
+            @endforeach
             </div>
-        </div>
+        </table>
     </div>
 @else
-    <div class="col-12">関連日報なし</div>
+    <div class="col-12">日報はありません</div>
 @endif
 

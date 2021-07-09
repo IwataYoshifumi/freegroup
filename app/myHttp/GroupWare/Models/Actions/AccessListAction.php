@@ -12,6 +12,8 @@ use App\myHttp\GroupWare\Models\Dept;
 use App\myHttp\GroupWare\Models\Group;
 use App\myHttp\GroupWare\Models\AccessList;
 use App\myHttp\GroupWare\Models\ACL;
+use App\myHttp\GroupWare\Models\AccessListUserRole;
+
 
 use App\myHttp\GroupWare\Models\Actions\AccessListUserRoleUpdate;
 
@@ -25,6 +27,10 @@ class AccessListAction  {
             $access_list = new AccessList;
             $access_list->name = $request->name;
             $access_list->memo = $request->memo;
+            
+            $access_list->num_owners = 0;
+            $access_list->num_writers = 0;
+            $access_list->num_readers = 0;
             $access_list->save();
             
             // ACL DBの更新
@@ -33,6 +39,10 @@ class AccessListAction  {
             // AccessListUserRole DBの更新
             // $access_list->updateAccessListUserRole();
             AccessListUserRoleUpdate::AccessList( $access_list );
+            
+            //　アクセスリストの権限人数更新　2021-06-10 追加
+            //
+            Self::update_num_of_roles( $access_list );            
             
             return $access_list;
         });    
@@ -53,6 +63,10 @@ class AccessListAction  {
             // AccessListUserRole DBの更新
             // $access_list->updateAccessListUserRole();
             AccessListUserRoleUpdate::AccessList( $access_list );
+            
+            //　アクセスリストの権限人数更新　2021-06-10 追加
+            //
+            Self::update_num_of_roles( $access_list );            
 
             return $access_list;
         });    
@@ -130,7 +144,27 @@ class AccessListAction  {
             $acl->save();
             $m++;
         }
+    }
+    
+    //　アクセスリストの権限人数を更新（管理者数、編集者数、閲覧者数） 2021-06-10
+    //
+    public static function update_num_of_roles( AccessList $access_list ) {
         
+        $result = AccessListUserRole::where( 'access_list_id', $access_list->id )
+                                    ->groupBy( 'role' )
+                                    ->selectRaw( 'count( role ) as num, role' )
+                                    ->get();
+
+        $access_list->num_owners = 0;
+        $access_list->num_writers = 0;
+        $access_list->num_readers = 0;
+        foreach( $result as $r ) {
+            $name = "num_" . $r->role . "s";
+            $access_list->$name = $r->num;
+        }
+        $access_list->save();
+        
+        return $access_list; 
     }
 }
 

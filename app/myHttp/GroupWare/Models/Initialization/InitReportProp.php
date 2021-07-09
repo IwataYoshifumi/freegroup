@@ -30,8 +30,8 @@ class InitReportProp  {
     public static function forUser( $user ) {
         $user = ( $user instanceof User ) ? $user : User::find( $user->id );
         
-        $report_lists = ReportList::whereDoesntHave( 'report_props', function( $query ) {
-                    $query->where( 'user_id', user_id() );
+        $report_lists = ReportList::whereDoesntHave( 'report_props', function( $query ) use ( $user ) {
+                    $query->where( 'user_id', $user->id );
                 })->get();
         
         foreach( $report_lists as $report_list ) {

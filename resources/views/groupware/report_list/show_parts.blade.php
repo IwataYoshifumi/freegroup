@@ -15,7 +15,7 @@ use App\myHttp\GroupWare\Models\Search\ListOfUsersInTheAccessList;
 //
 $auth = auth( 'user' )->user();
 $access_list = $report_list->access_list();
-$report_prop = $report_list->report_prop();
+$report_prop = $report_list->my_report_prop();
 
 $route_access_list = route( 'groupware.access_list.show', [ 'access_list' => $access_list ] );
 

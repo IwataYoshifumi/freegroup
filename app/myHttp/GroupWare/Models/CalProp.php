@@ -156,4 +156,25 @@ class CalProp extends Model {
     }
 
 
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    //
+    //  自分がアクセスできるCalPropを取得
+    //
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    public static function whereCalendarsCanRead( $user ) {
+        
+        $user_id = ( $user instanceof User ) ? $user->id : $user;
+        
+        $calendars = Calendar::whereCanRead( $user_id )->get();
+    
+        $calprops = self::whereIn( 'calendar_id', $calendars->pluck( 'id' ))
+                         ->where( 'user_id', $user_id );
+
+        return $calprops;
+    }
+
+
+
+
+
 }

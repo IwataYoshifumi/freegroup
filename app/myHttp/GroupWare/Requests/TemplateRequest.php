@@ -1,6 +1,6 @@
 <?php
 
-namespace App\myHttp\Schedule\Requests;
+namespace App\myHttp\GroupWare\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;

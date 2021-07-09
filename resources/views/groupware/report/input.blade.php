@@ -49,6 +49,10 @@ if( $route_name == 'groupware.report.create' ) {
     $input_report_list_enable = false;
 }
 
+if( isset( $report_lists )) {
+    $ReportLists = ReportList::whereIn( 'id', array_keys( $report_lists ) )->get();
+}
+
 
 #dd( $creator->name, $updator );
 #if_debug( $attached_files, old( 'attached_files' ) );
@@ -103,7 +107,27 @@ $is_invalid['report_list_id'] = ( $errors->has( 'report_list_id'         ) ) ? '
                             <div class="col-md-8">
 
                                 @if( $input_report_list_enable ) 
-                                    {{ Form::select( 'report_list_id', $report_lists, $report->report_list_id, [ 'class' => 'w-80 form-control '. $is_invalid['report_list_id']  ] ) }}
+                                    {{ Form::select( 'report_list_id', $report_lists, $report->report_list_id, [ 'class' => 'w-80 form-control ', 'id' => 'report_list_form'  ] ) }}
+                                    <script>
+
+                                        //　タスクリストを切り替えたときに、変更権限を自動的に設定する
+                                        //
+                                        var report_list = $('#report_list_form');
+                                        var permissions = [];
+                                        @foreach( $ReportLists as $report_list )
+                                            permissions[{{ $report_list->id }}] = "{{ $report_list->default_permission }}";
+                                        @endforeach
+                                        
+                                        report_list.on( 'change', function() {
+                                            var report_list_id = $(this).val();
+                                            var permission = permissions[ report_list_id ];
+                                            console.log( report_list_id, permission );
+                                            $('#permission_form').val( permission );
+                                        });
+                                    </script>
+                                    
+                                    
+                                    
                                 @else 
                                     {{ $report->report_list->name }}
                                     {{ Form::hidden( 'report_list_id', $report->report_list_id ) }}
@@ -285,7 +309,7 @@ $is_invalid['report_list_id'] = ( $errors->has( 'report_list_id'         ) ) ? '
                            ( $route_name == 'groupware.report.edit' and $creator->id == $auth->id ))
                                 <label for="place" class="col-md-4 mt-1 col-form-label text-md-right">変更権限</label>
                                 <div class="col-md-8">
-                                    {{ Form::select( 'permission', $permissions, $report->permission, [ 'class' => 'form-control col-6' ] ) }}
+                                    {{ Form::select( 'permission', $permissions, $report->permission, [ 'class' => 'form-control col-6', 'id' => 'permission_form' ] ) }}
                                 </div>
                         @endif
                     

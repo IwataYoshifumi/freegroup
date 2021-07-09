@@ -97,14 +97,15 @@ class Schedule extends Model {
     //  値取得メソッド
     //
     /////////////////////////////////////////////////////////////////////////////////////////////
-    public function calprop( $user = null ) {
-        $user    = ( empty( $user )) ? user_id() : $user ;
-        $user_id = ( $user instanceof User ) ? $user->id : $user;
-        return $this->calendar->calprops()->where( 'user_id', $user_id )->first();
+    public function calprop() {
+        // $user    = ( empty( $user )) ? user_id() : $user ;
+        // $user_id = ( $user instanceof User ) ? $user->id : $user;
+        // return $this->calendar()->calprops()->where( 'user_id', $user_id );
+        return $this->calendar->calprop;
     }
 
     public function my_calprop() {
-        return $this->calprop( user_id() );
+        return $this->calprop()->first();
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////
@@ -156,6 +157,22 @@ class Schedule extends Model {
         return config( 'groupware.schedule.permissions' );
     }
     
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    //
+    //  値取得メソッド
+    //
+    /////////////////////////////////////////////////////////////////////////////////////////////
+
+    //　スケジュールの予定日数を取得（必ず１以上）
+    //
+    public function getNumDates() {
+        $t_start = new Carbon( $this->start_date . ' 00:00:00' );
+        $t_end   = new Carbon( $this->end_date   . ' 23:59:59' );
+        return $t_end->diffInDays( $t_start ) + 1;
+    }
+    
+    
     /////////////////////////////////////////////////////////////////////////////////////////////
     //
     //  表示用関数( 主に View ファイルで使用 )
@@ -190,8 +207,76 @@ class Schedule extends Model {
             }
         }
     }
+    
+    public function p_time_for_montly_form() {
+        $num_day = $this->start->diffInDays( $this->end ) + 1;
+        if( $num_day >= 2 ) { return ""; }  
+        if( $this->all_day ) { return "終日"; }
+        return $this->start->format( 'G:i' );   
+    }
 
-    public function p_time() {
+    public function p_time_for_weekly_form() {
+        return $this->p_time_for_montly_form();
+    }
+    
+    public function p_time_for_daily_form( ) {
+        // dump( $date->format( 'Y-m-d' ) );
+        // $num_day = $this->start->diffInDays( $this->end ) + 1;
+        $num_day = $this->getNumDates();
+
+
+        if( $num_day >= 2 ) {
+            if( $this->all_day ) {
+                return "終日" . $this->end->format( ' 【 ～ Y年 n月 j日 】');
+            } else {
+                return $this->start->format( 'H:i' ) . '～' . $this->end->format( 'H:i' ) . $this->end->format( ' 【 ～ Y年 n月 j日 】');   
+            }
+        }
+        if( $this->all_day ) {
+            return "終日";
+        } else {
+            return $this->start->format( 'H:i' ) . '～' . $this->end->format( 'H:i' );   
+        }
+
+    }
+    
+    public function p_end_time() {
+
+        $num_day = $this->start->diffInDays( $this->end ) + 1;
+
+        if( $this->all_day ) {
+            if( $this->start->year == $this->end->year ) {
+                if( $this->start->month == $this->end->month ) {
+                    return $this->end->format( 'j日' );
+                } else {
+                    return $this->end->format('n月j日');
+                }
+            } else {
+                return $this->end->format( 'Y年n月j日' );
+            }
+        } else {
+        
+        }
+    }
+    
+
+    public function p_time( $form_type = 'daily' ) {
+        
+        if( $form_type == 'daily' ) {
+            return $this->p_time_for_daily_form();
+            
+        } elseif( $form_type == 'weekly' ) {
+            return $this->p_time_for_daily_form();
+
+        } elseif( $form_type == 'monthly' ) {
+            return $this->p_time_for_montly_form();
+
+        } elseif( $form_type == 'index' ) {
+
+        } elseif( $form_type == 'detail' ) {
+            
+        } 
+        
         return $this->p_dateTime();
     }
 
@@ -230,6 +315,14 @@ class Schedule extends Model {
         return $end->diffInMinutes( $start );
     }
     
+    //　カレンダー表示用のstyle css出力を取得
+    //
+    public function style() {
+        
+        return $this->my_calprop()->style();
+        // $calprop = $this->calendar->calprop->first();
+        // return $calprop->style();
+    }
 
     /////////////////////////////////////////////////////////////////////////////////////////////
     //

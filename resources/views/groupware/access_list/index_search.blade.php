@@ -18,6 +18,7 @@ $array_user_form = [
 
 $array_role_select = ACL::get_array_roles_for_select();
 
+
 @endphp
 
 {{ Form::open( [ 'route' => Route::currentRouteName(), 'method' => 'GET', 'id' => 'search_form' ] ) }}
@@ -25,8 +26,18 @@ $array_role_select = ACL::get_array_roles_for_select();
     <div class="border border-dark m-1">
         <div class="row">        
             <div class="col-3 p-3 m-2">
-                {{-- User_id --}}
-                <x-select_user :array="$array_user_form" />
+                {{-- 
+                  --
+                  -- User_id 
+                  --
+                  --}}
+                @if( is_debug() )
+                    @icon( debug )
+                    <x-select_user :array="$array_user_form" />
+                @else 
+                    {{ $user->dept->name }}<BR> {{ $user->name }} {{ $user->grade }}
+                    <input type='hidden' name='find[user_id]' value={{ $user->id }}>
+                @endif
             </div>
             <div class="col-8 p-3 m-2">
                 <div class='row'>
@@ -44,6 +55,7 @@ $array_role_select = ACL::get_array_roles_for_select();
                     @if( is_debug() ) 
                         {{-- アクセス権ないものも検索 --}}
                         <fieldset class="border border-dark col-12 mt-1">
+                            @icon( debug )
                             <label for="search_all" class="m-1">アクセス権ないものも検索</label>
                             {{ Form::checkBox( "find[all]", 1, optional( $find )['all'], [ 'id' => 'search_all', 'class' => 'checkbox_class' ] ) }}
                         </fieldset>

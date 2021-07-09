@@ -88,9 +88,6 @@ class ReportProp extends Model {
     //
     /////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
-
     public function style() {
         return "background-color:".$this->background_color."; color:".$this->text_color.";";
     }

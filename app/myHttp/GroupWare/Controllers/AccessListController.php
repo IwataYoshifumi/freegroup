@@ -33,7 +33,11 @@ class AccessListController extends Controller {
         
         $find = ( isset( $request->find )) ? $request->find : [];
         $show = [];
+        if( empty( $find['role'] )) { $find['role']['owner'] = "owner"; }
+
+
         if( ! optional( $find )['user_id'] ) { $find['user_id'] = auth( 'user' )->id(); }
+
 
         $access_lists = SearchAccessList::search( $find );
         

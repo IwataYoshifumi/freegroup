@@ -31,12 +31,12 @@ class UsersCheckboxComponent extends Component
         $this->button     = $button;
         $this->form_class = $formclass;
         
+        /* old があればそちらが優先 */
+        if( ! empty( old( $name ))) { $users = old( $name ); }
+        
         if( empty( $users ))        { $this->users = [];                   } 
         elseif( is_array( $users )) { $this->users = User::find( $users ); } 
         else                        { $this->users = $users;               }
-
-        /* old があればそちらが優先 */
-        if( ! empty( old( $name ))) { $this->users = old( $name ); }
         
     }
 

@@ -1,0 +1,42 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class ChangeAccessListsTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::table('access_lists', function (Blueprint $table) {
+            
+            // 追加 2021.6.10
+            //
+            $table->integer('num_owners');
+            $table->integer('num_writers');
+            $table->integer('num_readers');
+            
+            
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::table('access_lists', function( Blueprint $table ) {
+            $table->dropColumn( 'num_owners' );
+            $table->dropColumn( 'num_writers' );
+            $table->dropColumn( 'num_readers' );
+            
+        });
+    }
+}

@@ -216,26 +216,26 @@ class Schedule2IndexController extends Controller {
     static private function getMonthlyCalendarDates( Carbon $base_date ) {
    
         $date = new Carbon( "{$base_date->year}-{$base_date->month}-01" );
-        // if_debug( $date );
         
-        // MEMO: 月末が日曜日の場合の挙動を修正
-        $addDay = ( $date->copy()->endOfMonth()->isSunday()) ? 7 : 0;
-        
-        // カレンダーを四角形にするため、前月となる左上の隙間用のデータを入れるためずらす
-        $date->subDay( $date->dayOfWeek );
+        $first_of_month = $date->copy()->firstOfMonth();
+        $end_of_month   = $date->copy()->endOfMonth();
 
-        // 同上。右下の隙間のための計算。
-        // MEMO: 変数に修正
-        // $count = 31 + $date->dayOfWeek;
-        $count = 31 + $addDay + $date->dayOfWeek;
-        $count = ceil($count / 7) * 7;
+        //　月表示カレンダーの表示表示範囲を取得（日曜が週の初め）
+        //
+        $first_date = $first_of_month->copy();
+        $end_date   = $end_of_month->copy();
+        while( ! $first_date->isSunday() ) { $first_date->subDay(); }
+        while( ! $end_date->isSaturday() ) { $end_date->addDay();  }
+
+        //　月表示カレンダーのデータ作成
+        //
+        $count = $first_date->diffInDays( $end_date );
         $dates = [];
-
-        for ($i = 0; $i < $count; $i++, $date->addDay()) {
+        for ($i = 0; $i <= $count; $i++, $first_date->addDay()) {
             // copyしないと全部同じオブジェクトを入れてしまうことになる
-            $dates[] = $date->copy();
+            $dates[$i] = $first_date->copy();
         }
-        // if_debug( $dates );
+        if_debug( $dates );
         return $dates;
     }
     

@@ -51,7 +51,7 @@ class CalendarController extends Controller {
         $calendars = SearchCalender::search( $find );
         $calendars->load( [ 'calprops' => function( $query ) { $query->where( 'user_id', user_id() ); } ] );
         
-        BackButton::setHere( $request );
+        BackButton::stackHere( $request );
         return view( 'groupware.calendar.index' )->with( 'calendars', $calendars )
                                                  ->with( 'find',      $find );
     }

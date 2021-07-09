@@ -79,6 +79,12 @@ class CalendarAction {
                 if( $request->init_users_default_permission ) {
                     $calendar->calprops()->update( [ 'default_permission' => $request->default_permission ] );
                 }
+                //　変更管理者のCalPropの名前のみ変更
+                //
+                $calendar->calprops()->where( 'user_id', user_id() )->update( ['name' => $request->name ] );
+                
+                
+                
                 //　Googleカレンダーの同期解除
                 //
                 if( $calendar->disabled ) {

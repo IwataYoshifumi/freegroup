@@ -33,16 +33,19 @@ use App\myHttp\GroupWare\Events\UserTransferDeptEvent;
 use App\myHttp\GroupWare\Models\Initialization\InitCalendar;
 use App\myHttp\GroupWare\Models\Initialization\InitTaskList;
 use App\myHttp\GroupWare\Models\Initialization\InitReportProp;
+use App\myHttp\GroupWare\Models\Initialization\InitTaskProp;
 
 use App\myHttp\GroupWare\Notifications\GoogleCalendar\UnSyncGoogleCalendar;
 
 class InitUser  {
     
-    // protected $table = 'groups';
-    
-    //　検索
     //
     //　何かしらのエラーがあれば false を返す
+    //
+    //　デフォルトのロールを割り当てる
+    //　初期設定の公開カレンダーを自動生成する
+    //　公開日報を作成する
+    //　非公開タスクリストを作成する
     //
     public static function init( $user ) {
 
@@ -70,7 +73,6 @@ class InitUser  {
         InitCalendar::forUser( $user );
         InitReportProp::forUser( $user );
         InitTaskList::forUser( $user );
-        
         
         //　アクセス権がなくなったカレンダーのGoogleカレンダー同期を解除
         //
@@ -124,17 +126,27 @@ class InitUser  {
         //
         $access_list = self::initAccessList( $user );
         
+<<<<<<< HEAD
+=======
+        //　自分の公開カレンダーを生成
+        //　自分の非公開タスクリストを生成
+        //
+>>>>>>> develop
         if( ! is_null( $access_list )) {
             //　自分の公開カレンダーを生成
             self::initCalendar( $user, $access_list );
+<<<<<<< HEAD
     
             //　自分のタスクリスト（プライベート）を生成
+=======
+>>>>>>> develop
             self::initTaskList( $user, $access_list );
         }
     }
 
 
     //　ユーザ用アクセスリストの初期化（ユーザが管理者のアクセスリストがなければ、作成）
+    //　ユーザ自分のみが管理者のアクセスリストを生成
     //
     public static function initAccessList( User $user ) {
 
@@ -164,10 +176,10 @@ class InitUser  {
             }
         } 
         
-        // 　自分のみ管理者のアクセスリストを生成
+        // 　自分のみ管理者のアクセスリストを生成（同一部署内は閲覧可能）
         //
         $request = new Request;
-        $request->name = $user->name . 'のみ管理者';
+        $request->name = $user->name . 'のみ管理者（' . $user->dept->name . '内に公開）';
         $request->memo = '初期自動生成';
         
         $i = 1;
@@ -175,10 +187,19 @@ class InitUser  {
         $roles[$i]  = 'owner';
         $types[$i]  = 'user';
         $users[$i]  = $user->id;
+        $i++;
+        $orders[$i] = $i;
+        $roles[$i]  = 'reader';
+        $types[$i]  = 'dept';
+        $depts[$i]  = $user->dept_id;
+
         $request->orders = $orders;
         $request->roles  = $roles;
         $request->types  = $types;
         $request->users  = $users;
+        $request->depts  = $depts;
+        
+        if_debug( $request );
         
         $access_list = AccessListAction::creates( $request );
         
@@ -194,9 +215,11 @@ class InitUser  {
         if( count( $calendars )) { return null; }
         
         $request = new Request;
-        $request->name = $user->name . "の公開カレンダー";
+        $request->name = $user->name . "のカレンダー";
         $request->memo = "初期自動生成カレンダー";
-        $request->type = 'public';
+        // $request->type = 'public';
+        $request->type = 'private';
+        
         $request->default_permission = 'creator';
         $request->access_list_id = $access_list->id;
 
@@ -205,21 +228,32 @@ class InitUser  {
         return $calendar;
     }
     
+<<<<<<< HEAD
     //  自分のタスクリストを生成（自分のWrite権限カレンダーがない場合）
     //  Write権限カレンダーがあれば、Null を返す
     //
+=======
+    //　自分のみで使えるタスクリスト（非公開）を生成
+    // 
+>>>>>>> develop
     public static function initTaskList( User $user, AccessList $access_list ) {
         
         $tasklists = TaskList::getCanWrite( $user );
         if( count( $tasklists )) { return null; }
         
         $request = new Request;
+<<<<<<< HEAD
         $request->name = $user->name . "のタスクリスト";
         $request->memo = "自動生成タスクリスト";
+=======
+        $request->name = $user->name . "のタスク";
+        $request->memo = "初期自動生成タスク（非公開）";
+>>>>>>> develop
         $request->type = 'private';
         $request->default_permission = 'creator';
         $request->access_list_id = $access_list->id;
 
+<<<<<<< HEAD
         $calendar = TaskListAction::creates( $request );
         
         return $tasklists;
@@ -228,6 +262,12 @@ class InitUser  {
   
     
     
+=======
+        $tasklist = TaskListAction::creates( $request );
+        
+        return $tasklist;
+    }
+>>>>>>> develop
 
 }
 

@@ -65,7 +65,13 @@ class Schedule2Controller extends Controller {
             //
             $schedule = new Schedule;
             $schedule->calendar_id = ( $request->calendar_id ) ? $request->calendar_id : '';
-            $input    = new DateTimeInput( );
+
+            $input    = new DateTimeInput();
+            if( isset( $request->start_date ) and isset( $request->end_date )) {
+                $input->start_date = $request->start_date;
+                $input->end_date   = $request->end_date;
+            }
+            
             
         } else {
             //　予定の複製

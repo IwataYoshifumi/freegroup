@@ -18,6 +18,8 @@ $url   = route( 'ajax.dept.search' );
 $dept_ids = ( count( $depts )) ? $depts->pluck('id')->toArray() : [];
 $dept_ids = implode( ",", $dept_ids );
 
+$me = auth( 'user' )->user()->load( 'dept' );
+
 @endphp
 
 <div class="m-1">
@@ -35,7 +37,17 @@ $dept_ids = implode( ",", $dept_ids );
 
     <div class="row">
         {{ Form::text( 'dept_name', old( 'dept_name' ), [ 'class' => 'form-control col-6 m-1', 'id' => $dept_name_id, 'placeholder' => '部署名検索' ] ) }}
-        <button type=button class="btn btn-outline-dark btn-sm col-2 m-1" onClick="{{ $name }}_search_depts()">検索</button>
+        <button type=button class="btn btn-outline-dark btn-sm col-3 m-1" onClick="{{ $name }}_search_depts()">検索</button>
+        <div class="col-12"></div>
+        <button type=button class="btn btn-outline-dark btn-sm col-4 m-1" onClick="{{ $name }}_paste_dept()">「{{ $me->dept->name }}」で検索</button>
+
+        <script>
+            function {{ $name }}_paste_dept() {
+                $('#{{ $dept_name_id }}').val( '{{ $me->dept->name }}');
+                {{ $name }}_search_depts();
+            }
+        </script>
+        
     </div>
     <hr>
 

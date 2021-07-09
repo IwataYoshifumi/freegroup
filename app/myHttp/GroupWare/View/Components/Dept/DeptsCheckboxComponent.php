@@ -31,13 +31,12 @@ class DeptsCheckboxComponent extends Component
         $this->button     = $button;
         $this->form_class = $formclass;
         
+        /* old があればそちらが優先 */
+        if( ! empty( old( $name ))) { $depts = old( $name ); }
+        
         if( empty( $depts ))        { $this->depts = [];                   } 
         elseif( is_array( $depts )) { $this->depts = Dept::find( $depts ); } 
         else                        { $this->depts = $depts;               }
-
-        /* old があればそちらが優先 */
-        if( ! empty( old( $name ))) { $this->depts = old( $name ); }
-        
     }
 
     /**

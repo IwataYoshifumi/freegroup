@@ -50,11 +50,11 @@ class MyGoogleCalendar {
     
         $a = func_get_args();
         $i = func_num_args();
-        // dump( $a, $i );
+        // if_debug( $a, $i );
         if (method_exists($this,$f='init_'.$i)) {
             call_user_func_array(array($this,$f),$a);
         } else {
-            dump( get_class(), 'NULL');
+            if_debug( get_class(), 'NULL');
             return null;
         }
         
@@ -63,7 +63,7 @@ class MyGoogleCalendar {
 
     private function init_1( Schedule $schedule ) {
         if( ! $schedule instanceof Schedule ) { dd( 'MyGoogleCalendar Error : 第一引数はScheduleクラスでなければなりません。 ', $schedule ); }
-        dump( get_class(), $schedule );
+        if_debug( get_class(), $schedule );
         $this->schedule = $schedule;
         $this->calendar_id = $schedule->schedule_type->google_calendar_id;
         $this->private_key = $schedule->schedule_type->google_private_key_file();
@@ -148,7 +148,7 @@ class MyGoogleCalendar {
         if (method_exists($this,$f='init_'.$i)) {
             call_user_func_array(array($this,$f),$a);
         } else {
-            dump( get_class(), 'argv NG');
+            if_debug( get_class(), 'argv NG');
             return null;
         }
         $this->init_google_calendar_event_data();
@@ -166,7 +166,7 @@ class MyGoogleCalendar {
         if (method_exists($this,$f='init_'.$i)) {
             call_user_func_array(array($this,$f),$a);
         } else {
-            dump( get_class(), 'argv NG');
+            if_debug( get_class(), 'argv NG');
             return null;
         }
         $this->init_google_calendar_event_data();
@@ -179,7 +179,7 @@ class MyGoogleCalendar {
                 $this->new_event = $this->service->events->update( $this->calendar_id, $this->event_id, $this->event );
                 $this->event_id = $this->new_event->id;
             }
-            // dump( $this->event_id );
+            // if_debug( $this->event_id );
             
         } catch( Google_Service_Exception $e ) {
             session::flash( 'info_message', 'Googleカレンダーの同期処理ができませんでした。Googleカレンダーとスケジュール種別　双方の設定を確認してください。');
@@ -197,7 +197,7 @@ class MyGoogleCalendar {
         if (method_exists($this,$f='init_'.$i)) {
             call_user_func_array(array($this,$f),$a);
         } else {
-            dump( get_class(), 'argv NG');
+            if_debug( get_class(), 'argv NG');
             return null;
         }
 

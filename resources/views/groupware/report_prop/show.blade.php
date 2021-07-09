@@ -16,6 +16,8 @@ use App\myHttp\GroupWare\Models\Search\CheckAccessList;
 use App\Http\Helpers\BackButton;
 
 $user = auth( 'user' )->user();
+$auth = $user;
+
 $report_list = $report_prop->report_list;
 
 $route_show_report_list   = route( 'groupware.report_list.show', [ 'report_list' => $report_list ] );

@@ -24,8 +24,11 @@ class DateSpanFormComponent extends Component
     public $start_value;    // 開始日のフォームの値
     public $end_value;      // 終了日のフォームの値
 
+    public $search_condition_for_span_name;  // 期間の検索条件（フォーム名）
+    public $search_condition_for_span_value; // 期間の検索条件値
+    public $search_condition_for_span_id;    // フォームのID
 
-    public function __construct( $start = null, $end = null ) {
+    public function __construct( $start = null, $end = null, $searchConditionForSpan = null ) {
         
         $request = request();
         
@@ -40,7 +43,14 @@ class DateSpanFormComponent extends Component
         $this->start_value = ( isset( $request->$start_name )) ? $request->$start_name : old( $start_name );
         $this->end_value   = ( isset( $request->$end_name   )) ? $request->$end_name   : old( $end_name   );
 
-        // if_debug( $this );
+
+        //　タスク検索用フォームボタンを表示する
+        //
+        $this->search_condition_for_span_name  = ( $searchConditionForSpan ) ? $searchConditionForSpan : NULL;
+        $this->search_condition_for_span_id    = ( $searchConditionForSpan ) ? $searchConditionForSpan . '_id' : NULL;
+        $this->search_condition_for_span_value = ( $searchConditionForSpan ) ? $request->$searchConditionForSpan : NULL;
+
+        // if_debug($searchConditionForSpan, $this );
     }
     
     /**

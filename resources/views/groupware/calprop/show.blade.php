@@ -46,7 +46,7 @@ $info = "<i class='fas fa-minus-circle' style='color:lightgray'></i>";
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            @include( 'groupware.calendar.menu' )
+            @include( 'groupware.calprop.menu' )
             <div class="card">
                 <div class="card-header">{{ config( Route::currentRouteName() ) }}</div>
 

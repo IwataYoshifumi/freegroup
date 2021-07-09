@@ -29,6 +29,8 @@ $url   = route( 'ajax.user.search' );
 $user_ids = ( count( $users )) ? $users->pluck('id')->toArray() : [];
 $user_ids = implode( ",", $user_ids );
 
+$me = auth( 'user' )->user()->load( 'dept' );
+
 @endphp
 
 <div class="m-1">
@@ -62,12 +64,23 @@ $user_ids = implode( ",", $user_ids );
         <div class="col-8 row container mt-1">
             <label for="{{ $dept_name_id }}" class="col">部署名：</label>
             {{ Form::text( 'dept_name' , old( 'dept_name'  ), [ 'class' => 'form-control col-8', 'id' => $dept_name_id,  'autocomplete' => 'off','placeholder' => '部署名検索' ] ) }}
+
+            
+            
         </div>
         
         
         <div class="col-12 row container mt-1">
             <div class="col-2"></div>
-            <button type=button class="btn btn-outline-dark btn-sm col-7 m-1" onClick="{{ $name }}_search_users()">社員を検索</button>
+            
+            <div class="btn btn-outline-dark btn-sm col-3 m-1" onClick="paste_dept();">「{{ $me->dept->name }}」 社員を検索</div>
+            <script>
+                function paste_dept() {
+                    $('#{{ $dept_name_id }}').val( '{{ $me->dept->name }}');
+                    {{ $name }}_search_users();
+                }
+            </script>
+            <button type=button class="btn btn-outline-dark btn-sm col-4 m-1" onClick="{{ $name }}_search_users()">社員を検索</button>
             <div class="btn btn-outline-dark btn-sm m-1" id='{{ $button_id }}_clear'>選択解除</div>
         </div>
     </div>

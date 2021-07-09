@@ -29,13 +29,28 @@ class CustomersCheckboxComponent extends Component
         $this->name       = $name;
         $this->button     = $button;
         $this->form_class = $formclass;
-        
-        if( empty( $customers ))        { $this->customers = [];                   } 
-        elseif( is_array( $customers )) { $this->customers = Customer::find( $customers ); } 
-        else                        { $this->customers = $customers;               }
+
 
         /* old があればそちらが優先 */
-        if( ! empty( old( $name ))) { $this->customers = old( $name ); }
+        // dump( 'pre', $customers, old( 'customers') );
+        if( ! empty( old( $name ))) { $customers = old( $name ); }
+        // dump( 'post', $customers, old( 'customers') );
+        
+        if( empty( $customers ))        { 
+            // dump( 'empty');
+            $this->customers = [];                   
+        } elseif( is_array( $customers )) { 
+            // dump( 'is_array');
+
+            $this->customers = Customer::find( $customers ); 
+        } else { 
+            // dump( 'else');
+            $this->customers = $customers;               
+        }
+        // dump( $this->customers, old( 'customers') );
+        
+
+
     }
 
     /**

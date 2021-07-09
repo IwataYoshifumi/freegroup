@@ -5,6 +5,7 @@ use App\myHttp\GroupWare\Models\Dept;
 use App\myHttp\GroupWare\Models\Group;
 use App\myHttp\GroupWare\Models\Calendar;
 use App\myHttp\GroupWare\Models\ReportList;
+use App\myHttp\GroupWare\Models\TaskList;
 use App\myHttp\GroupWare\Models\AccessList;
 use App\myHttp\GroupWare\Models\ACL;
 use App\myHttp\GroupWare\Models\File as MyFile;
@@ -29,6 +30,7 @@ $class_names = [ Group::class => "グループ",
                  MyFile::class => "ファイル",
                  Calendar::class => "カレンダー",
                  ReportList::class => "日報リスト",
+                 TaskList::class => "タスクリスト",
                 ]
 
 @endphp
@@ -105,6 +107,7 @@ $class_names = [ Group::class => "グループ",
 
     <table class="table table-border table-sm col-11 m-3 p-1" id="model_list">
         @foreach( $accesslistables as $i => $model )
+
             @if( $loop->first )
                 <tr><th colspan=4 class="bg-light">アクセスリスト設定先</th></tr>
                 <tr>
@@ -115,7 +118,8 @@ $class_names = [ Group::class => "グループ",
             @endif
 
             @php
-                if( ! $model ) { continue; }
+                // if_debug( $model );
+                if( is_null( $model )) { continue; }
                 
                 if( $model instanceof Group ) {
                     $href = route( 'groupware.group.show', ['group' => $model->id ] );
@@ -123,6 +127,8 @@ $class_names = [ Group::class => "グループ",
                     $href = route( 'groupware.calendar.show', ['calendar' => $model->id ] );
                 } elseif( $model instanceof ReportList ) {
                     $href = route( 'groupware.report_list.show', [ 'report_list' => $model->id ] );
+                } elseif( $model instanceof TaskList ) {
+                    $href = route( 'groupware.tasklist.show', [ 'tasklist' => $model->id ] );
                 }
                 $class_name = ( op( $class_names )[get_class( $model )] ) ? $class_names[get_class( $model )] : get_class( $model );
                     
