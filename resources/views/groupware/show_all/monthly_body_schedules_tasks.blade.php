@@ -56,17 +56,24 @@ $others = [];  // 表示しきれずその他何件と表示するための配�
 @foreach( $returns['multi'] as $i => $schedule )
     @php
     
-        $start = $schedule->start->copy();
-        $end   = $schedule->end->copy();
+        // $start = $schedule->start->copy();
+        // $end   = $schedule->end->copy();
+        
+        $start = new Carbon( $schedule->start->format( 'Y-m-d 00:00:00' ));
+        $end   = new Carbon( $schedule->end->format(   'Y-m-d 23:59:59' ));
         
         //　開始日、終了日を表示カレンダーの中に収める
         //
-        while( $start->lt( $start_date_of_calendar )) {
-            $start->addDay();
-        }
-        while( $end->gt( $end_date_of_calendar )) {
-            $end->subDay();
-        }
+        #while( $start->lt( $start_date_of_calendar )) {
+        #    $start->addDay();
+        #}
+        if( $start->lt( $start_date_of_calendar )) { $start = $start_date_of_calendar->copy(); }
+        
+        #while( $end->gt( $end_date_of_calendar )) {
+        #while( $end->diffInDays( $end_date_of_calendar ) > 1 ) {
+        #    $end->subDay();
+        #}
+        if( $end->gt( $end_date_of_calendar )) { $end = $end_date_of_calendar->copy(); }
         
         $start_row = $rows[ $start->format( 'Y-m-d' ) ];
         $start_col = $cols[ $start->format( 'Y-m-d' ) ];
@@ -76,6 +83,7 @@ $others = [];  // 表示しきれずその他何件と表示するための配�
         $style = $schedule->style();
         
         $span = $end->diffInDays( $start ) + 1;
+        #if( $schedule->name == "グアム旅行" ) {     if_debug( $start, $end, $span ); }
     
         $d = $start->copy();
 

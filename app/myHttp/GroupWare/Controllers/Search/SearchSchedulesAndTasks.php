@@ -398,20 +398,6 @@ class SearchSchedulesAndTasks {
     //  $returns['multi_not_all_day'] 複数日の予定で終日フラグがついてない予定
     //  $returns['time_for_daily'][時刻] 　終日フラグでない予定（１日以内、複数日含む）
     // 
-    //  下記はウイークリー表示
-    //
-    //  $returns['depts']  キー；dept_id , 値：部署のインスタンス
-    //  $returns['users']  キー：user_id , 値：ユーザのインスタンス
-    //  $returns['objects_that_has_user'][user_id][[Y-m-d]] ユーザのある日に何個オブジェクトがあるか
-    //  $returns['others'][user_id][[Y-m-d]]　〇〇件以上はその他表示させるため
-    //    
-    //  $returns[user_id][Y-m-d]['multi']　２日間以上の予定の配列
-    //  $returns[user_id][Y-m-d]['single'] １日終日の予定
-    //  $returns[user_id][Y-m-d]['task']   タスク
-    //  $returns[user_id][Y-m-d]['time']  １日以内の予定
-    //  $returns[user_id][Y-m-d]['others'] その他　何件
-    
-    
     private static function arrange_outputs( $dates, $schedules, $tasks, $list_of_calendars, $list_of_tasklists ) {
 
         //　カレンダー表示用データの作成
@@ -437,8 +423,7 @@ class SearchSchedulesAndTasks {
             
             //　予定の日数（１日以内 or 複数日か　)
             //
-            $num_day = $schedule->end->diffInDays( $schedule->start ) + 1;
-            // if_debug( $schedule->name, $num_day );
+            $num_day = $schedule->getNumDates();
             $date = $schedule->start->copy();
 
             if( $num_day >= 2 ) {
@@ -502,7 +487,7 @@ class SearchSchedulesAndTasks {
                 
                 if( is_array( op( $returns['dept_user'] )[ $dept->id ] )) {
                     if( ! in_array( $user->id, $returns['dept_user'][$dept->id] )) {
-                        array_push( op( $returns['dept_user'] )[$dept->id], $user->id );
+                        array_push( $returns['dept_user'][$dept->id], $user->id );
                     }
                 } else {
                     $returns['dept_user'][ $dept->id ] = [ $user->id ];
@@ -515,6 +500,7 @@ class SearchSchedulesAndTasks {
         //
         // if_debug( $returns['time_for_daily'], ksort( $returns['time_for_daily'] ), $returns['time_for_daily'], $returns );
         ksort( $returns['time_for_daily' ] );
+        // dd( $returns['time_for_daily']);
 
         return $returns;
         
@@ -577,9 +563,10 @@ class SearchSchedulesAndTasks {
         //　スケジュールを週表示用にデータ処理
         // 
         foreach( $schedules as $schedule ) {
+
             //　予定の日数（１日以内 or 複数日か　)
             //
-            $num_day = $schedule->end->diffInDays( $schedule->start ) + 1;
+            $num_day = $schedule->getNumDates();
             $user = $schedule->user;
 
             if( $num_day >= 2 ) {

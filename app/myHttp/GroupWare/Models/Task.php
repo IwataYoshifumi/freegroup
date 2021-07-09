@@ -169,7 +169,7 @@ class Task extends Model {
     public function p_time_for_daily_form() {
     
         if( $this->all_day ) { 
-            $return = "終日"; 
+            $return = ""; 
         } else {
            $return = $this->due_time->format( 'G:i' );
         }

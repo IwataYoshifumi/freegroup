@@ -50,7 +50,8 @@ class ReportListController extends Controller   {
         // if( $request->auth == 'owner' ) {
         if( $request->report_list_permission == 'owner' ) {
             $query = ReportList::getOwner( user_id() );
-        } elseif( $request->auth == 'reader' ) {
+        // } elseif( $request->auth == 'reader' ) {
+        } elseif( $request->report_list_permission == 'reader' ) {
             $query = ReportList::getCanRead( user_id() );
         } else { 
             $query = ReportList::getCanWrite( user_id() );

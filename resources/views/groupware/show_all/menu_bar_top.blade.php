@@ -5,7 +5,7 @@ $current_route         = Route::currentRouteName();
 
 @endphp
 
-<div class="cal3 top_area border border-dark" style="background-color: peachpuff" id="top_area">
+<div class="top_area border border-dark" style="background-color: peachpuff" id="top_area">
     <div class="row no-gutters">
         <div class="col-2 w-10 mr-auto">
             <div class="row">

@@ -27,6 +27,10 @@ class AccessListAction  {
             $access_list = new AccessList;
             $access_list->name = $request->name;
             $access_list->memo = $request->memo;
+            
+            $access_list->num_owners = 0;
+            $access_list->num_writers = 0;
+            $access_list->num_readers = 0;
             $access_list->save();
             
             // ACL DBの更新

@@ -66,11 +66,11 @@ $depts = ( op( $request )->depts ) ? $request->depts : [];
                         </div>
 
                         <div class="col-11 m-1 p-1 border border-dark">
-                            <div class="row">
-                                <div class="col-2 m-2">キーワード検索：</div>
-                                {{ Form::text( 'keyword', $request->keyword, [ 'class' => 'col-5 form-control' ] ) }}
-                                <label for="search_memo">備考を検索</label>
-                                {{ Form::checkbox( 'search_memo', 1, $request->search_memo, [ 'class' => 'checkboxradio ml-2', 'id' => 'search_memo' ] ) }}
+                            <div class="row ">
+                                <div class="col-11 col-md-2 m-1 m-md-2">キーワード検索：</div>
+                                {{ Form::text( 'keyword', $request->keyword, [ 'class' => 'col-10 col-md-5 ml-3 ml-md form-control' ] ) }}
+                                <label for="search_memo" class="col-5 col-md-2 ml-3 ml-md">備考を検索</label>
+                                {{ Form::checkbox( 'search_memo', 1, $request->search_memo, [ 'class' => 'checkboxradio', 'id' => 'search_memo' ] ) }}
                             </div>
                         </div>
                     </div>
@@ -88,9 +88,8 @@ $depts = ( op( $request )->depts ) ? $request->depts : [];
                                 <div class="btn btn-sm btn-outline-dark openers" data-target="calendars_form">カレンダー</div>
                             </div>
                             
-                            <fieldset class="col-4 border border-dark m-1 p-1 calendars_form">
+                            <fieldset class="col-12 col-md-4 border border-dark m-md-1 p-md-1 calendars_form">
                                 <x-calendar_checkboxes :calendars="op( $request )->calendars" name="calendars" button="カレンダー検索" />
-                            
                             </fieldset>
                         </div>
                     </div>
@@ -107,8 +106,8 @@ $depts = ( op( $request )->depts ) ? $request->depts : [];
                             <div class="col-12 m-1 p-2">
                                 <div class="btn btn-sm btn-outline-dark openers" data-target="tasklists_form">タスクリスト</div>
                             </div>
-                            <div class="col-12 m-1 p-1 tasklists_form">                            
-                                <fieldset class="col-4 border border-dark m-1 p-1">
+                            <div class="col-12 m-md-1 p-md-1 tasklists_form">                            
+                                <fieldset class="col-12 col-md-4 border border-dark m-md-1 p-md-1">
                                     @php
                                     $array_task_status = [ '完了' => '完了', '未完' => '未完', '未完・完了とも' => '' ];
                                     $i = 1;
@@ -124,7 +123,7 @@ $depts = ( op( $request )->depts ) ? $request->depts : [];
                                     @endforeach
                                 </fieldset>
                                 
-                                <fieldset class="col-4 border border-dark m-1 p-1 tasklists_form">
+                                <fieldset class="col-12 col-md-4 border border-dark m-md-1 p-md-1 tasklists_form">
                                     <x-tasklist_checkboxes :tasklists="op( $request )->tasklists" name="tasklists" button="タスクリスト検索" />
                                 </fieldset>
                             </div>
@@ -144,7 +143,7 @@ $depts = ( op( $request )->depts ) ? $request->depts : [];
                                 <div class="btn btn-sm btn-outline-dark openers" data-target="report_lists_form">日報リスト</div>
                             </div>
                             
-                            <fieldset class="col-4 border border-dark m-1 p-1 report_lists_form">
+                            <fieldset class="col-12 col-md-4 border border-dark m-1 p-1 report_lists_form">
                                 <x-report_list_checkboxes :reportLists="op( $request )->report_lists" name="report_lists" button="日報リスト検索検索" />
                             </fieldset>
                         </div>
@@ -164,13 +163,13 @@ $depts = ( op( $request )->depts ) ? $request->depts : [];
                             </div>
                             
                             {{-- 顧客検索 --}}
-                            <fieldset class="col-3 border border-dark m-1 p-1 customers_users_form">
+                            <fieldset class="col-11 col-md-3 border border-dark m-1 p-1 customers_users_form">
                                 <!--<div class="m-2">顧客検索</div>-->
                                 <x-checkboxes_customers :customers="op( $request )->customers" name="customers" button="顧客" />
                             </fieldset>
                             
                             {{-- ユーザ検索 --}}
-                            <fieldset class="col-3 border border-dark m-1 p-1 customers_users_form">
+                            <fieldset class="col-11 col-md-3 border border-dark m-1 p-1 customers_users_form">
                                 <!--<div class="m-2">社員検索</div>-->
                                 <x-checkboxes_users :users="op( $request )->users" button="社員" />
                                 
@@ -186,7 +185,7 @@ $depts = ( op( $request )->depts ) ? $request->depts : [];
                             </fieldset>
         
                             {{-- 部署検索 --}}
-                            <fieldset class="col-3 border border-dark m-1 p-1 customers_users_form">
+                            <fieldset class="col-11 col-md-3 border border-dark m-1 p-1 customers_users_form">
                                 <!--<div class="m-2">部署検索</div>-->
                                 <x-checkboxes_depts :depts="op( $request )->depts" name="depts" button="部署" />
                             </fieldset>
@@ -208,7 +207,7 @@ $depts = ( op( $request )->depts ) ? $request->depts : [];
                             {{-- 部署検索 --}}
                             <fieldset class="col-11 border border-dark m-1 p-1 other_condition_form">
                                 <div class="row">
-                                    <div class="col-2">
+                                    <div class="col-12 col-md-2">
                                         {{--
                                           --
                                           --
@@ -234,7 +233,7 @@ $depts = ( op( $request )->depts ) ? $request->depts : [];
                                         <div class=" m-2">ソート</div>
                                             <div class="row">
                                             @for( $i = 0; $i <= 2; $i++ )
-                                                <div class="col-4">
+                                                <div class="col-12 col-md-4">
                                                     {{ Form::select( "order_by[$i]", $array_sort, op( $request->order_by )[$i], [ 'class' => 'form-control' ] ) }}
                                                     {{ Form::select( "asc_desc[$i]", $array_desc, op( $request->asc_desc )[$i], [ 'class' => 'form-control' ] ) }}
                                                 </div>

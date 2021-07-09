@@ -157,6 +157,22 @@ class Schedule extends Model {
         return config( 'groupware.schedule.permissions' );
     }
     
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    //
+    //  値取得メソッド
+    //
+    /////////////////////////////////////////////////////////////////////////////////////////////
+
+    //　スケジュールの予定日数を取得（必ず１以上）
+    //
+    public function getNumDates() {
+        $t_start = new Carbon( $this->start_date . ' 00:00:00' );
+        $t_end   = new Carbon( $this->end_date   . ' 23:59:59' );
+        return $t_end->diffInDays( $t_start ) + 1;
+    }
+    
+    
     /////////////////////////////////////////////////////////////////////////////////////////////
     //
     //  表示用関数( 主に View ファイルで使用 )
@@ -205,7 +221,9 @@ class Schedule extends Model {
     
     public function p_time_for_daily_form( ) {
         // dump( $date->format( 'Y-m-d' ) );
-        $num_day = $this->start->diffInDays( $this->end ) + 1;
+        // $num_day = $this->start->diffInDays( $this->end ) + 1;
+        $num_day = $this->getNumDates();
+
 
         if( $num_day >= 2 ) {
             if( $this->all_day ) {

@@ -96,6 +96,7 @@
 
 .cal3 {
     position:  absolute;
+    pointer-events: none;
 }
 
 .date_box {

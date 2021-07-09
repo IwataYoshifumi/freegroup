@@ -43,10 +43,9 @@ setlocale(LC_ALL, 'ja_JP.UTF-8');
         <th>社員名</th>
         <th>
             <div class="row">
-                <div class="col-4">スケジュール・タスク</div>
-                <div class="col-6">日時</div>
+                <div class="col-5">スケジュール・タスク</div>
+                <div class="col-7">日時</div>
             </div>
-        
         </th>
     </tr>
     @foreach( $depts as $dept_id => $dept )
@@ -84,7 +83,7 @@ setlocale(LC_ALL, 'ja_JP.UTF-8');
                                 }
                                 @endphp
                             
-                                <div class="event_item col-4" {!! $data !!}>
+                                <div class="event_item col-5" {!! $data !!}>
                                     <div class="row">
                                         <div class="col-1 mr-2">
                                             @if( $item instanceof Schedule) @icon(calendar) @else @icon( check )  @endif
@@ -94,7 +93,7 @@ setlocale(LC_ALL, 'ja_JP.UTF-8');
                                         </span>
                                     </div>
                                 </div>
-                                <div class="col-6">{{ $item->p_time( 'daily' ) }}</div>
+                                <div class="col-7">{{ $item->p_time( 'daily' ) }}</div>
                             @endforeach
                         @endforeach
                         
@@ -104,32 +103,38 @@ setlocale(LC_ALL, 'ja_JP.UTF-8');
                           -- 終日でない予定
                           --
                           --}}
-                        @foreach( $returns['time_for_daily'] as $time => $items )
-                            @foreach( $items as $i => $item )
-                                @if( $item->user_id != $user_id ) @continue @endif
+                        @foreach( $returns['time_for_daily'] as $time => $schedules )
+                            @foreach( $schedules as $i => $schedule )
+                                @if( $schedule->user_id != $user_id ) @continue @endif
                                 @php
-                                $style = $item->style();
-                                $url = route( 'groupware.schedule.show', [ 'schedule' => $item->id ] );
-                                $data = "data-object='schedule' data-object_id=" . $item->id;
+
+                                $num_dates = $schedule->getNumDates();
+
+                                $style = $schedule->style();
+                                $url = route( 'groupware.schedule.show', [ 'schedule' => $schedule->id ] );
+                                $data = "data-object='schedule' data-object_id=" . $schedule->id;
                                 @endphp
-                                <div class="event_item col-4" {!! $data !!}>
+                                <div class="event_schedule col-5" {!! $data !!}>
                                     <div class="row">
                                         <div class="col-1 mr-2">
-                                            @if( $item instanceof Schedule) @icon(calendar) @else @icon( check-circle-r )  @endif
+                                            @if( $schedule instanceof Schedule) @icon(calendar) @else @icon( check-circle-r )  @endif
                                         </div>
                                         <span class="col btn btn-sm text-left w-100 object_to_show_detail" {!! $data !!}  style="{{ $style }}">
-                                            {{ $item->name }}
+                                            {{ $schedule->name }}
                                         </span>
                                     </div>
                                 </div>
-                                <div class="col-6">{{ $item->p_time_for_daily_form() }}</div>
+                                <div class="col-7">
+                                    {{ $schedule->p_time_for_daily_form() }}
+                                </div>
                             @endforeach
-                        @endforeach
+                        @endforeach 
                     </div>
                 </td>
-            @endforeach
-        </tr>
-    @endforeach
+        </tr>                
+            @endforeach  {{-- loop user --}}
+            
+    @endforeach  {{-- loop dept --}}
 </table>
 
 @include( 'groupware.show_all.modal_to_show_detail' )

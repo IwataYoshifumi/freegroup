@@ -10,7 +10,7 @@ $tasklists = ( is_array( $request->tasklists )) ? $request->tasklists : [];
 @endphp
 
 
-<div class="cal3 left_area border border-light shadow " id="left_area">
+<div class="left_area border border-light shadow " id="left_area">
     {{ Form::open( [ 'route' => $current_route, 'method' => 'GET', 'id' => 'search_form' ] ) }}
         @csrf
         {{ Form::hidden( 'base_date', $request->base_date, ['id' => 'base_date' ] ) }}
@@ -99,7 +99,7 @@ $tasklists = ( is_array( $request->tasklists )) ? $request->tasklists : [];
     {{ Form::close() }}
 </div>
 
-<div class="cal3 top_area border border-dark" style="background-color: peachpuff" id="top_area">
+<div class="top_area border border-dark" style="background-color: peachpuff" id="top_area">
     <div class="row no-gutters">
         <div class="col-2 w-10 mr-auto">
             <div class="row">

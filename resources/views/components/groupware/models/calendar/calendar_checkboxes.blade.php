@@ -9,6 +9,8 @@ $request = request();
 $name_of_show_hidden_calendars = "component_" . $name . "_show_hidden_calendars";
 $name_of_calendar_permission   = "component_" . $name . "_calendar_permission";
 
+$value_of_calendar_permission = ( ! empty( $reqeust->$name_of_calendar_permission )) ? $request->$name_of_calendar_permission : "writer";
+
 $btn_search_calendars = "component_" . $name . "_btn_search_calendars";
 $prepend_calendar_area = "component_" . $name . "_prepend_calendar_area";
 $array_of_calendar_ids = "component_" . $name . "_array_calendar_ids";
@@ -19,6 +21,7 @@ $calendar_search_form_opener = "component_" . $name . "_calendar_search_form_ope
 $permissions = [ 'owner' => 'カレンダー管理者', 'writer' => '予定追加可', 'reader' => '予定閲覧可' ];
 
 $calendar_check_toggler = "component_" . $name . "_calendar_check_toggler";
+
 
 @endphp
 <div>
@@ -31,7 +34,7 @@ $calendar_check_toggler = "component_" . $name . "_calendar_check_toggler";
         <div id="{{ $calendar_search_form }}">
             <label for="{{ $name_of_show_hidden_calendars }}">非表示カレンダーも検索</label>
             {{ Form::checkbox( $name_of_show_hidden_calendars, 1, $request->$name_of_show_hidden_calendars , [ 'id' => $name_of_show_hidden_calendars , 'class' => 'checkboxradio' ] ) }}
-            {{ Form::select( $name_of_calendar_permission, $permissions, $request->$name_of_calendar_permission, [ 'id' => $name_of_calendar_permission, 'class' => 'form-control' ] ) }}
+            {{ Form::select( $name_of_calendar_permission, $permissions, $value_of_calendar_permission, [ 'id' => $name_of_calendar_permission, 'class' => 'form-control' ] ) }}
 
             <div class="btn btn-outline-dark m-1" id="{{ $btn_search_calendars }}">カレンダーを再検索</div>
         </div>

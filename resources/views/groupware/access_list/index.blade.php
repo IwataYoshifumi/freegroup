@@ -16,6 +16,8 @@ use App\Http\Helpers\BackButton;
 $array_roles = ACL::get_array_roles_for_select();
 $array_roles[''] = '-';
 
+$user = auth( 'user' )->user();
+
 #dump( $access_lists );
 @endphp
 

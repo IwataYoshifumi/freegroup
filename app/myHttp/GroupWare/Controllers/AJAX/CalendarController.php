@@ -28,10 +28,9 @@ class CalendarController extends Controller   {
         
         //  アクセスリスト権限検索
         //
-        // if( $request->auth == 'owner' ) {
         if( $request->calendar_permission == 'owner' ) {
             $query = Calendar::getOwner( user_id() );
-        } elseif( $request->auth == 'reader' ) {
+        } elseif( $request->calendar_permission == 'reader' ) {
             $query = Calendar::getCanRead( user_id() );
         } else { 
             $query = Calendar::getCanWrite( user_id() );

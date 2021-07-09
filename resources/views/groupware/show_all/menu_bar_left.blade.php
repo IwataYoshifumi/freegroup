@@ -9,7 +9,7 @@ $tasklists = ( is_array( $request->tasklists )) ? $request->tasklists : [];
 @endphp
 
 
-<div class="cal3 left_area border border-light shadow " id="left_area">
+<div class="left_area border border-light shadow " id="left_area">
     {{ Form::open( [ 'route' => $current_route, 'method' => 'GET', 'id' => 'search_form' ] ) }}
         @csrf
         {{ Form::hidden( 'base_date', $request->base_date, ['id' => 'base_date' ] ) }}

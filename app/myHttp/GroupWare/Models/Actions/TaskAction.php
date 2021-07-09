@@ -70,6 +70,7 @@ class TaskAction  {
                 $task->permission  = $request->permission;
             }
             $task->updator_id  = $user->id;
+            $task->tasklist_id = $request->tasklist_id;
 
             $task->name  = $request->name;
             $task->memo  = $request->memo;

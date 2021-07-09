@@ -98,7 +98,10 @@ class ReportList extends Model {
         $access_lists = $access_lists->pluck( 'id' )->toArray();
         $subquery = DB::table( 'accesslistables' )->select('accesslistable_id' )->whereIn( 'access_list_id', $access_lists )->where( 'accesslistable_type', ReportList::class );
         // if_debug( 'getCanRead', $subquery, $subquery->get() );
-        return self::whereIn( 'id', $subquery )->get();
+        //　公開カレンダーも検索
+        //
+        // return self::whereIn( 'id', $subquery )->get();
+        return self::whereIn( 'id', $subquery )->orWhere( 'type', 'company-wide' )->get();
     }
     
 
