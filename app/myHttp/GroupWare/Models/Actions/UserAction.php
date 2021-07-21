@@ -97,7 +97,7 @@ class UserAction  {
             return $user;
         });
 
-        //　イベント発生（退社・復社・部署異動）
+        //　イベント発生（退社・復社・部署異動）　実質的な処理は未実装
         //
         if( $old_user->retired == false and $user->retired == true ) {
             event( new UserRetireEvent( $user ));

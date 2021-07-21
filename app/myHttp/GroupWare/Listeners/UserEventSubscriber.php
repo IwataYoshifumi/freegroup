@@ -46,11 +46,13 @@ class UserEventSubscriber // implements ShouldQueue
     }
     
     public function retired() {
-        _d( 'retired', $this);
+        // _d( 'retired', $this);
+        return true;
     }
     
     public function return() {
-        _d( 'return', $this );
+        // _d( 'return', $this );
+        return true;
     }
     
     
