@@ -72,7 +72,8 @@ $auth = auth( 'user' )->user();
                             <div class="row mt-1">
                                 @php
                                     $route_show   = route( 'groupware.file.show',   [ 'file' => $file->id ] );
-                                    if( count( $file->schedules ) or count( $file->reports ) or count( $file->calprops )) {
+                                    #if( count( $file->schedules ) or count( $file->reports ) or count( $file->calprops )) {
+                                    if( count( $file->fileables )) {
                                         $attached = "有";
                                     } else {
                                         $attached = "";

@@ -117,6 +117,7 @@ class TaskListAction {
             // $reportables->delete();
             $fileables->delete();
             $tasks->delete();
+            $tasklist->access_lists()->detach();
             $tasklist->delete();
             
             return $files;

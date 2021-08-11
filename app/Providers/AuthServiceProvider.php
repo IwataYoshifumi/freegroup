@@ -20,6 +20,7 @@ use App\myHttp\GroupWare\Models\ReporProp;
 use App\myHttp\GroupWare\Models\Task;
 use App\myHttp\GroupWare\Models\TaskList;
 use App\myHttp\GroupWare\Models\TaskProp;
+use App\myHttp\GroupWare\Models\Facility;
 
 use App\myHttp\GroupWare\Models\Policies\UserPolicy;
 use App\myHttp\GroupWare\Models\Policies\GroupPolicy;
@@ -37,6 +38,9 @@ use App\myHttp\GroupWare\Models\Policies\ReportPropPolicy;
 use App\myHttp\GroupWare\Models\Policies\TaskPolicy;
 use App\myHttp\GroupWare\Models\Policies\TaskListPolicy;
 use App\myHttp\GroupWare\Models\Policies\TaskPropPolicy;
+
+use App\myHttp\GroupWare\Models\Policies\FacilityPolicy;
+use App\myHttp\GroupWare\Models\Policies\ReservationPolicy;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -62,11 +66,15 @@ class AuthServiceProvider extends ServiceProvider
         ReportList::class   => ReportListPolicy::class,
         ReportProp::class   => ReportPropPolicy::class,
 
+        MyFile::class       => FilePolicy::class,
+
         Task::class         => TaskPolicy::class,
         TaskList::class     => TaskListPolicy::class,
         TaskProp::class     => TaskPropPolicy::class,
 
-        MyFile::class       => FilePolicy::class,
+        Facility::class     => FacilityPolicy::class,
+        Reservation::class  => ReservationPolicy::class,
+
     ];
 
     /**

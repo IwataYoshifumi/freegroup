@@ -26,18 +26,37 @@ $route = [  0  => route( 'groupware.user.home', $options  ),
             22 => route( 'groupware.show_all.index', [ 'writable_tasklist'    => 1, 'set_defaults' => 1 ] ),
             23 => route( 'groupware.show_all.index', [ 'writable_report_list' => 1, 'set_defaults' => 1 ] ),
             25 => route( 'groupware.show_all.weekly' ),
+            
+            30 => route( 'groupware.facility.index'      ) . "?from_menu=1" , 
+            31 => route( 'groupware.reservation.check'   ) . "?from_menu=1" ,
+            32 => route( 'groupware.reservation.index'   ) . "?from_menu=1" ,
+            33 => route( 'groupware.reservation.monthly' ) . "?from_menu=1" ,
 
         ];
 @endphp
                     
 <a class="nav-item nav-link" href="{{ $route[1]  }}">顧客管理</a> 
 <a class="nav-item nav-link" href="{{ $route[20] }}">カレンダー</a>
-<!--<a class="nav-item nav-link" href="{{ $route[25] }}">週表示</a>-->
 <a class="nav-item nav-link" href="{{ $route[21] }}">予定</a>
 <a class="nav-item nav-link" href="{{ $route[22] }}">タスク</a>
 <a class="nav-item nav-link" href="{{ $route[23] }}">日報</a>
 
-@if( is_debug() )
+<div class="dropdown">
+    <a id="dropdownfacility"
+            class="nav-item nav-link dropdown-toggle"
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false">設備予約</a>
+    <div class="dropdown-menu" aria-labelledby="dropdownfacility" style="z-index:9999;">
+        <a class="dropdown-item" href="{{ $route[33] }}">予約状況</a>
+        <a class="dropdown-item" href="{{ $route[32] }}">予約一覧</a>
+        <div class="dropdown-divider"></div>        
+        <a class="dropdown-item" href="{{ $route[30] }}">設備管理</a>
+    </div>
+</div>
+
+
+@if( 0 )
     <a class="nav-item nav-link" href="{{ $route[4]  }}">【旧】タクス</a>
     <a class="nav-item nav-link" href="{{ $route[3]  }}">【旧】日報</a>
 @endif
@@ -52,6 +71,8 @@ $route = [  0  => route( 'groupware.user.home', $options  ),
         <a class="dropdown-item" href="{{ $route[10] }}">アクセスリスト設定</a>
         <a class="dropdown-item" href="{{ $route[11] }}">グループ設定</a>
         <a class="dropdown-item" href="{{ $route[5]  }}">ファイル管理</a>
+        <div class="dropdown-divider"></div>        
+        <a class="dropdown-item" href="{{ $route[30]  }}">設備管理</a>
         <div class="dropdown-divider"></div>
         <a class="dropdown-item" href="{{ $route[14]  }}">カレンダー設定</a>
         <a class="dropdown-item" href="{{ $route[15]  }}">タスクリスト設定</a>

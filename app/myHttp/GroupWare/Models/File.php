@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use App\myHttp\GroupWare\Models\User;
 use App\myHttp\GroupWare\Models\Schedule;
 use App\myHttp\GroupWare\Models\CalProp;
+use App\myHttp\GroupWare\Models\Facility;
 use App\myHttp\GroupWare\Models\Report;
 use App\myHttp\GroupWare\Models\Fileable;
 
@@ -46,10 +47,16 @@ class File extends Model {
         return $this->morphedByMany( CalProp::class, 'fileable' );
     }
 
+    public function facilities() {
+        return $this->morphedByMany( Facility::class, 'fileable' );
+    }
+
+
     public function fileables() {
         return $this->hasMany( Fileable::class, 'file_id' );
     }
     
+
     //////////////////////////////////////////////////////////////////////////
     //
     //  DBクエリーメソッド

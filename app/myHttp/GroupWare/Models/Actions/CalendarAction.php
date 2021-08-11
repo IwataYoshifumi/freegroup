@@ -121,12 +121,14 @@ class CalendarAction {
             
             //  ＤＢを削除
             //
+            
             $gcal_syncs->delete();
             $calprops->delete();
             $scheduleables->delete();
             $reportables->delete();
             $fileables->delete();
             $schedules->delete();
+            $calendar->access_lists()->detach();
             $calendar->delete();
             
             return $files;

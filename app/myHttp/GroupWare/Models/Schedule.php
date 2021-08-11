@@ -72,6 +72,7 @@ class Schedule extends Model {
     }
     
     //　関連社員
+    //
     public function users() {
         // return $this->morphedByMany( User::class, 'scheduleable' )->withPivot( 'google_calendar_event_id' );
         return $this->morphedByMany( User::class, 'scheduleable' );
@@ -91,6 +92,12 @@ class Schedule extends Model {
     public function files() {
         return $this->morphToMany( MyFile::class, 'fileable' );
     }
+    
+    public function reservations() {
+        return $this->morphedByMany( Reservation::class, 'scheduleable' );
+        
+    }
+    
     
     /////////////////////////////////////////////////////////////////////////////////////////////
     //

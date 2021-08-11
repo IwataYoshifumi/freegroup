@@ -47,12 +47,6 @@ $route_name = Route::currentRouteName();
 
                 <div class="card-body">
                     
-                    @if( $errors->count() )
-                        <div class="alert-warning">
-                            入力エラーで順序が元に戻っているます。確認してください。
-                        </div>
-                    @endif
-                    
                     @include( 'layouts.error' )
                     @include( 'layouts.flash_message' )
                     

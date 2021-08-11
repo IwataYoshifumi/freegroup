@@ -105,6 +105,7 @@ class ReportListAction {
             $reportables->delete();
             $fileables->delete();
             $reports->delete();
+            $report_list->access_lists()->detach();
             $report_list->delete();
             
             return $files;

@@ -69,5 +69,23 @@
         </div>
     @endif
     
+    @if( count( $file->facilities )) 
+        <div class="col-12 col-lg-4">添付先（設備）</div>
+        <div class="col-12 col-lg-8">
+            @foreach( $file->facilities as $facility )
+                @php
+                    $href = route( 'groupware.facility.show', [ 'facility' => $facility->id ] );
+                @endphp
+                <div class="row">
+                    <div class="col-3">{{ $facility->name }}</div>
+                    <div class="col-2 mtb-1">
+                        <a class="btn btn-sm btn-outline-secondary" href="{{ $href }}">詳細</a>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    @endif
+
+    
 
 </div>

@@ -29,12 +29,9 @@ $reports   = $file->reports;
 
                     @include( 'groupware.file.detail_show' )
 
-                  
-                    </div>
-                    <div class="col-12">
+                    <div class="w-100">
                         {{ BackButton::form() }}
                     </div>
-    
                 </div>
             </div>
         </div>

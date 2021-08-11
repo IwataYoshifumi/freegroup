@@ -7,38 +7,28 @@ use App\myHttp\GroupWare\Models\Group;
 use App\myHttp\GroupWare\Models\Calendar;
 use App\myHttp\GroupWare\Models\CalProp;
 use App\myHttp\GroupWare\Models\Schedule;
-
 use App\myHttp\GroupWare\Models\AccessList;
 use App\myHttp\GroupWare\Models\ACL;
 use App\myHttp\GroupWare\Models\Search\ListOfUsersInTheAccessList;
 use App\myHttp\GroupWare\Models\Search\CheckAccessList;
-
 use App\Http\Helpers\BackButton;
-
 $user = auth( 'user' )->user();
 $calendar = $calprop->calendar;
-
 $permissions = Schedule::getPermissions();
 $google_private_key_file = $calprop->google_private_key_file();
-
 $route_show_calendar   = route( 'groupware.calendar.show', [ 'calendar' => $calendar ] );
 $route_update_calendar = route( 'groupware.calendar.update', [ 'calendar' => $calendar ] );
 $route_update_calprop  = route( 'groupware.calprop.update',  [ 'calprop'  => $calprop  ] );
 $route_create_schedule = route( 'groupware.schedule.create', [ 'calendar_id' => $calendar->id ] );
-
 $sync_levels = config( 'groupware.calprop.sync_level' );
 $sync_spans  = config( 'groupware.calprop.sync_spans' );
 $route_update_calprop  = route( 'groupware.calprop.update',  [ 'calprop'  => $calprop  ] );
-
 $google_sync_level = ( $calprop->google_sync_level ) ? $sync_levels[$calprop->google_sync_level] : null;
 $google_sync_span  = ( $calprop->google_sync_span  ) ? $sync_spans[ $calprop->google_sync_span ] : null;
-
 $route_gsync       = route( 'groupware.calprop.gsync',       [ 'calprop' => $calprop ] );
 $route_gsync_on    = route( 'groupware.calprop.gsync_on',    [ 'calprop' => $calprop ] );
 $route_gsync_check = route( 'groupware.calprop.gsync_check', [ 'calprop' => $calprop ] );
-
 $info = "<i class='fas fa-minus-circle' style='color:lightgray'></i>";
-
 @endphp
 
 @section('content')

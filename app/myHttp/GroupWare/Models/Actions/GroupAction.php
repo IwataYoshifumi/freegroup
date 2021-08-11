@@ -92,6 +92,7 @@ class GroupAction {
 
         $group = DB::transaction( function() use ( $group ) {
                 $group->users()->detach();
+                $group->access_lists()->detach();
                 return $group->delete();
             });
         
