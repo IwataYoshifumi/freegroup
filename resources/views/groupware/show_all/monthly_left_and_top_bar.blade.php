@@ -59,7 +59,6 @@ $tasklists = ( is_array( $request->tasklists )) ? $request->tasklists : [];
                   --
                   -- 社員・部署検索
                   --
-                  --
                   --}}
                 <div class="col-12 shadow btn btn btn-light sidebar_headar left_menus m-1 font-weight-bold" data-target="users">社員・部署</div>
                 <div class="users" style="width: 100%">
@@ -67,13 +66,16 @@ $tasklists = ( is_array( $request->tasklists )) ? $request->tasklists : [];
                         <x-checkboxes_users :users="op( $request )->users" button="社員" />
                         <hr>
                         <x-checkboxes_depts :depts="op( $request )->depts" name="depts" button="部署" />
+                        <hr>
+                        <label for="search_users">関連社員でも検索</label>
+                        {{ Form::checkbox( 'search_users', 1, $request->search_users, [ 'id' => 'search_users', 'class' => 'checkboxradio' ] ) }}
+
                     </div>
                 </div>
                 
                 {{--
                   --
                   -- 顧客検索
-                  --
                   --
                   --}}
                 <div class="col-12 shadow btn btn btn-light sidebar_headar left_menus m-1 font-weight-bold" data-target="customers">顧客</div>

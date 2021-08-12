@@ -1,5 +1,7 @@
 <?php
 
+use Carbon\Carbon;
+
 if (! function_exists('is_debug')) {
     function is_debug() {
         return config( 'app.debug' );
@@ -177,4 +179,28 @@ if( ! function_exists( 'p_date_jp' )) {
         return "";        
     }
     
+}
+
+if (! function_exists('diffInDays')) {
+    function diffInDays( DateTime $d1, DateTime $d2 ) {
+        $t_d1 =  new Carbon( $d1->format( 'Y-m-d 00:00' ));
+        $t_d2 =  new Carbon( $d2->format( 'Y-m-d 00:00' ));
+
+        return $t_d1->diffInDays( $t_d2 );
+        
+    }
+}
+
+if (! function_exists('subInDays')) {
+    function subInDays( DateTime $d1, DateTime $d2 ) {
+        
+        $t_d1 =  new Carbon( $d1->format( 'Y-m-d 00:00' ));
+        $t_d2 =  new Carbon( $d2->format( 'Y-m-d 00:00' ));
+        
+        if( $t_d1->gte( $t_d2 )) {
+            return $t_d1->diffInDays( $t_d2 );
+        } else {
+            return $t_d1->diffInDays( $t_d2 ) * -1 ;
+        }
+    }
 }

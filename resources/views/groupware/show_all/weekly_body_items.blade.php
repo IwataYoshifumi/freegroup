@@ -62,6 +62,7 @@ $users = $returns['users'];
     $top = 0;
     $next_top = 0;
 
+    $max_objects = []; // ユーザ別、表示高さ調整用（キー User ID, 値　最大表示オブジェクト数）
 
     $template_orders = [];
     foreach( $dates as $date ) {
@@ -90,11 +91,10 @@ $users = $returns['users'];
             
             @endphp
             
-            <div class="col01 span01 cal3 border border-dark bg-white" style="{{ $row_style }}">
+            <div class="col01 span01 cal3 border border-dark bg-white row_style_user_{{ $user->id }}" style="{{ $row_style }}">
                 <div class="order1 font-weight-bold">
                     {{ $dept->name }}<br>
-                    {{ $user->name }} {{ $user->grade }}<br>
-                    @if( 0 and is_debug() )  {{ $max }}/{{ $row_style }} @endif
+                    {{ $user->name }} {{ $user->grade }} @if( is_debug() ) {{ $user->id }} @endif
                 </div>
             </div>
             
@@ -116,13 +116,12 @@ $users = $returns['users'];
             
                 @endphp
             
-                <div class="col0{{ $col }} span01 cal3 border border-dark {{ $box_class }}" style="{{ $row_style }}">
+                <div class="col0{{ $col }} span01 cal3 border border-dark {{ $box_class }} row_style_user_{{ $user->id }}" style="{{ $row_style }}">
                     <div class="order0 date_item" data-date="{{ $date_text }}">
                         &nbsp; {{ $date->format( 'n/j' ) }}
                     </div>
                 </div>
-                {{--
-                <div class="col0{{ $col }} span01 cal3 border border-dark" style="{{ $row_style }} z-index:100; pointer-events: none;"></div>
+
                 {{--
                   --
                   --  複数日の予定
@@ -131,41 +130,50 @@ $users = $returns['users'];
                 @foreach( $items['multi'] as $schedule )
                     @if( $schedule instanceof Schedule )
                         @php
-                        $tmp_d = $date->copy();
-                        if( $schedule->start->lt( $start_date_of_calendar )) {
-                            $start_date = $start_date_of_calendar->copy();
-                        } else {
-                            $start_date = $schedule->start->copy();
-                        }
-                        $order = $orders[$start_date->format('Y-m-d')]+1;
+                        $tmp_d      = $date->copy();
+                        $start_date = $date->copy();
+
+                        $order = $orders[$date->format('Y-m-d')] + 1;
+                        $orders[$date->format('Y-m-d')] = $order;
 
                         for( $j = 1; $j <= 7; $j++ ) {
-
-                            if( $tmp_d->gte( $schedule->end ) or $tmp_d->isSaturday() ) {
-                                break;
-                            }
+                            // if( $tmp_d->gte( $schedule->end ) or $tmp_d->isSaturday() ) { break; }
+                            // if( $tmp_d->gte( $schedule->end ) or ( $j > 1 and $tmp_d->isSunday() )) { break; }
+                            if( subInDays( $tmp_d, $schedule->end ) >= 0 or ( $tmp_d->isSaturday() )) { break; }
                             $orders[$tmp_d->format('Y-m-d')] = $order;
                             $tmp_d->addDay();                                
                         }
+
+                        $orders[$tmp_d->format('Y-m-d')] = $order;
                         
-                        $span = $start_date->diffInDays( $tmp_d ) + 1;
+                        #$span = $start_date->diffInDays( $tmp_d ) + 1;
+                        $span = diffInDays( $start_date, $tmp_d ) + 1;
+                        
                         $schedule_class = "schedule schedule_item calendar_" . $schedule->calendar_id;
                         $data = "data-object='schedule' data-object_id=" . $schedule->id;
                         $style = $schedule->style();
                         @endphp
-                        <div class="col0{{ $col }} span0{{ $span }} cal3 calendar_item order{{ $order }} {{ $schedule_class }} object_to_show_detail" style="{{ $style }}" {!! $data !!}> {{-- htmlspecialchars OK --}}
-                            <div class="span01">
-                                @if( $user_id != $schedule->user_id ) 【{{ $schedule->user->name }}】 @endif
-                                {{ $schedule->name }} 
-                                
-                                @if( ! $schedule->all_day )
-                                    {{ $schedule->p_time( 'weekly' ) }}
-                                @endif
+                        <div class="col0{{ $col }} span0{{ $span }} cal3  row_style_user_{{ $user->id }}" style="{{ $row_style }}">
+                            <div class="w-100 cal3 calendar_item order{{ $order }} {{ $schedule_class }} object_to_show_detail" style="{{ $style }}" {!! $data !!}> {{-- htmlspecialchars OK --}}
+                                <div class="d-flex w-100">
+                                    <div class="text-left text-truncate">
+                                        {{ $schedule->name }} 
+                                    </div>
+                                    <div class="flex-fill text-right">
+                                        @if( ! $schedule->all_day )
+                                            {{ $schedule->start->format('h:i') }}
+                                        @endif
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                    @else 
+                        @php
+                        #$orders[$date->format('Y-m-d')]++;
+                        @endphp
                     @endif
+                    
                 @endforeach
-                
                 {{--
                   --
                   -- １日の予定、タクスを表示
@@ -184,41 +192,76 @@ $users = $returns['users'];
                         $complete   = ( $item->status == "完了" ) ? "task_complete" : "";
                     } 
                     $order = $orders[$date_text]+1;
-                    $orders[$date_text]++;
+                    $orders[$date_text] = $order;
                     $style = $item->style();
                     
                     @endphp
-                    <div class="col0{{ $col }} span01 cal3" style="{{ $row_style }}">
-                        <div class="calendar_item order{{ $order }} {{ $class }} {{ $complete }} single_schedule object_to_show_detail" style="{{ $style }}" {!! $data !!}> {{-- htmlspecialchars OK --}}
-                            @if( $item instanceof Task ) 
-                                @if( $item->status == "完了" )
-                                    @icon( check )
-                                @else
-                                     @icon( check-circle-r )
+                    <div class="col0{{ $col }} span01 cal3 row_style_user_{{ $user->id }}" style="{{ $row_style }}">
+                        <div class="calendar_item order{{ $order }} {{ $class }} {{ $complete }} single_schedule object_to_show_detail d-flex" style="{{ $style }}" {!! $data !!}> {{-- htmlspecialchars OK --}}
+                            <div class="text-left text-truncate">
+                                @if( $item instanceof Task ) 
+                                    @if( $item->status == "完了" )
+                                        @icon( check )
+                                    @else
+                                         @icon( check-circle-r )
+                                    @endif
                                 @endif
-                            @endif
-                            @if( $user_id != $item->user_id ) 【{{ $item->user->name }}】 @endif
-                            {{ $item->name }}
-
-
-                            @if( ! $item->all_day and method_exists( $item, 'p_time' ))
-            
-                                <span>{{ $item->p_time('monthly') }}</span>
-                            @endif
+                                {{ $item->name }}
+                            </div>
+                            <div class="flex-fill text-right">
+                                @if( ! $item->all_day and method_exists( $item, 'p_time' ))
+                                    <span>{{ $item->p_time('monthly') }}</span>
+                                @else 
+                                    <span>終日</span>
+                                @endif
+                            </div>
                         </div>
                     </div>
                 
+                    @if( 0 and $user->id == 2 )
+                        @php
+                        if_debug( $user->id,  $item, $item->users );
+                        @endphp
+                    @endif
                 @endforeach
             @endforeach
 
             @php
             $i++;
-            #if_debug( $orders );
+
+            // 各ユーザの表示高さの調整用（最後のJavaScriptで仕様）
+            //
+            $max_objects[$user->id] = max( $orders );
 
             @endphp
-        @endforeach
-    @endforeach
+        @endforeach  {{-- Loop Users --}}
+    @endforeach  {{-- Loop Depts --}}
     
-    
+     <script>
+        //　各ユーザごとの表示幅を調整するスクリプト
+        //
+        $(document).ready( function() {
+            @php
+            $top = 0;
+            $next_top = 0;
+            @endphp
+
+            @foreach( $max_objects as $user_id => $max ) 
+                @php
+                $max++;
+                $height = 28 + $max * 20;
+                $top      = $next_top;
+                $next_top = $top + $height;
+                @endphp
+                
+                $('.row_style_user_{{ $user_id }}').css( 'top',    {{ $top }} );
+                $('.row_style_user_{{ $user_id }}').css( 'height', {{ $height }} );
+                {{-- 
+                console.log( {{ $user_id }},  {{ $max}},  {{ $top }}, {{ $height }} );
+                --}}
+            @endforeach
+        });
+        
+    </script>
     
 </div>
