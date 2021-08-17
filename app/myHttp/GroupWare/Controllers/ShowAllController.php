@@ -156,6 +156,7 @@ class ShowAllController extends Controller {
             $request->show_hidden_tasklists = 0;
             $request->calendar_permission = "writer";
             $request->tasklist_permission = "writer";
+
             $request->task_status = '未完';
             $request->users = [ user_id() ];
             $request->calendars = Calendar::getCanWrite( user_id() )->pluck('id')->toArray();

@@ -20,6 +20,8 @@ $permissions = [ 'owner' => '日報リスト管理者', 'writer' => '予定追�
 
 $report_list_check_toggler = "component_" . $name . "_report_list_check_toggler";
 
+if( empty( $request->$name_of_report_list_permission )) { $request->$name_of_report_list_permission = 'writer'; }
+
 @endphp
 <div>
     <div class="col-12 m-2">

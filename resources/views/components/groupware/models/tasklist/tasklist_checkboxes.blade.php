@@ -20,6 +20,8 @@ $permissions = [ 'owner' => 'タスクリスト管理者', 'writer' => '予定�
 
 $tasklist_check_toggler = "component_" . $name . "_tasklist_check_toggler";
 
+if( empty( $request->$name_of_tasklist_permission )) { $request->$name_of_tasklist_permission = 'writer'; }
+
 @endphp
 <div>
     <div class="col-12 m-2">

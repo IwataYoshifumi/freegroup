@@ -36,9 +36,8 @@ $route = [  0  => route( 'groupware.user.home', $options  ),
 @endphp
                     
 <a class="nav-item nav-link" href="{{ $route[1]  }}">顧客管理</a> 
-<a class="nav-item nav-link" href="{{ $route[20] }}">カレンダー</a>
-<a class="nav-item nav-link" href="{{ $route[21] }}">予定</a>
-<a class="nav-item nav-link" href="{{ $route[22] }}">タスク</a>
+<a class="nav-item nav-link" href="{{ $route[20] }}">予定・タスク</a>
+<a class="nav-item nav-link" href="{{ $route[21] }}">検索</a>
 <a class="nav-item nav-link" href="{{ $route[23] }}">日報</a>
 
 <div class="dropdown">

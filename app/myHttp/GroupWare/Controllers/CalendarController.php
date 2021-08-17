@@ -37,6 +37,7 @@ class CalendarController extends Controller {
     
     public function index( Request $request ) {
 
+        if_debug( $request->all() );
         //　検索初期条件
         //
         $find = ( isset( $request->find )) ? $request->find : [ 'user_id' => user_id(), 'keyword' => 'canWrite' ];

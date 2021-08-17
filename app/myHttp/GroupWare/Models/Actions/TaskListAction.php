@@ -78,10 +78,17 @@ class TaskListAction {
                 if( $request->init_users_default_permission ) {
                     $tasklist->taskprops()->update( [ 'default_permission' => $request->default_permission ] );
                 }
-                //　変更管理者のTaskPropの名前のみ変更
+                //　TaskPropの表示名を変更
                 //
-                $tasklist->taskprops()->where( 'user_id', user_id() )->update( ['name' => $request->name ] );
+                if( $request->change_name_all_users ) {
+                    $tasklist->taskprops()->update( [ 'name' => $request->name ] );
 
+                } else {
+
+                    //　変更管理者のTaskPropの名前のみ変更
+                    //
+                    $tasklist->taskprops()->where( 'user_id', user_id() )->update( ['name' => $request->name ] );
+                }
 
                 return $tasklist;
         });

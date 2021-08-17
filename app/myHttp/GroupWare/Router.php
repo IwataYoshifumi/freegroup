@@ -680,7 +680,7 @@ class Router {
                 'groupware.show_all.weekly'     => 'スケジュール・タスク　週次表示',
                 'groupware.show_all.daily'     => 'スケジュール・タスク　日次表示',
                 'groupware.show_all.index'      => 'スケジュール・タスク・日報　検索',
-                'groupware.show_all.indexExecSearch'  => 'スケジュール・タスク・日報　検索',
+                'groupware.show_all.indexEexecSearch'  => 'スケジュール・タスク・日報　検索',
                 ]);
     }
     
