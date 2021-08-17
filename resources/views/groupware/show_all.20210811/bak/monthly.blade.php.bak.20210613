@@ -1,0 +1,323 @@
+@php
+
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\URL;
+use App\Http\Helpers\MyForm;
+use App\Http\Helpers\OutputCSV;
+use Carbon\Carbon;
+
+use App\Models\Customer;
+
+use App\myHttp\GroupWare\Models\Schedule;
+use App\myHttp\GroupWare\Models\Dept;
+use App\myHttp\GroupWare\Models\Calendar;
+use App\myHttp\GroupWare\Models\CalProp;
+use App\myHttp\GroupWare\Models\TaskProp;
+
+use App\myHttp\GroupWare\Controllers\Search\SearchSchedule;
+use App\myHttp\GroupWare\Controllers\Search\SearchSchedulesAndTasks;
+use App\myHttp\GroupWare\Controllers\Schedule2IndexController;
+
+$route_name = Route::currentRouteName();
+
+
+$sidebar_height = 30;
+
+
+
+$calendars = [ 0 => "岩田のカレンダー", 1 => "総務部のカレンダー", 2 => "営業部のカレンダー", 3 => "鈴木のカレンダー", 4 => "全社カレンダー" ];
+$tasklists = [ 0 => "岩田のタスク", 1 => "総務部のタスク", 2 => "営業部のタスク", 3 => "鈴木のタスク" ];
+
+$calprops  = Calprop::whereCalendarsCanRead( user_id() )->get();
+$taskprops = TaskProp::whereTaskListCanRead( user_id() )->get();
+
+
+
+$today = new Carbon('today');
+
+/*
+$first_of_month = $today->copy()->firstOfMonth();
+$end_of_month   = $today->copy()->endOfMonth();
+
+//　月表示カレンダーの表示表示範囲を取得（日曜が週の初め）
+//
+$first_date = $first_of_month->copy();
+$end_date   = $end_of_month->copy();
+while( ! $first_date->isSunday() ) { $first_date->subDay(); }
+while( ! $end_date->isSaturday() ) { $end_date->addDay();  }
+
+//　月表示カレンダーのデータ作成
+//
+$count = $first_date->diffInDays( $end_date );
+$dates = [];
+for ($i = 0; $i <= $count; $i++, $first_date->addDay()) {
+    // copyしないと全部同じオブジェクトを入れてしまうことになる
+    $dates[$i] = $first_date->copy();
+}
+*/
+
+
+//　スケジュールの検索
+//
+$request = request();;
+$request->base_date =  $today->format( 'Y-m-d' );
+$request->span      = "monthly";
+
+$returns = SearchSchedulesAndTasks::search( $request );
+
+$num_of_weeks = floor( count( $returns ) / 7 ); 
+
+#dd( $returns, $num_of_weeks );
+
+@endphp
+
+@extends('layouts.app')
+@section('content')
+
+<div class="main_body bg-warning">
+    <div class="cal3 left_area bg-info" id="left_area">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 d-flex sidebar_headar">
+                    <span class="btn btn_icon m-1 mr-auto" id="sidebar_closer">@icon( arrow-left ) </span>
+                </div>
+                
+                <div class="col-12 sidebar_headar bg-danger left_menus" data-target="calendars">カレンダー</div>
+                <div class="calendars" style="width: 100%">
+                    @foreach( $calprops as $i => $calprop )
+                        @php
+                            $h = 50 +  $sidebar_height * $i;
+                        @endphp
+                        <div class="col-12 sidebar_lists left_menus border border-dark bg-light">{{ $calprop->name }}</div>
+                    @endforeach
+                </div>
+
+                <div class="col-12 sidebar_headar bg-danger  left_menus" data-target="tasklists">タスクリスト</div>
+                <div class="tasklists" style="width: 100%">
+                    @foreach( $taskprops as $i => $taskprop )
+                        @php
+                            $h = 50 +  $sidebar_height * $i;
+                        @endphp
+                        <div class="col-12 sidebar_lists border border-dark bg-light  left_menus">{{ $taskprop->name }}</div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="cal3 top_area bg-success" id="top_area">
+        <div class="row  no-gutters">
+            <div class="col-1 w-10 mr-auto">
+                <div class="row">
+                    <div class="col btn ml-2 m-1 btn_icon" id="sidebar_opener">@icon( angle-double-right )</div>
+                    <div class="col btn m-1 btn_icon" id="new_schedule" title="新規スケジュール作成">@icon( plus-circle  )</div>
+                    <div class="col btn m-1 btn_icon" id="new_task"     title="新規タスク作成">@icon( check-circle )</div>
+                </div>
+            </div>
+            <div class="col-5 font-weight-bold">
+                <div id="window-size"></div>
+                <div id="main-size"></div>
+            </div>
+        </div>
+    </div>
+    
+
+        <div class="main_area" id="main_area">
+            @php
+                $d = 0;
+                $height = floor( 100 / $num_of_weeks );
+            @endphp
+            @foreach( $returns as $d => $return )
+                @php
+                    $date = $return['date'];
+                    if( $date->eq( $today )) {
+                        $box_class = "today_box";
+                    } elseif( $date->month != $today->month ) {
+                        $box_class = "other_month_box";
+                    } else {
+                        $box_class = "";
+                    }
+                @endphp
+
+                @if( $loop->first or $date->isSunday() ) <div class="row no-gutters"> @endif
+                
+                    <div class="col border border-dark date_box {{ $box_class }}">
+                        <div class="row no-gutters">
+                            <div class="col-12">{{ $date->format( 'd' ) }}</div>
+                            
+
+                            @if( count( op( $return )['multi_after'] ) >= 1 )
+                                @foreach( $return['multi_after'] as $schedule )
+                                    @php
+                                        #$calprop = $schedule->calendar->calprops->first();
+                                        #$style = "color: " . $calprop->text_color . " ; background-color: " . $calprop->background_color . ";";
+
+                                        $style = op( $schedule )->style();
+                                    @endphp
+                                    <div class="col-12 m-1 border border-dark schedule" style="{{ $style }}">a {{ op( $schedule )->id }}</div>
+                                @endforeach
+                            @endif
+
+                            @if( count( op( $return )['multi'] ) >= 1 )
+                                @foreach( $return['multi'] as $schedule )
+                                    @php
+                                        #$calprop = $schedule->calendar->calprops->first();
+                                        #$style = "color: " . $calprop->text_color . " ; background-color: " . $calprop->background_color . ";";
+                                        
+                                        //　マルチだから必ず２日以上
+                                        //
+                                        $diff = $date->diffInDays( $schedule->end ) + 1;
+                                        $t_date = $date->copy()->addDay();
+                                        
+                                        for( $i = 2; $i <= $diff and ! $t_date->isSunday(); $i++, $t_date->addDay() ) {
+                                            $span = $i;
+                                        }
+                                        #if_debug( $span, $diff );                                        
+                                        
+                                        $style = $schedule->style();
+                                        $span  = "span" . $span;
+                                    @endphp
+                                    <div class="col-12 m-1 border border-dark schedule {{ $span }}" style="{{ $style }}">{{ $schedule->name }} {{ $schedule->id }}</div>
+                                @endforeach
+                            @endif
+                            
+                            @if( count( op( $return )['single'] ) >= 1 )
+                                @foreach( $return['single'] as $schedule )
+                                    @php
+                                        #$calprop = $schedule->calendar->calprops->first();
+                                        #$style = "color: " . $calprop->text_color . " ; background-color: " . $calprop->background_color . ";";
+
+                                        $style = $schedule->style();
+                                    @endphp
+                                    <div class="col-12 m-1 border border-dark schedule" style="{{ $style }}">{{ $schedule->name }}</div>
+                                @endforeach
+                            @endif
+
+
+                            @if( count( op( $return )['time'] ) >= 1 )
+                                @foreach( $return['time'] as $schedule )
+                                    @php
+                                    $style = $schedule->style();
+                                        
+                                    @endphp
+                                
+                                    <div class="col-12 m-1 schedule" style="{{ $style }}">{{ $schedule->name }} <span class="text-right">{{ $schedule->start->format( 'H:i' ) }}</span></div>
+                                @endforeach
+                            @endif
+                        </div>
+                    </div>
+
+
+                @if( $date->isSaturday() ) </div> @endif
+            @endforeach
+        </div>
+    </div>
+    
+</div>
+
+<br><br><hr>
+
+<script>
+
+    $('.sidebar_headar').on( 'click', function() {
+        var target = $(this).data( 'target' );
+        var t      = "." + target;
+        var options = { percent: 50 };
+        $( t ).toggle( 'blind', options , 200 );
+        
+    });
+    
+    var breakpoint_sm = 576;
+    var breakpoint_md = 768;
+    var breakpoint_lg = 992;
+    var left_area = $('#left_area');
+    var sidebar_opener = $('#sidebar_opener');
+    var sidebar_closer = $('#sidebar_closer');
+    var main_area = $('#main_area');
+    var top_area  = $('#top_area');
+    var left_menus = $('.left_menus');
+    var left_offset = 250;
+    var top_offset  = 100;
+
+    var left_area_display;
+    
+    $(window).on( 'resize load', function( event ) {
+        var w_width = $(window).width();
+        var w_height = $(window).height();
+        
+        resize_main_area();
+        console.log( event.type );
+        
+        if( w_width < breakpoint_md ) {
+            hide_sidebar();
+        } else if( w_width >= breakpoint_md ) {
+            // show_sidebar();
+        }
+        top_area.scrollLeft( 0 );
+        
+    });
+    
+    sidebar_closer.on( 'click', function() { hide_sidebar(); });
+    sidebar_opener.on( 'click', function() { show_sidebar(); });
+    
+    function hide_sidebar() {
+
+        left_area_display = 'none';        
+        var css = { width: "0px", left: "20px" };        
+        left_menus.animate( css, 500 );
+        
+        
+        var css = { left: "5px" };        
+        main_area.animate( css, 500 );
+        top_area.animate( css, 500 );
+        
+        var width = main_area.width() + left_offset;
+        top_area.css( 'width', width + 'px' );
+        main_area.css( 'width', width + 'px' );
+        setTimeout( function() { sidebar_opener.show(); } , 500 );
+
+
+    }
+
+    function show_sidebar() {
+
+        left_area_display = 'block';
+        var css = { width: left_offset + 'px', left: "0px" };
+        left_menus.animate( css, 500 ); 
+
+        var css = { left: left_offset + 'px' };
+        sidebar_opener.hide();
+        main_area.animate( css, 500 );
+        top_area.animate(  css, 500 );
+        setTimeout( function() { resize_main_area(); }, 500 );
+    }
+
+    function resize_main_area() {
+        
+        var num_of_weeks = {{ $num_of_weeks }};
+    
+        var w_width = $(window).width();
+        var w_height = $(window).height();
+
+        var main_height = w_height - top_offset;
+        if( left_area_display == 'none' ) {
+            var main_width = w_width - 20; 
+        } else {
+            var main_width = w_width - left_offset - 10;
+        }
+
+        
+        top_area.css(  'width', main_width );
+        main_area.css( 'width', main_width );
+        main_area.css( 'height', main_height );
+
+
+        var w = "window 幅：" + w_width + " 高：" + w_height + "&nbsp; &nbsp;" ;
+        var t = "main    幅：" + main_area.width() + " / 高：" + main_area.height();
+        $('#window-size').html( w + t );
+    }
+    
+</script>
+
+
+@endsection

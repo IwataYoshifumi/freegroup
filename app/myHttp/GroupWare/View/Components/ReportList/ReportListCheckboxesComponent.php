@@ -49,8 +49,6 @@ class ReportListCheckboxesComponent extends Component
         } else { 
             $this->report_lists = $reportLists; 
         }
-
-
         
     }
 

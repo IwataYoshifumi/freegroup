@@ -120,9 +120,11 @@ class SearchForShowALLIndex {
         //　キーワード検索（件名 or 備考）
         //
         if( $request->keyword ) {
-            $keyword = '%' . addcslashes($request->keyword, '%_\\') . '%';
-            $column  = ( $request->search_memo ) ? "memo" : "name";
-            $schedules = $schedules->where( $column, 'like', $keyword );
+            $keyword = '%' . addcslashes( $request->keyword, '%_\\') . '%';
+            $schedules = $schedules->where( function( $query ) use( $keyword ) {
+                                                    $query->where(   'name', 'like', $keyword )
+                                                          ->orWhere( 'memo', 'like', $keyword );
+                        });
         }
 
         //　期間の検索
@@ -153,20 +155,64 @@ class SearchForShowALLIndex {
         
         //　部署・社員検索
         //
-        if( $request->users and $request->depts ) {
-            $sub_query = User::select('id')->whereIn( 'id', $request->users )
-                                           ->orWhere( function( $query ) use ( $request ) {
-                                                $query->whereIn( 'dept_id', $request->depts );
-                                           });
-            $schedules = $schedules->whereIn( 'user_id', $sub_query );
-        } elseif( ! $request->users and $request->depts ) {
-            $schedules = $schedules->whereHas( 'user', function( $query ) use ( $request ) {
-                                        $query->whereIn( 'dept_id', $request->depts );
-                            });
-        } elseif( $request->users and ! $request->depts ) {
-            $schedules = $schedules->whereIn( 'user_id', $request->users );
+        // if( $request->users and $request->depts ) {
+        //     $sub_query = User::select('id')->whereIn( 'id', $request->users )
+        //                                   ->orWhere( function( $query ) use ( $request ) {
+        //                                         $query->whereIn( 'dept_id', $request->depts );
+        //                                   });
+        //     $schedules = $schedules->whereIn( 'user_id', $sub_query );
+        // } elseif( ! $request->users and $request->depts ) {
+        //     $schedules = $schedules->whereHas( 'user', function( $query ) use ( $request ) {
+        //                                 $query->whereIn( 'dept_id', $request->depts );
+        //                     });
+        // } elseif( $request->users and ! $request->depts ) {
+        //     $schedules = $schedules->whereIn( 'user_id', $request->users );
+        // }
+
+        //　部署・社員検索
+        //
+        if( $request->users or $request->depts ) {
+
+            if( $request->users and $request->depts ) {
+                $query_for_user = User::whereIn( 'id', $request->users )
+                                      ->orWhere( function( $query ) use ( $request ) {
+                                                    $query->whereIn( 'dept_id', $request->depts );
+                                               });
+            } elseif( ! $request->users and $request->depts ) {
+                $query_for_user = User::whereIn( 'dept_id', $request->depts );
+    
+            } elseif( $request->users and ! $request->depts ) {
+                $query_for_user = User::whereIn( 'id', $request->users );
+            }
+            $user_ids = $query_for_user->get()->pluck( 'id' )->toArray();
             
+            if( ! $request->search_users ) {
+    
+                // 　予定作成者のみ検索
+                //
+                $schedules = $schedules->whereIn( 'user_id', $user_ids );
+                $schedules = $schedules->with( [ 'users' => function( $query ) { $query->where( 'id', -1 ); } ]);
+
+            } else {
+    
+                // 　予定作成者と関連社員で検索
+                //
+                $schedules = $schedules->where( function( $query ) use( $user_ids ) {
+                                                        $query->whereIn( 'user_id', $user_ids )
+                                                              ->orWhere( function( $query2 ) use ( $user_ids ) {
+                                                                    $query2->whereHas( 'users', function( $query3 ) use( $user_ids )  {
+                                                                                $query3->whereIn( 'id', $user_ids );
+                                                                            });
+                                                                    });
+                                                        });
+                $schedules = $schedules->with( [ 'users' => function( $query ) use( $user_ids ) { $query->whereIn( 'id', $user_ids ); }] );
+            }
+        } else {
+            $schedules = $schedules->with( [ 'users' => function( $query ) { $query->where( 'id', -1 ); } ]);
         }
+        
+        
+        
         //　関連顧客で検索
         //
         if( $request->customers ) {
@@ -212,9 +258,11 @@ class SearchForShowALLIndex {
         //　キーワード検索（件名 or 備考）
         //
         if( $request->keyword ) {
-            $keyword = '%' . addcslashes($request->keyword, '%_\\') . '%';
-            $column  = ( $request->search_memo ) ? "memo" : "name";
-            $reports = $reports->where( $column, 'like', $keyword );
+            $keyword = '%' . addcslashes( $request->keyword, '%_\\') . '%';
+            $reports = $reports->where( function( $query ) use( $keyword ) {
+                                                  $query->where(   'name', 'like', $keyword )
+                                                        ->orWhere( 'memo', 'like', $keyword );
+                        });
         }
 
         //　期間の検索
@@ -245,20 +293,62 @@ class SearchForShowALLIndex {
         
         //　部署・社員検索
         //
-        if( $request->users and $request->depts ) {
-            $sub_query = User::select('id')->whereIn( 'id', $request->users )
-                                           ->orWhere( function( $query ) use ( $request ) {
-                                                $query->whereIn( 'dept_id', $request->depts );
-                                           });
-            $reports = $reports->whereIn( 'user_id', $sub_query );
-        } elseif( ! $request->users and $request->depts ) {
-            $reports = $reports->whereHas( 'user', function( $query ) use ( $request ) {
-                                        $query->whereIn( 'dept_id', $request->depts );
-                            });
-        } elseif( $request->users and ! $request->depts ) {
-            $reports = $reports->whereIn( 'user_id', $request->users );
+        // if( $request->users and $request->depts ) {
+        //     $sub_query = User::select('id')->whereIn( 'id', $request->users )
+        //                                   ->orWhere( function( $query ) use ( $request ) {
+        //                                         $query->whereIn( 'dept_id', $request->depts );
+        //                                   });
+        //     $reports = $reports->whereIn( 'user_id', $sub_query );
+        // } elseif( ! $request->users and $request->depts ) {
+        //     $reports = $reports->whereHas( 'user', function( $query ) use ( $request ) {
+        //                                 $query->whereIn( 'dept_id', $request->depts );
+        //                     });
+        // } elseif( $request->users and ! $request->depts ) {
+        //     $reports = $reports->whereIn( 'user_id', $request->users );
+        // }
+
+        //　部署・社員検索
+        //
+        if( $request->users or $request->depts ) {
+            if( $request->users and $request->depts ) {
+                $query_for_user = User::whereIn( 'id', $request->users )
+                                      ->orWhere( function( $query ) use ( $request ) {
+                                                    $query->whereIn( 'dept_id', $request->depts );
+                                               });
+            } elseif( ! $request->users and $request->depts ) {
+                $query_for_user = User::whereIn( 'dept_id', $request->depts );
+    
+            } elseif( $request->users and ! $request->depts ) {
+                $query_for_user = User::whereIn( 'id', $request->users );
+            }
+            $user_ids = $query_for_user->get()->pluck( 'id' )->toArray();
             
+            if( ! $request->search_users ) {
+    
+                // 　日報作成者のみ検索
+                //
+                $reports = $reports->whereIn( 'user_id', $user_ids );
+                $reports = $reports->with( [ 'users' => function( $query ) { $query->where( 'id', -1 ); } ]);
+    
+            } else {
+    
+                // 　日報作成者と関連社員で検索
+                //
+                $reports = $reports->where( function( $query ) use( $user_ids ) {
+                                                        $query->whereIn( 'user_id', $user_ids )
+                                                              ->orWhere( function( $query2 ) use ( $user_ids ) {
+                                                                    $query2->whereHas( 'users', function( $query3 ) use( $user_ids )  {
+                                                                                $query3->whereIn( 'id', $user_ids );
+                                                                            });
+                                                                    });
+                                                        });
+                $reports = $reports->with( [ 'users' => function( $query ) use( $user_ids ) { $query->whereIn( 'id', $user_ids ); }] );
+            }
+        } else {
+            $reports = $reports->with( [ 'users' => function( $query ) { $query->where( 'id', -1 ); } ]);
         }
+
+
         //　関連顧客で検索
         //
         if( $request->customers ) {
@@ -290,10 +380,13 @@ class SearchForShowALLIndex {
         //　キーワード検索（件名 or 備考）
         //
         if( $request->keyword ) {
-            $keyword = '%' . addcslashes($request->keyword, '%_\\') . '%';
-            $column  = ( $request->search_memo ) ? "memo" : "name";
-            $tasks = $tasks->where( $column, 'like', $keyword );
+            $keyword = '%' . addcslashes( $request->keyword, '%_\\') . '%';
+            $tasks = $tasks->where( function( $query ) use( $keyword ) {
+                                                    $query->where(   'name', 'like', $keyword )
+                                                          ->orWhere( 'memo', 'like', $keyword );
+                        });
         }
+
 
         //　期間の検索
         //
@@ -311,20 +404,45 @@ class SearchForShowALLIndex {
         
         //　部署・社員検索
         //
-        if( $request->users and $request->depts ) {
-            $sub_query = User::select('id')->whereIn( 'id', $request->users )
-                                           ->orWhere( function( $query ) use ( $request ) {
-                                                $query->whereIn( 'dept_id', $request->depts );
-                                           });
-            $tasks = $tasks->whereIn( 'user_id', $sub_query );
-        } elseif( ! $request->users and $request->depts ) {
-            $tasks = $tasks->whereHas( 'user', function( $query ) use ( $request ) {
-                                        $query->whereIn( 'dept_id', $request->depts );
-                            });
-        } elseif( $request->users and ! $request->depts ) {
-            $tasks = $tasks->whereIn( 'user_id', $request->users );
+        if( $request->users or $request->depts ) {
+            if( $request->users and $request->depts ) {
+                $query_for_user = User::whereIn( 'id', $request->users )
+                                      ->orWhere( function( $query ) use ( $request ) {
+                                                    $query->whereIn( 'dept_id', $request->depts );
+                                               });
+            } elseif( ! $request->users and $request->depts ) {
+                $query_for_user = User::whereIn( 'dept_id', $request->depts );
+    
+            } elseif( $request->users and ! $request->depts ) {
+                $query_for_user = User::whereIn( 'id', $request->users );
+            }
+            $user_ids = $query_for_user->get()->pluck( 'id' )->toArray();
             
+            if( ! $request->search_users ) {
+    
+                // 　タスク作成者のみ検索
+                //
+                $tasks = $tasks->whereIn( 'user_id', $user_ids );
+                $tasks = $tasks->with( [ 'users' => function( $query ) { $query->where( 'id', -1 ); } ]);
+    
+            } else {
+    
+                // 　タスク作成者と関連社員で検索
+                //
+                $tasks = $tasks->where( function( $query ) use( $user_ids ) {
+                                                        $query->whereIn( 'user_id', $user_ids )
+                                                              ->orWhere( function( $query2 ) use ( $user_ids ) {
+                                                                    $query2->whereHas( 'users', function( $query3 ) use( $user_ids )  {
+                                                                                $query3->whereIn( 'id', $user_ids );
+                                                                            });
+                                                                    });
+                                                        });
+                $tasks = $tasks->with( [ 'users' => function( $query ) use( $user_ids ) { $query->whereIn( 'id', $user_ids ); }] );
+            }
+        } else {
+            $tasks = $tasks->with( [ 'users' => function( $query ) { $query->where( 'id', -1 ); } ]);
         }
+
         //　関連顧客で検索
         //
         if( $request->customers ) {

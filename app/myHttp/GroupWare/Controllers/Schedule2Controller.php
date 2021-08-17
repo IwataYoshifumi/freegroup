@@ -186,8 +186,6 @@ class Schedule2Controller extends Controller {
         // session()->flash( 'info_message', "スケジュールを削除します。よろしいですか。" );
 
         $this->authorize( 'delete', $schedule );
-        
-
 
         BackButton::stackHere( request() );
         return view( 'groupware.schedule2.delete' )->with( 'schedule' , $schedule );

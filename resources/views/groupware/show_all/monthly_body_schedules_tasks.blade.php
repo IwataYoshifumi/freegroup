@@ -123,13 +123,13 @@ $others = [];  // 表示しきれずその他何件と表示するための配�
             @endphp
         
             <div class="row{{ $start_row }} col{{ $start_col }} span{{ $span }} cal3" style="pointer-events: none;">
-                <div class="calendar_item order{{ $order }} {{ $schedule_class }} multi_schedule object_to_show_detail" style="{{ $style }}" {!! $data !!}> {{-- htmlspecialchars OK --}}
-                    @if( $user_id != $schedule->user_id ) 【{{ $schedule->user->name }}】 @endif
-                
-                    {{ $schedule->name }}
-                    @if( ! $schedule->all_day )
-                        {{ $schedule->start->format( 'H:i' ) }}
-                    @endif
+                <div class="calendar_item order{{ $order }} {{ $schedule_class }} multi_schedule object_to_show_detail d-flex" style="{{ $style }}" {!! $data !!}> {{-- htmlspecialchars OK --}}
+                    <div class="flex-fill text-left text-truncate">{{ $schedule->name }}</div>
+                    <div class="flex-fill text-right">
+                        @if( ! $schedule->all_day )
+                            {{ $schedule->start->format( 'H:i' ) }}
+                        @endif
+                    </div>
                 </div>
             </div>
             @php
@@ -140,9 +140,10 @@ $others = [];  // 表示しきれずその他何件と表示するための配�
             $style = $schedule->style();
             @endphp
             <div class="row{{ $start_row }} col{{ $start_col }} span{{ $span }} cal3" style="pointer-events: none;">
-                <div class="calendar_item order{{ $order }} multi_schedule {{ $schedule_class }} order{{ $order }} object_to_show_detail" style="{{ $style }}" {!! $data !!}> {{-- htmlspecialchars OK --}}
-                    @if( $user_id != $schedule->user_id ) 【{{ $schedule->user->name }}】 @endif
-                    {{ $schedule->name }}
+                <div class="calendar_item order{{ $order }} multi_schedule {{ $schedule_class }} order{{ $order }} object_to_show_detail d-flex" style="{{ $style }}" {!! $data !!}> {{-- htmlspecialchars OK --}}
+                    <div class="text-left">
+                        {{ $schedule->name }}
+                    </div>
                 </div>
             </div>
         @endif
@@ -180,11 +181,14 @@ $others = [];  // 表示しきれずその他何件と表示するための配�
             @endphp
             
             <div class="row{{ $start_row }} col{{ $start_col }} span1 cal3" style="pointer-events: none;">
-                <div class="calendar_item order{{ $order }} {{ $schedule_class }} single_schedule object_to_show_detail" style="{{ $style }}" {!! $data !!}> {{-- htmlspecialchars OK --}}
+                <div class="calendar_item order{{ $order }} {{ $schedule_class }} single_schedule object_to_show_detail d-flex juntify-content-between" style="{{ $style }}" {!! $data !!}> {{-- htmlspecialchars OK --}}
                     @if( $order < 6 )
-                        @if( $user_id != $schedule->user_id ) 【{{ $schedule->user->name }}】 @endif
-                        {{ $schedule->name }} 
-                        {{ $schedule->p_time( 'monthly' ) }} 
+                        <div class="text-left text-truncate" style="">
+                            {{ $schedule->name }} 
+                        </div>
+                        <div class="flex-fill text-right">
+                            {{ $schedule->p_time( 'monthly' ) }}
+                        </div>
                     @else
                         {{-- その他〇〇件 --}}
                         @php
@@ -218,16 +222,19 @@ $others = [];  // 表示しきれずその他何件と表示するための配�
 
             @endphp
             <div class="row{{ $start_row }} col{{ $start_col }} span1 cal3" style="pointer-events: none;">
-                <div class="calendar_item order{{ $order }} {{ $task_class }} {{ $complete }} single_schedule object_to_show_detail" {!! $data !!} style="{{ $style }}">
+                <div class="calendar_item order{{ $order }} {{ $task_class }} {{ $complete }} single_schedule object_to_show_detail d-flex" {!! $data !!} style="{{ $style }}">
                     @if( $order < 6 )
-                        @if( $task->status == "完了" )
-                            @icon( check )
-                        @else
-                             @icon( check-circle-r )
-                        @endif
-                        @if( $user_id != $task->user_id ) 【{{ $task->user->name }}】 @endif
-                        {{ $task->name }}
-                        {{ $task->p_time('daily') }}
+                        <div class="flex-fill text-left text-truncate">
+                            @if( $task->status == "完了" )
+                                @icon( check )
+                            @else
+                                 @icon( check-circle-r )
+                            @endif
+                            {{ $task->name }}
+                        </div>
+                        <div class="text-right">
+                            {{ $task->p_time('daily') }}
+                        </div>
                     @else
                         {{-- その他〇〇件 --}}
                         @php

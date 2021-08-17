@@ -76,6 +76,10 @@ class ShowAllController extends Controller {
     
     public function weekly( Request $request ) {
 
+        // $day_1 = new Carbon( '2021-8-11 10:00');
+        // $day_2 = new Carbon( '2021-8-12 9:59');
+        // if_debug( subInDays( $day_1, $day_2), subInDays( $day_2, $day_1), diffInDays( $day_1, $day_2 ), $day_1->diffInDays( $day_2 ) );
+
         //　検索初期条件の設定
         //
         // dump( $request->all() );
@@ -97,7 +101,7 @@ class ShowAllController extends Controller {
         if( ! isset( $request->span )) {
             $request->span = "weekly";
         }
-        
+
         //　スケジュールとタスクを件枠
         //
         $returns = SearchSchedulesAndTasks::search( $request );
@@ -152,6 +156,7 @@ class ShowAllController extends Controller {
             $request->show_hidden_tasklists = 0;
             $request->calendar_permission = "writer";
             $request->tasklist_permission = "writer";
+
             $request->task_status = '未完';
             $request->users = [ user_id() ];
             $request->calendars = Calendar::getCanWrite( user_id() )->pluck('id')->toArray();

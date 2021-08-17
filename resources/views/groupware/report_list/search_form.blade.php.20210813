@@ -24,9 +24,11 @@ $array_role_select = ACL::get_array_roles_for_select();
 {{ Form::open( [ 'route' => $route_name, 'method' => 'GET', 'id' => 'search_form' ] ) }}
     @csrf
     <div class="border border-dark m-1">
-        <div class="row container">        
-            <div class="col-12 m-1 p-1 container" style="color:red">@icon( debug )  開発モード中はログインユーザの検索は外されます</div>
-
+        <div class="row container">
+            @if( is_debug() )
+                <div class="col-12 m-1 p-1 container" style="color:red">@icon( debug )  開発モード中はログインユーザの検索は外されます</div>
+            @endif
+            
             <div class="col border border-dark m-1 p-1 container">
                 日報リスト名
                 {{ Form::text( 'name', $request->name, [ 'class' => 'form-control container' ] ) }}

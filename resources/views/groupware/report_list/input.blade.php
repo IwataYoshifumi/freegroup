@@ -61,6 +61,11 @@ $route_name = Route::currentRouteName();
                             <label for="name" class="col-md-4 col-form-label text-md-right m-1">日報リスト名</label>
                             <div class="col-md-6">
                                 {{ Form::text( 'name', old( 'name', optional( $report_list )->name ), ['class' => 'form-control m-1', ] ) }}
+                                @if( $route_name == 'groupware.report_list.update' )
+                                    <label for='change_name_for_all_users' class='m-1'>各ユーザの表示名を変更する</label>
+                                    {{ Form::checkbox( 'change_name_for_all_users', 1, 0, ['id' => 'change_name_for_all_users' ] ) }}
+                                    <hr>
+                                @endif
                             </div>
                             
                             <label for="memo" class="col-md-4 col-form-label text-md-right m-1">備考</label>
@@ -84,6 +89,7 @@ $route_name = Route::currentRouteName();
                                 @if( $route_name == 'groupware.report_list.update' )
                                     <label for='init_users_default_permission' class='m-1'>各ユーザの変更権限　初期値を変更する</label>
                                     {{ Form::checkbox( 'init_users_default_permission', 1, 0, ['id' => 'init_users_default_permission' ] ) }}
+                                    <hr>
                                 @endif
                             </div>
                             
@@ -117,6 +123,7 @@ $route_name = Route::currentRouteName();
                                             $('#not_use').checkboxradio();
                                             $('#disabled').checkboxradio();
                                             $('#init_users_default_permission').checkboxradio();
+                                            $('#change_name_for_all_users').checkboxradio();
                                             $('#comfirm-disabled_1').checkboxradio();
                                             $('#comfirm-disabled_2').checkboxradio();
                                         });

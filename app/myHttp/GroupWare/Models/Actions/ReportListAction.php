@@ -73,10 +73,16 @@ class ReportListAction {
                 if( $request->init_users_default_permission ) {
                     $report_list->report_props()->update( [ 'default_permission' => $request->default_permission ] );
                 }
-                //　変更管理者のReportPropの名前のみ変更
-                //
-                $report_list->report_props()->where( 'user_id', user_id() )->update( ['name' => $request->name ] );
                 
+                //　ReportPropの表示名を変更
+                //
+                if( $request->change_name_for_all_users ) {
+                    $report_list->report_props()->update( [ 'name' => $request->name ] );
+                } else {
+                    //　変更管理者のReportPropの名前のみ変更
+                    //
+                    $report_list->report_props()->where( 'user_id', user_id() )->update( ['name' => $request->name ] );
+                }
                 
 
                 return $report_list;
@@ -105,6 +111,7 @@ class ReportListAction {
             $reportables->delete();
             $fileables->delete();
             $reports->delete();
+            $report_list->access_lists()->detach();
             $report_list->delete();
             
             return $files;

@@ -143,6 +143,9 @@ class Task extends Model {
         
     }
 
+    public function isComplete() {
+        return ( $this->status == "完了" ) ? 1 : 0;
+    }
 
     /////////////////////////////////////////////////////////////////////////////////////////////
     //

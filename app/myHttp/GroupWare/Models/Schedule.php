@@ -47,6 +47,7 @@ class Schedule extends Model {
 
     protected $dates = [ 'start', 'end' ];
     
+    
     /////////////////////////////////////////////////////////////////////////////////////////////
     //
     //  リレーションの定義
@@ -72,6 +73,7 @@ class Schedule extends Model {
     }
     
     //　関連社員
+    //
     public function users() {
         // return $this->morphedByMany( User::class, 'scheduleable' )->withPivot( 'google_calendar_event_id' );
         return $this->morphedByMany( User::class, 'scheduleable' );
@@ -91,6 +93,12 @@ class Schedule extends Model {
     public function files() {
         return $this->morphToMany( MyFile::class, 'fileable' );
     }
+    
+    public function reservations() {
+        return $this->morphedByMany( Reservation::class, 'scheduleable' );
+        
+    }
+    
     
     /////////////////////////////////////////////////////////////////////////////////////////////
     //
@@ -166,10 +174,17 @@ class Schedule extends Model {
 
     //　スケジュールの予定日数を取得（必ず１以上）
     //
+    // public function getNumDates() {
+    //     $t_start = new Carbon( $this->start_date . ' 00:00:00' );
+    //     $t_end   = new Carbon( $this->end_date   . ' 23:59:59' );
+        
+    //     return $t_end->diffInDays( $t_start ) + 1;
+    // }
     public function getNumDates() {
-        $t_start = new Carbon( $this->start_date . ' 00:00:00' );
-        $t_end   = new Carbon( $this->end_date   . ' 23:59:59' );
-        return $t_end->diffInDays( $t_start ) + 1;
+        $start = $this->start->format( 'Ymd' );
+        $end   = $this->end->format( 'Ymd' );
+        
+        return $end - $start + 1;
     }
     
     

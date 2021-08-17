@@ -51,14 +51,14 @@ if_debug( $request->all() );
 
     <div class="head_area bg-light" id="head_area">
         <div class="row no-gutters">
-            <div class="col border border-dark heddings col01">部署・社員名</div>
-            <div class="col border border-dark heddings col02">日</div>
-            <div class="col border border-dark heddings col03">月</div>
-            <div class="col border border-dark heddings col04">火</div>
-            <div class="col border border-dark heddings col05">水</div>
-            <div class="col border border-dark heddings col06">木</div>
-            <div class="col border border-dark heddings col07">金</div>
-            <div class="col border border-dark heddings col08">土</div>
+            <div class="col border border-dark heddings col01 span01">部署・社員名</div>
+            <div class="col border border-dark heddings col02 span01">日</div>
+            <div class="col border border-dark heddings col03 span01">月</div>
+            <div class="col border border-dark heddings col04 span01">火</div>
+            <div class="col border border-dark heddings col05 span01">水</div>
+            <div class="col border border-dark heddings col06 span01">木</div>
+            <div class="col border border-dark heddings col07 span01">金</div>
+            <div class="col border border-dark heddings col08 span01">土</div>
         </div>
     </div>
 

@@ -46,7 +46,7 @@ $auth = auth( 'user' )->user();
                 <span class="">新規日報</span>
             </a>
         @else
-            @if( ! count( $request->calendars ) and ! count( $request->tasklists ) and ! count( $request->report_lists )) 
+            @if( ! is_array( $request->calendars ) and ! is_array( $request->tasklists ) and ! is_array( $request->report_lists )) 
                 @php
                 $route = route( 'groupware.report_list.index' );
                 $title = "日報作成権限のある日報リストがありません。まずは日報リストを作成してください";

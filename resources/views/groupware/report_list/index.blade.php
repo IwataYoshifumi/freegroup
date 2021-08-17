@@ -51,7 +51,7 @@ $options = [ 'start_date' => Carbon::parse( 'first day of January' )->format( 'Y
                     @include( 'layouts.error' )
 
                     <!-- 検索フォーム -->                    
-                    @include( 'groupware.report_list.search_form' )
+                    @include( 'groupware.report_list.index_search' )
                     
                     <table class="table table-striped m-1 p-1 border clearfix">
                         <tr class="">

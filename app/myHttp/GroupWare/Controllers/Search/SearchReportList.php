@@ -39,7 +39,8 @@ class SearchReportList {
      */
     static public function search( Request $request ) {
 
-        // if_debug( $request->all() );        
+        if_debug( $request->all() );        
+        
         //　検索条件のチェック
         //
         $auth = auth( 'user' )->user();
@@ -73,7 +74,7 @@ class SearchReportList {
         //　公開日報リストの検索用
         //
         $public_report_lists = clone $report_lists;
-        $public_report_lists->where( 'type', 'public' );
+        $public_report_lists->whereIn( 'type', [ 'company-wide' ] );
         
         //　アクセスリストの検索
         //
@@ -94,18 +95,14 @@ class SearchReportList {
             $report_lists->whereIn( 'type', $request->types );
         }
         
-        
-        
         //　公開　日報リストの検索
         //
         if( $request->user_auth == "canRead" and ( is_null( $request->types ) or in_array( 'public', $request->types ))) {
             $report_lists = $report_lists->union( $public_report_lists );
         }
         
-        
-        
-        // if_debug( $report_lists, $users );
         $return = $report_lists->get();
+        // if_debug( $report_lists, $return );
         
         return $return;
         

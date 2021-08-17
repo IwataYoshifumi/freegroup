@@ -67,6 +67,9 @@ $tasklists = ( is_array( $request->tasklists )) ? $request->tasklists : [];
                         <x-checkboxes_users :users="op( $request )->users" button="社員" />
                         <hr>
                         <x-checkboxes_depts :depts="op( $request )->depts" name="depts" button="部署" />
+                        <hr>
+                        <label for="search_users">関連社員でも検索</label>
+                        {{ Form::checkbox( 'search_users', 1, $request->search_users, [ 'id' => 'search_users', 'class' => 'checkboxradio' ] ) }}
                     </div>
                 </div>
                 

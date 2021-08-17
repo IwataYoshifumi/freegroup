@@ -134,10 +134,21 @@ trait AccessListTrait {
 
     
     public static function whereInUsersCanRead( $users ) {
-        $subquery = AccessList::whereInUsersCanRead( $users )->get()->pluck('id')->toArray();;
+        $subquery = AccessList::whereInUsersCanRead( $users )->get()->pluck('id')->toArray();
+        
         $builder = self::whereHas( 'access_lists', function( $query) use ( $subquery ) {
                                     $query->whereIn( 'access_list_id', $subquery ); 
         });
+        
+        // $builder = self::orWhere( function( $query ) use ( $subquery ) {
+        //                         $query->whereIn( 'type', [ 'company-wide', 'public' ] )
+        //                               ->whereHas( 'access_lists', function( $q ) use ( $subquery ) {
+        //                                           $q->whereIn( 'access_list_id', $subquery ); 
+        //                                         });
+        //                         });        
+        
+        // if_debug( $builder );
+        
         return $builder;
     }
     

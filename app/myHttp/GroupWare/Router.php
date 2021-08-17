@@ -46,6 +46,9 @@ class Router {
             self::task_route();
             
             self::show_all_route();
+            
+            self::facility_route();
+            self::reservation_route();
 
             self::test_route();            
             self::route_json();
@@ -576,6 +579,88 @@ class Router {
         });
     
     }
+    
+    //   Facilityルート
+    //
+    static public function facility_route() {
+        Route::prefix( 'facility/' )->name( 'facility.')->namespace( '\App\myHttp\GroupWare\Controllers' )->group( function() {
+            
+            Route::get(  '/index',          'FacilityController@index'  )->name('index'   );
+            Route::get(  '/create',         'FacilityController@create' )->name( 'create'   );
+            Route::post( '/create',         'FacilityController@store'  )->name( 'create'   );
+
+            Route::get(  '/show/{facility}',        'FacilityController@show'    )->name( 'show'   )->where( 'facility', '\d+' );
+            Route::get(  '/update/{facility}',      'FacilityController@edit'    )->name( 'update' )->where( 'facility', '\d+' );
+            Route::post( '/update/{facility}',      'FacilityController@update'  )->name( 'update' )->where( 'facility', '\d+' );
+            Route::get(  '/delete/{facility}',      'FacilityController@delete'  )->name( 'delete' )->where( 'facility', '\d+' );
+            Route::delete(  '/delete/{facility}',   'FacilityController@deleted' )->name( 'delete' )->where( 'facility', '\d+' );
+
+            config([
+                'groupware.facility.index'          => '設備　一覧',
+                'groupware.facility.show'           => '設備　管理者設定',
+                'groupware.facility.create'         => '設備　新規作成',
+                'groupware.facility.update'         => '設備　管理者設定修正',
+                'groupware.facility.delete'         => '設備　削除',
+            ]);
+        });
+    }
+    
+    //  Reservation ルート
+    //
+    static public function reservation_route() {
+        
+        Route::prefix( 'reservation')->name( 'reservation.')->namespace( '\App\myHttp\GroupWare\Controllers' )->group( function() {
+
+                
+            Route::get(   '/check',      'ReservationController@check'          )->name('check' );
+
+            Route::get(   '/monthly',    'ReservationController@monthly'        )->name('monthly' );
+            Route::get(   '/weekly',     'ReservationController@weekly'         )->name('weekly'  );
+            Route::get(   '/index',      'ReservationController@index'          )->name('index'   );
+            
+            Route::get(   '/create',     'ReservationController@create'          )->name('create');
+            Route::post(  '/create',     'ReservationController@store'           )->name('store' );
+            
+            Route::get(   '/create_modal',     'ReservationController@createModal'          )->name('create_modal');
+            Route::post(  '/create_modal',     'ReservationController@storeModal'           )->name('store_modal' );
+            Route::get(   '/stored_modal',     'ReservationController@storedModal'          )->name('stored_modal');
+            
+            Route::get(   '/show/{reservation}',     'ReservationController@show'   )->name('show'  )->where( 'reservation', '\d+' );
+            Route::get(   '/show',                'ReservationController@show_m' )->name('show_m');
+            
+            Route::get(   '/edit/{reservation}',     'ReservationController@edit'   )->name('edit'   )->where( 'reservation', '\d+' );
+            Route::post(  '/edit/{reservation}',     'ReservationController@update' )->name('update' )->where( 'reservation', '\d+' );
+
+            Route::get(     '/delete/{reservation}',     'ReservationController@delete'  )->name('delete'  )->where( 'reservation', '\d+' );
+            Route::post(    '/delete/{reservation}',     'ReservationController@deleted' )->name('deleted' )->where( 'reservation', '\d+' );
+
+            Route::get(  '/copy/{reservation}',     'ReservationController@copy' )->name( 'copy' )->where( 'reservation', '\d+' );
+            
+            Route::get(   '/show_modal/{reservation}',  'ReservationController@showModal' )->name('show_modal')->where( 'reservation', '\d+' );;
+
+
+            config(['groupware.reservation.index'    => '予約一覧',
+            
+                    'groupware.reservation.monthly'  => '設備　予約状況',
+                    'groupware.reservation.check'    => '設備　空き状況確認',
+                    
+                    'groupware.reservation.create'   => '新規　予約',
+                    'groupware.reservation.store'    => '予約　完了',
+                    'groupware.reservation.show'     => '予約内容',
+                    'groupware.reservation.detail'   => '予約詳細',
+                    'groupware.reservation.edit'     => '予約　変更',
+                    'groupware.reservation.update'   => '予約　変更完了',
+                    
+                    'groupware.reservation.delete'   => '予約　キャンセル',
+                    'groupware.reservation.deleted'  => '予約　キャンセル完了',
+                    'groupware.reservation.show_modal'   => '予約詳細',
+                    ]);
+        });
+    
+    }
+    
+    
+    
 
     //　スケジュール・タスク一覧表示（月次・週次・日次表示）
     //
@@ -595,7 +680,7 @@ class Router {
                 'groupware.show_all.weekly'     => 'スケジュール・タスク　週次表示',
                 'groupware.show_all.daily'     => 'スケジュール・タスク　日次表示',
                 'groupware.show_all.index'      => 'スケジュール・タスク・日報　検索',
-                'groupware.show_all.indexExecSearch'  => 'スケジュール・タスク・日報　検索',
+                'groupware.show_all.indexEexecSearch'  => 'スケジュール・タスク・日報　検索',
                 ]);
     }
     
@@ -694,6 +779,8 @@ class Router {
             Route::get( '/ajax/tasklist/search', 'TaskListController@search' )->name( 'ajax.tasklist.search' );
             
             Route::get( '/ajax/calendar/search', 'CalendarController@search' )->name( 'ajax.calendar.search' );
+            
+            Route::get( '/ajax/facility/search', 'FacilityController@search' )->name( 'ajax.facility.search' );
             
             
             

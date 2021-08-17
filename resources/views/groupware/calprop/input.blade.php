@@ -2,7 +2,6 @@
 
 @php
 use Illuminate\Support\Facades\Route;
-
 use App\myHttp\GroupWare\Models\User;
 use App\myHttp\GroupWare\Models\Dept;
 use App\myHttp\GroupWare\Models\AccessList;
@@ -11,25 +10,18 @@ use App\myHttp\GroupWare\Models\Schedule;
 use App\myHttp\GroupWare\Models\CalProp;
 use App\myHttp\GroupWare\Models\Group;
 use App\myHttp\GroupWare\Models\ACL;
-
 use App\Http\Helpers\BackButton;
 use App\Http\Helpers\MyHelper;
-
 $user = auth( 'user' )->user();
-
 //　オーナー権限アクセスリスト
 //
-
 $route_name = Route::currentRouteName();
-
 $calendar = $calprop->calendar;
 $permissions = Schedule::getPermissions();
 $google_private_key_file = $calprop->google_private_key_file();
-
 $sync_levels = config( 'groupware.calprop.sync_level' );
 #$sync_spans  = [ '60' => '前後３か月', '180' => '前後半年', '365' => '前後１年間', ];
 $sync_spans  = config( 'groupware.calprop.sync_spans' );
-
 if( $calendar->isOwner( $user->id )) {
     $authority = "管理者";
 } elseif( $calendar->isWriter( $user->id )) {
@@ -39,9 +31,7 @@ if( $calendar->isOwner( $user->id )) {
 } else {
     $authority = "権限なし";
 }
-
 $sync_bidrection_or_not = [ 0 => '片方向', 1 => '両方向同期' ];
-
 @endphp
 
 @section('content')

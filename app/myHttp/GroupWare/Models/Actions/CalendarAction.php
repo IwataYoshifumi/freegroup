@@ -74,16 +74,21 @@ class CalendarAction {
 
                 $calendar->access_lists()->sync( [$request->access_list_id] );
 
-                //  CalPropの変更種別の初期設定を更新
+                //  CalPropの変更権限初期値を変更
                 //
                 if( $request->init_users_default_permission ) {
                     $calendar->calprops()->update( [ 'default_permission' => $request->default_permission ] );
                 }
-                //　変更管理者のCalPropの名前のみ変更
+
+                //  CalPropの表示名を変更
                 //
-                $calendar->calprops()->where( 'user_id', user_id() )->update( ['name' => $request->name ] );
-                
-                
+                if( $request->change_name_all_users) {
+                    $calendar->calprops()->update( [ 'name' => $request->name ] );
+                } else {
+                    //　変更管理者のCalPropの名前のみ変更
+                    //
+                    $calendar->calprops()->where( 'user_id', user_id() )->update( ['name' => $request->name ] );
+                }
                 
                 //　Googleカレンダーの同期解除
                 //
@@ -121,12 +126,14 @@ class CalendarAction {
             
             //  ＤＢを削除
             //
+            
             $gcal_syncs->delete();
             $calprops->delete();
             $scheduleables->delete();
             $reportables->delete();
             $fileables->delete();
             $schedules->delete();
+            $calendar->access_lists()->detach();
             $calendar->delete();
             
             return $files;

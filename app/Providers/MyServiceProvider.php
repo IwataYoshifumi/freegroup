@@ -29,6 +29,8 @@ use App\myHttp\GroupWare\View\Components\Calendar\CalendarCheckboxesComponent;
 use App\myHttp\GroupWare\View\Components\TaskList\TaskListCheckboxesComponent;
 use App\myHttp\GroupWare\View\Components\ReportList\ReportListCheckboxesComponent;
 
+use App\myHttp\GroupWare\View\Components\Facility\FacilityCheckboxesComponent;
+
 class MyServiceProvider extends ServiceProvider
 {
     /**
@@ -84,6 +86,8 @@ class MyServiceProvider extends ServiceProvider
         Blade::component( 'tasklist_checkboxes', TaskListCheckboxesComponent::class );
         Blade::component( 'report_list_checkboxes', ReportListCheckboxesComponent::class );
         
+        // 2021.07.23 追加
+        Blade::component( 'facility_checkboxes', FacilityCheckboxesComponent::class );
         
 
     }
