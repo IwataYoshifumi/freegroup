@@ -4,6 +4,8 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
+        <link rel="icon" type="image/png" href="/freegroup.png">
+
         <title>FreeGroup</title>
 
         <!-- Fonts -->
@@ -122,13 +124,17 @@
             </div>
 
             <div class="content">
+
+                <div class="links"><a href="">〇〇〇株式会社</a></div>
+
                 <h1 class="m-b-md">
-                    グループウエア  FreeGroup
+                        <a href="https://freegroup.work" style="text-decoration: none; color: #636bbf;">グループウエア FreeGroup</a>
                 </h1>
 
                 <div class="bottom-right links">
-                	<a href="https://www.network-tokai.jp">©　株式会社ネットワーク東海</a>
+                	<a href="https://www.network-tokai.jp">開発元：株式会社ネットワーク東海</a>
                 </div>
+                	    
             </div>
         </div>
     </body>
