@@ -3,8 +3,12 @@
 FreeGroup is a Web Application Groupware with PHP and Laravel Framework.
 You can install FreeGroup on your own server and use it freely and free in the Organization belongs to you.
 
-## Version 2.0
+## Version
 
+Version 3.0 
+設備予約機能を追加しました。
+
+Version 2.0
 タスク管理機能を追加しました。
 それに伴い月表示・週表示・日次表示カレンダーに予定とタスクを同時表示できるようGUIを改修しました。
 
