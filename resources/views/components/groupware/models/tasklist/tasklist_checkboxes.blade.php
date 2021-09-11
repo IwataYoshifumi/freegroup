@@ -16,7 +16,7 @@ $array_of_tasklist_ids = "component_" . $name . "_array_tasklist_ids";
 $tasklist_search_form        = "component_" . $name . "_tasklist_search_form";
 $tasklist_search_form_opener = "component_" . $name . "_tasklist_search_form_opener";
 
-$permissions = [ 'owner' => 'タスクリスト管理者', 'writer' => '予定追加可', 'reader' => '予定閲覧可' ];
+$permissions = [ 'owner' => 'タスクリスト管理者', 'writer' => 'タスク追加可', 'reader' => 'タスク閲覧可' ];
 
 $tasklist_check_toggler = "component_" . $name . "_tasklist_check_toggler";
 
@@ -31,7 +31,7 @@ if( empty( $request->$name_of_tasklist_permission )) { $request->$name_of_taskli
         <div class="btn btn_icon" id="{{ $tasklist_search_form_opener }}" title="タスクリスト検索フォーム">@icon( caret-square-down )</div>
 
         <div id="{{ $tasklist_search_form }}">
-            <label for="{{ $name_of_show_hidden_tasklists }}">非表示タスクリストも検索</label>
+            <label for="{{ $name_of_show_hidden_tasklists }}">非表示も検索</label>
             {{ Form::checkbox( $name_of_show_hidden_tasklists, 1, $request->$name_of_show_hidden_tasklists , [ 'id' => $name_of_show_hidden_tasklists , 'class' => 'checkboxradio' ] ) }}
             {{ Form::select( $name_of_tasklist_permission, $permissions, $request->$name_of_tasklist_permission, [ 'id' => $name_of_tasklist_permission, 'class' => 'form-control' ] ) }}
 
@@ -115,9 +115,9 @@ if( empty( $request->$name_of_tasklist_permission )) { $request->$name_of_taskli
                     var name = tasklist['prop_name'];
                 }
                 
-                html += "<div style='background-color: " + tasklist['background_color'] + "; color: " + tasklist['text_color'] + ";'>";
+                html += "<div class='d-flex' style='background-color: " + tasklist['background_color'] + "; color: " + tasklist['text_color'] + ";'>";
                 html += '<input name="{{ $name }}[]" type="checkbox" class="m-1 {{ $name }}" id="' + id + '" value=' + tasklist['id'] + '>';
-                html += '<label for="' + id + '" style="cursor: pointer" class="m-1">' + name + '</label>'; 
+                html += '<label for="' + id + '" style="cursor: pointer" class="m-1 text-truncate" title="' + name + '">' + name + '</label>'; 
                 html += '<a class="btn btn-sm" href="{{ url( 'groupware/taskprop/show' ) }}/' + tasklist['taskprop_id'] + '"><i class="fas fa-cog"></i></a>';
                 html += "</div>";
             });

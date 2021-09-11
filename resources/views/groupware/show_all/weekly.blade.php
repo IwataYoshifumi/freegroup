@@ -73,7 +73,8 @@ if_debug( $request->all() );
 @include( 'groupware.show_all.weekly_scripts' )
 
 <!-- スケジュール詳細ダイアログ -->
-@include( 'groupware.show_all.modal_to_show_detail' )
+<!--include( 'groupware.show_all.modal_to_show_detail' )-->
+@include( 'groupware.show_all.dialog.show_detail' )
 
 @stack( 'left_and_top_bar_script' )
 @stack( 'script_to_move_daily_page' )

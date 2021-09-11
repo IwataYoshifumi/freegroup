@@ -24,8 +24,6 @@
     <link rel="stylesheet" href="{{ asset('js/jquery-ui-1.12.1.custom/jquery-ui.theme.css' ) }}">
     <link rel="stylesheet" href="{{ asset('js/jquery-ui-1.12.1.custom/jquery-ui.structure.css' ) }}">
     
-    
-
     <!-- BootStrap -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
     
@@ -42,6 +40,10 @@
             });
         });
     </script>
+    
+    <!-- JQuery Sidr.js -->
+    <script src="{{ asset('js/jquery_sidr/jquery.sidr.js' ) }}"></script>
+    <link rel="stylesheet" href="{{ asset('css/jquery.sidr.light.css' ) }}">
 
     <!-- TimePiker JS -->
     <script src="{{ asset( 'js/jquery.timepicker.js' ) }}"></script>

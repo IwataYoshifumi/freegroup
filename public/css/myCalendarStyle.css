@@ -22,6 +22,7 @@
     
 }
 
+
 .left_area {
     position: absolute;
     left: 0px;
@@ -80,6 +81,8 @@
     height: 40px;
 }
 
+
+
 .main_area {
     position: absolute;
     left: 250px;
@@ -90,7 +93,50 @@
     height: 760px;
     max-height: 900px;
     max-width:1900px;
+}
 
+.mb_main_body {
+    position:relative;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+}
+
+.mb_top_bar {
+    position: absolute;
+    top: 0px;
+    height: 28px;
+    width: 100%;
+    border-color: black;
+}
+
+.mb_head_area {
+    position: absolute;
+    top: 28px;
+    height: 20px;
+    width: 100%;
+}
+.mb_side_bar {
+    position: absolute;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    border-color: black;
+    background-color: yellow;
+    border-color: black;
+    z-index: 100;
+}
+
+.mb_main_area {
+    position: absolute;
+    top: 45px;
+    width: 100%;
+    height: 95%;
+}
+
+.mb_month_btn {
+    font-size: x-small;
+    font-weight: bold;
     
 }
 
@@ -113,8 +159,6 @@
 .other_month_box {
     background-color: lightyellow;
 }
-
-
 
 .task_complete {
     text-decoration: line-through;
@@ -262,7 +306,8 @@
 
 .heddings {
     position: absolute;
-    height: 27px;
+    text-align: center;
+    /*height: 27px;*/
 }
 
 .multi_schedule {
@@ -293,8 +338,25 @@
     cursor: pointer;
     z-index: 100;
     pointer-events: auto;
-    
 }
+
+.mb_calendar_item {
+    position: absolute;
+    font-size: small;
+    font-weight: 300;
+    line-height: 1.2;
+    font-family: 'SFNSText', 'Helvetica Neue', "Meiryo UI", "MS PGothic", sans-serif;
+    margin: 0px;
+    padding: 0px;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -ms-content-zooming: none;
+    overflow: hidden;
+    cursor: pointer;
+    z-index: 1;
+    pointer-events: none;
+}
+
 
 .schedule_time {
     /*position: static;*/
@@ -308,5 +370,15 @@
     font-size: 13px;
     font-weight: 500;
     right: auto;
+    text-overflow: ellipsis;
 }
 
+
+
+.sunday {
+    background-color: lightpink;
+}
+
+.starday {
+    background-color: lightblue;
+}

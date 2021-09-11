@@ -25,6 +25,8 @@ $route_update_taskprop  = route( 'groupware.taskprop.update',  [ 'taskprop'  => 
 $info = "<i class='fas fa-minus-circle' style='color:lightgray'></i>";
 $permissions = Task::getPermissions();
 
+if_debug( $taskprop, $taskprop->user->id, $user->id, $user->can( 'update', $taskprop ));
+
 @endphp
 
 @section('content')

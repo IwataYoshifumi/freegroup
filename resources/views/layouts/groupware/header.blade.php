@@ -1,3 +1,5 @@
+@include( 'layouts.header' )
+{{--
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -39,6 +41,10 @@
             });
         });
     </script>
+    
+    <!-- JQuery Sidr.js -->
+    <script src="{{ asset('js/jquery_sidr/jquery.sidr.js' ) }}"></script>
+    <link rel="stylesheet" href="{{ asset('css/jquery.sidr.light.css' ) }}">
 
     <!-- TimePiker JS -->
     <script src="{{ asset( 'js/jquery.timepicker.js' ) }}"></script>
@@ -65,3 +71,4 @@
     <link href="{{ asset('css/myStyle.css') }}" rel="stylesheet">
 
 </head>
+--}}

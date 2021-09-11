@@ -1,6 +1,7 @@
 @php
 use App\myHttp\GroupWare\Models\User;
 use App\myHttp\GroupWare\Models\Dept;
+use App\Http\Helpers\ScreenSize;
 
 // 各変数の初期化
 //
@@ -45,42 +46,36 @@ $me = auth( 'user' )->user()->load( 'dept' );
 <div class="btn btn-outline-secondary" id='{{ $button_id }}'>{{ $button }}</div>
 
 
-
 <div id='{{ $dialog_id }}' title="{{ $button }}">
-
     <div class="row">
         @php
         
         @endphp
         
-        <div class="col-8 row">
+        <div class="col-12 col-md-8 row">
             <label for="{{ $user_name_id }}" class="col">社員名：</label>
             {{ Form::text( 'user_name' , old( 'user_name'  ), [ 'class' => 'form-control col-8', 'id' => $user_name_id, 'autocomplete' => 'off', 'placeholder' => '社員名検索' ] ) }}
         </div>
-        <div class="col-4 row container">
-            <label for="{{ $grade_name_id }}" class="col-5">役職名：</label>
-            {{ Form::text( 'grade_name', old( 'grade_name' ), [ 'class' => 'form-control col-7', 'id' => $grade_name_id, 'autocomplete' => 'off','placeholder' => '役職名検索' ] ) }}
+        <div class="col-12 col-md-4 row container">
+            <label for="{{ $grade_name_id }}" class="col col-md-5">役職名：</label>
+            {{ Form::text( 'grade_name', old( 'grade_name' ), [ 'class' => 'form-control col-8 col-md-7', 'id' => $grade_name_id, 'autocomplete' => 'off','placeholder' => '役職名検索' ] ) }}
         </div>
-        <div class="col-8 row container mt-1">
+        <div class="col-12 col-md-8 row container mt-1">
             <label for="{{ $dept_name_id }}" class="col">部署名：</label>
             {{ Form::text( 'dept_name' , old( 'dept_name'  ), [ 'class' => 'form-control col-8', 'id' => $dept_name_id,  'autocomplete' => 'off','placeholder' => '部署名検索' ] ) }}
-
-            
-            
         </div>
         
-        
         <div class="col-12 row container mt-1">
-            <div class="col-2"></div>
+            <div class="d-none d-md-block col-2"></div>
             
-            <div class="btn btn-outline-dark btn-sm col-3 m-1" onClick="paste_dept();">「{{ $me->dept->name }}」 社員を検索</div>
+            <div class="btn btn-outline-dark btn-sm col-5 col-md-3 m-1" onClick="paste_dept();">「{{ $me->dept->name }}」 <div class="d-none d-md-block">社員を検索</div></div>
             <script>
                 function paste_dept() {
                     $('#{{ $dept_name_id }}').val( '{{ $me->dept->name }}');
                     {{ $name }}_search_users();
                 }
             </script>
-            <button type=button class="btn btn-outline-dark btn-sm col-4 m-1" onClick="{{ $name }}_search_users()">社員を検索</button>
+            <button type=button class="btn btn-outline-dark btn-sm col-5 col-md-6 m-1" onClick="{{ $name }}_search_users()">社員を検索</button>
             <div class="btn btn-outline-dark btn-sm m-1" id='{{ $button_id }}_clear'>選択解除</div>
         </div>
     </div>
@@ -92,7 +87,7 @@ $me = auth( 'user' )->user()->load( 'dept' );
                 $form_id = $dialog_id ."_" . $user->id;
                 $form_group_id = $form_id . "_group";
             @endphp
-            <div id="{{ $form_group_id }}" class="col-4">
+            <div id="{{ $form_group_id }}" class="col-11 col-md-4"">
                 <label for="{{ $form_id }}" class"w-100">【{{ $user->dept->name }} {{ $user->grade }}】{{ $user->name }}</label>
                 <input type="checkbox", name="{{ $form_name }}" value="{{ $user->id }}" checked class="checkboxradio {{ $input_class }}" id="{{ $form_id }}" data-user_name="{{ $user->name }}">
                 {{-- Form::checkbox( $form_name, $user->id, true, [ 'class' => 'checkboxradio', 'id' => $form_id ] ) --}}
@@ -163,7 +158,7 @@ $me = auth( 'user' )->user()->load( 'dept' );
                 var form_id       = "{{ $dialog_id }}_" + user_id;
                 var form_group_id = form_id + "_group";
     
-                var html     = '<div id="' + form_group_id + '" class="col-4">';
+                var html     = '<div id="' + form_group_id + '" class="col-12 col-md-4">';
                 html        += '<label for="' + form_id + '" class"">【' + dept + ' ' + grade + '】 '   + name + '</label>';
                 html        += '<input type="checkbox" value="' + user_id + '" class="checkboxradio {{ $input_class }}" id="' + form_id + '" data-user_name="' + name + '">   '; 
                 html        += '</div>                                                                             ';
@@ -175,7 +170,6 @@ $me = auth( 'user' )->user()->load( 'dept' );
         $('.checkboxradio').checkboxradio( { icon: false } );
     }
 
-
     /* 
      * 社員検索ダイアログの設定
      */
@@ -184,9 +178,14 @@ $me = auth( 'user' )->user()->load( 'dept' );
         /*
          *　社員検索ダイアログの初期設定
          */
+        @php
+        $screen_width = ( ScreenSize::getWidth() < ScreenSize::md ) ? ScreenSize::getWidth() : 750 ;
+        
+        @endphp
+
         autoOpen: false,
         modal: true,
-        width: 750,
+        width: {{ $screen_width }},
         buttons: [ {
             text: 'OK',
             icon: 'ui-icon-heart',

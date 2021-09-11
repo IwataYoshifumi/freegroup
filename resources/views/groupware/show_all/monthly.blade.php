@@ -18,6 +18,8 @@ use App\myHttp\GroupWare\Controllers\Search\SearchSchedule;
 use App\myHttp\GroupWare\Controllers\Search\SearchSchedulesAndTasks;
 use App\myHttp\GroupWare\Controllers\Schedule2IndexController;
 
+use App\Http\Helpers\ScreenSize;
+
 $route_name = Route::currentRouteName();
 
 $user_id = user_id();
@@ -63,9 +65,14 @@ $num_of_weeks = count( $returns['dates'] ) / 7;
     </div>
 </div>
 
-<!-- スケジュール詳細ダイアログ -->
-@include( 'groupware.show_all.modal_to_show_detail' )
+<!-- スケジュール・タスク詳細表示ダイアログ -->
+{{--
+include( 'groupware.show_all.modal_to_show_detail' )
+--}}
+@include( 'groupware.show_all.dialog.show_detail' )
 
+<!-- スクリーンサイズを取得 -->
+{{ ScreenSize::rendarScriptToGetScreenSize() }}
 
 
 @stack( 'left_and_top_bar_script' )

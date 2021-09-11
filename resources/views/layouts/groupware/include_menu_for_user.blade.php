@@ -1,4 +1,7 @@
 @php
+
+use App\Http\Helpers\ScreenSize;
+
 if( ! Auth( 'user' )) { return "no user_menu"; }
 
 $options = [ 'from_menu' => '1' ];
@@ -37,7 +40,8 @@ $route = [  0  => route( 'groupware.user.home', $options  ),
                     
 <a class="nav-item nav-link" href="{{ $route[1]  }}">顧客管理</a> 
 <a class="nav-item nav-link" href="{{ $route[20] }}">予定・タスク</a>
-<a class="nav-item nav-link" href="{{ $route[21] }}">検索</a>
+
+<a class="nav-item nav-link d-none d-md-block" href="{{ $route[21] }}">検索</a>
 <a class="nav-item nav-link" href="{{ $route[23] }}">日報</a>
 
 <div class="dropdown">

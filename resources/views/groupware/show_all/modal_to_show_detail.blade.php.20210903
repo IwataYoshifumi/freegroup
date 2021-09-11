@@ -1,8 +1,3 @@
-@php
-use App\Http\Helpers\ScreenSize;
-
-@endphp
-
 @once
     <!-- スケジュール・タスク詳細表示モーダルウインドウ -->
 
@@ -14,28 +9,22 @@ use App\Http\Helpers\ScreenSize;
     <script>
         var modal_window          = $('#modal_window_to_show_detail');
         var iframe_to_show_detail = $('#iframe_to_show_detail');
-        
-        var window_w = $(document).width();
-        var window_h = $(document).height();
-        console.log( 'window', window_w, window_h );
     
         $( function() {
            modal_window.dialog( { 
-           
-                @php
-                $screen_width = ( ScreenSize::getWidth() < ScreenSize::md ) ? ScreenSize::getWidth() : 750 ;
-                @endphp
-           
                 autoOpen: false,
-                // height: 780,
-                width: {{ $screen_width }},
-                // miniHeight: 480,
-                // maxHeight:780,
-                // minWidth: 710,
-                // maxWidth: 860,
+                miniHeight: 480,
+                maxHeight:780,
+                minWidth: 710,
+                maxWidth: 860,
                 closeOnEscape: true,
                 buttons: [ { text: '閉じる', click: function() { $(this).dialog( 'close' ); }} ]
             });
+
+//            $('.object_to_show_detail').each( function() {
+//              $(this).css( 'z-index', 100 );
+//              console.log( $(this).data( 'object_id' ) );
+//              });
         });
 
         
@@ -44,7 +33,7 @@ use App\Http\Helpers\ScreenSize;
             var object_id = $(this).data('object_id');
             var url = "";
             var title = "";
-            // console.log( object, object_id, $(this).html() );
+            console.log( object, object_id, $(this).html() );
 
             if( object == "schedule" ) {
                 url += "{{ url( '/groupware/schedule/show_modal/' ) }}";
@@ -69,21 +58,7 @@ use App\Http\Helpers\ScreenSize;
             iframe_to_show_detail.attr( 'src', url );
             modal_window.dialog( { title: title } );
             modal_window.dialog( 'open' );
-        });
-
-        iframe_to_show_detail.on( 'load', function() {
-        
-            // var modal_window          = $('#modal_window_to_show_detail');
-        
-            var w = $(this).prop( 'scrollWidth' );
-            var h = $(this).prop( 'scrollHeight' );
-            console.log( 'onloaded', w, h );
-
-            // $(this).width( w   );
-            // $(this).height( h  );
             
-            // modal_window.daialog( { width: w, height: h } );
         });
-
     </script>
 @endonce

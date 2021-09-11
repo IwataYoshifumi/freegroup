@@ -28,7 +28,6 @@ class TaskListController extends Controller   {
                     $query->where( 'user_id', user_id() );
                 } ]);;
 
-        
         //  アクセスリスト権限検索
         //
         if( $request->auth == 'owner'  ) {
@@ -39,36 +38,37 @@ class TaskListController extends Controller   {
             $query = TaskList::getCanWrite( user_id() );
         }
         $ids = toArray( $query, 'id' );
-        $tasklists = $tasklists->whereIn('id', $ids );
-
+        $tasklists->whereIn('id', $ids );
+        
         //　公開種別の検索
         //
         if( $request->types ) {
-            $tasklists = $tasklists->whereIn( 'type', $request->types );
+            $tasklists->whereIn( 'type', $request->types );
         }
+        
         
         //　Disableの検索
         //
         if( $request->disabled ) { 
-            $tasklists = $tasklists->where( 'disabled', 1 ); 
+            $tasklists->where( 'disabled', 1 ); 
         } else {
-            $tasklists = $tasklists->where( 'disabled', 0 ); 
+            $tasklists->where( 'disabled', 0 ); 
 
             // if( $request->not_use  ) { 
             //     $tasklists = $tasklists->where( 'not_use',  1 ); 
             // }
         }
-
+        
         //　非表示タスクの表示（taskpropを検索）
         //
         if( $request->hidden ) {
             $tasklists = $tasklists->whereHas( 'taskprops', function( $query ) {
-                            $query->where( 'hide', 1 ); 
+                            $query->where( 'user_id', user_id() )->where( 'hide', 1 ); 
             });
         } else {
             if( ! $request->show_hidden_tasklists ) {
                 $tasklists = $tasklists->whereHas( 'taskprop', function( $query ) {
-                    $query->where( 'hide', 0 ); 
+                    $query->where( 'user_id', user_id() )->where( 'hide', 0 ); 
                 });      
             }
         }
@@ -79,9 +79,8 @@ class TaskListController extends Controller   {
             }); 
             
         }
-        
-
         $tasklists = $tasklists->get();
+
         $return = [];
         foreach( $tasklists as $tasklist ) {
             $taskprop = $tasklist->taskprops->first();

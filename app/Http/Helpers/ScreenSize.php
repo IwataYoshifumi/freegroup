@@ -57,10 +57,15 @@ class ScreenSize {
                 var url_to_send_screen_size = '$route_to_send_screen_size';
                 
                 var fd = new FormData();
-                fd.append( 'width',  $(window).width()   );
-                fd.append( 'height', $(window).height()   );
+                var w  = screen.availWidth;
+                var h  = screen.availHeight;
+                
+                // fd.append( 'width',  $(window).width()   );
+                // fd.append( 'height', $(window).height()   );
+                fd.append( 'width',  w );
+                fd.append( 'height', h )
                 fd.append( '_token', '$csrf_token' );
-                console.log( fd );
+                // console.log( fd );
                 
                 $.ajax({ 
                     url: url_to_send_screen_size,
@@ -72,7 +77,7 @@ class ScreenSize {
                     data: fd,
                     
                 }).done( function( data, status, xhr ) {
-                    console.log( data, status, xhr ); 
+                    // console.log( data, status, xhr ); 
                     
                 });
             </script>
@@ -123,3 +128,4 @@ class ScreenSize {
         return self::isPC();
     }
 }
+

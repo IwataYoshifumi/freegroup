@@ -16,6 +16,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Helpers\BackButton;
 use App\Http\Helpers\MyForm;
 use App\Http\Helpers\OutputCSV;
+use App\Http\Helpers\ScreenSize;
 
 use App\myHttp\GroupWare\Models\Customer;
 use App\myHttp\GroupWare\Models\User;
@@ -69,9 +70,25 @@ class ShowAllController extends Controller {
         //
         $returns = SearchSchedulesAndTasks::search( $request );
         // dump( $returns );
+        
+        
         BackButton::setHere( $request );
-        return view( 'groupware.show_all.monthly' )->with( 'request', $request )
-                                                   ->with( 'returns', $returns );
+
+        // スクリーンサイズを確認
+        //
+        if( ScreenSize::isMobile() ) {
+            //　モバイル画面
+            //
+            return view( 'groupware.show_all.mobile.monthly' )->with( 'request', $request )
+                                                              ->with( 'returns', $returns );
+            
+        } else {
+            //　PCタブレット用画面
+            //
+            return view( 'groupware.show_all.monthly' )->with( 'request', $request )
+                                                       ->with( 'returns', $returns );
+        }
+            
     }
     
     public function weekly( Request $request ) {
@@ -139,10 +156,23 @@ class ShowAllController extends Controller {
         //
         $returns = SearchSchedulesAndTasks::search( $request );
         
-        BackButton::stackHere( $request );
-        return view( 'groupware.show_all.daily' )->with( 'request', $request )
-                                                   ->with( 'returns', $returns );
+        if( Route::currentRouteName() == "groupware.show_all.daily" ) {
+            //　日次表示ページ
+            //
+            BackButton::stackHere( $request );
+            return view( 'groupware.show_all.daily' )->with( 'request', $request )
+                                                     ->with( 'returns', $returns );
+        } else {
+            //　日次表示ダイヤログ
+            //
+            return view( 'groupware.show_all.mobile.daily.daily' )->with( 'request', $request )
+                                                                  ->with( 'returns', $returns );
+        }
         
+    }
+    
+    public function dailyDiallog( Request $request ) {
+        return $this->daily( $request );
     }
     
     public function index( Request $request ) {
@@ -207,32 +237,32 @@ class ShowAllController extends Controller {
     }
     
     
-    public function dailyDiallog( Request $request ) {
+    // public function dailyDiallog( Request $request ) {
 
-        $today = new Carbon( 'today' );
-        if( ! isset( $request->base_date )) { 
-            $request->base_date =  $today->format( 'Y-m-d' );
-            $request->calendars = Calendar::getCanWrite( user_id() )->pluck('id')->toArray();
-            $request->tasklists = TaskList::getCanWrite( user_id() )->pluck('id')->toArray();
+    //     $today = new Carbon( 'today' );
+    //     if( ! isset( $request->base_date )) { 
+    //         $request->base_date =  $today->format( 'Y-m-d' );
+    //         $request->calendars = Calendar::getCanWrite( user_id() )->pluck('id')->toArray();
+    //         $request->tasklists = TaskList::getCanWrite( user_id() )->pluck('id')->toArray();
 
-            $request->show_hidden_calendars = 0;
-            $request->show_hidden_tasklists = 0;
-            $request->calendar_permission = "writer";
-            $request->tasklist_permission = "writer";
-            $request->task_status = '未完';
+    //         $request->show_hidden_calendars = 0;
+    //         $request->show_hidden_tasklists = 0;
+    //         $request->calendar_permission = "writer";
+    //         $request->tasklist_permission = "writer";
+    //         $request->task_status = '未完';
 
-        }
-        if( ! isset( $request->span )) {
-            $request->span = "daily";
-        }
+    //     }
+    //     if( ! isset( $request->span )) {
+    //         $request->span = "daily";
+    //     }
         
-        //　スケジュールとタスクを件枠
-        //
-        $returns = SearchSchedulesAndTasks::search( $request );
+    //     //　スケジュールとタスクを件枠
+    //     //
+    //     $returns = SearchSchedulesAndTasks::search( $request );
         
-        BackButton::stackHere( $request );
-        return view( 'groupware.show_all.daily_body' )->with( 'request', $request )
-                                                      ->with( 'returns', $returns );
-    }
+    //     BackButton::stackHere( $request );
+    //     return view( 'groupware.show_all.daily_body' )->with( 'request', $request )
+    //                                                   ->with( 'returns', $returns );
+    // }
 
 }

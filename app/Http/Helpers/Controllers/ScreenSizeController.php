@@ -32,8 +32,10 @@ class ScreenSizeController extends Controller {
     }
     
     public function dump() {
-        if_debug( __METHOD__, session( 'ScreenSize' ) );
-        return view( 'helpers.ScreenSize.test' );
+        $screen_size = session('ScreenSize');
+        // $text = "width : $screen_size->width, height : $screen_size->height, update_at : $screen_size->update_at";
+        if_debug( __METHOD__, session( 'ScreenSize' ), session()->all() );
+        return view( 'helpers.ScreenSize.dump' );
     }
     
     public function forget() {

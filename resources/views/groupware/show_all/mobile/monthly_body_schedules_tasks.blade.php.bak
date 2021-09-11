@@ -4,7 +4,6 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\URL;
 use App\Http\Helpers\MyForm;
 use App\Http\Helpers\OutputCSV;
-use App\Http\Helpers\ScreenSize;
 use Carbon\Carbon;
 
 use App\Models\Customer;
@@ -27,8 +26,6 @@ $row = 1;
 $col = 1;
 
 $array_multi  = [];
-
-$is_mobile = ScreenSize::isMobile();
 
 foreach( $returns as $d => $return ) {
     $array_multi[$d] = [];
@@ -128,7 +125,7 @@ $others = [];  // 表示しきれずその他何件と表示するための配�
             <div class="row{{ $start_row }} col{{ $start_col }} span{{ $span }} cal3" style="pointer-events: none;">
                 <div class="calendar_item order{{ $order }} {{ $schedule_class }} multi_schedule object_to_show_detail d-flex" style="{{ $style }}" {!! $data !!}> {{-- htmlspecialchars OK --}}
                     <div class="flex-fill text-left text-truncate">{{ $schedule->name }}</div>
-                    <div class="flex-fill text-right time_item">
+                    <div class="flex-fill text-right">
                         @if( ! $schedule->all_day )
                             {{ $schedule->start->format( 'H:i' ) }}
                         @endif
@@ -183,24 +180,24 @@ $others = [];  // 表示しきれずその他何件と表示するための配�
             
             @endphp
             
-            @if( $order < 6 )
-                <div class="row{{ $start_row }} col{{ $start_col }} span1 cal3" style="pointer-events: none;">
-                    <div class="calendar_item order{{ $order }} {{ $schedule_class }} single_schedule object_to_show_detail d-flex juntify-content-between" style="{{ $style }}" {!! $data !!}> {{-- htmlspecialchars OK --}}
+            <div class="row{{ $start_row }} col{{ $start_col }} span1 cal3" style="pointer-events: none;">
+                <div class="calendar_item order{{ $order }} {{ $schedule_class }} single_schedule object_to_show_detail d-flex juntify-content-between" style="{{ $style }}" {!! $data !!}> {{-- htmlspecialchars OK --}}
+                    @if( $order < 6 )
                         <div class="text-left text-truncate" style="">
                             {{ $schedule->name }} 
                         </div>
-                        <div class="flex-fill text-right time_item">
+                        <div class="flex-fill text-right">
                             {{ $schedule->p_time( 'monthly' ) }}
                         </div>
-                    </div>
+                    @else
+                        {{-- その他〇〇件 --}}
+                        @php
+                        $others[$d_date] = op( $others )[$d_date] + 1;
+                        @endphp
+                    @endif
                 </div>
-            @else
-                {{-- その他〇〇件 --}}
-                @php
-                $others[$d_date] = op( $others )[$d_date] + 1;
-                @endphp
-            @endif
-        
+            </div>
+            
         {{-- タスクを表示 --}}
         
         @elseif( $Item instanceof Task )
@@ -224,10 +221,9 @@ $others = [];  // 表示しきれずその他何件と表示するための配�
             $data = "data-object='task' data-object_id=" . $task->id;
 
             @endphp
-            
-            @if( $order < 6 )
-                <div class="row{{ $start_row }} col{{ $start_col }} span1 cal3" style="pointer-events: none;">
-                    <div class="calendar_item order{{ $order }} {{ $task_class }} {{ $complete }} single_schedule object_to_show_detail d-flex" {!! $data !!} style="{{ $style }}">
+            <div class="row{{ $start_row }} col{{ $start_col }} span1 cal3" style="pointer-events: none;">
+                <div class="calendar_item order{{ $order }} {{ $task_class }} {{ $complete }} single_schedule object_to_show_detail d-flex" {!! $data !!} style="{{ $style }}">
+                    @if( $order < 6 )
                         <div class="flex-fill text-left text-truncate">
                             @if( $task->status == "完了" )
                                 @icon( check )
@@ -236,17 +232,17 @@ $others = [];  // 表示しきれずその他何件と表示するための配�
                             @endif
                             {{ $task->name }}
                         </div>
-                        <div class="text-right time_item">
+                        <div class="text-right">
                             {{ $task->p_time('daily') }}
                         </div>
-                    </div>
+                    @else
+                        {{-- その他〇〇件 --}}
+                        @php
+                        $others[$d_date] = op( $others )[$d_date] + 1;
+                        @endphp
+                    @endif
                 </div>
-            @else
-                {{-- その他〇〇件 --}}
-                @php
-                $others[$d_date] = op( $others )[$d_date] + 1;
-                @endphp
-            @endif
+            </div>
         @endif
     @endforeach
 @endforeach
@@ -256,67 +252,15 @@ $others = [];  // 表示しきれずその他何件と表示するための配�
 @foreach( $others as $d_date => $num )
     @php
     $start_row = $rows[ $d_date ];
-    $start_col = $cols[ $d_date ];
+    $start_col = $cols[ $d_date ];      
     
     @endphp
     <div class="row{{ $start_row }} col{{ $start_col }} span1 cal3">
-        <div class="date_item calendar_item order6 single_schedule other_item text-truncate" data-date="{{ $d_date }}">
+        <div class="date_item calendar_item order6 single_schedule other_item" data-date="{{ $d_date }}">
             その他 {{ $num }} 件・・・
         </div>
     </div>    
 @endforeach
 
 </div>
-
-@if( ScreenSize::isMobile() )
-    <script>
-        /*
-         *
-         * スマホ用画面調整
-         *
-         */
-        $('.calendar_item').addClass( 'mb_calendar_item' );
-        $('.mb_calendar_item').removeClass( 'calendar_item' );
-        
-        // $('.mb_calendar_item').css( 'font-size', 'xx-small' );
-        $('.other_item').css( 'font-size', 'small' );
-        $('.other_item').css( ' pointer-events', 'none' );
-        $('.time_item').css( 'display', 'none');
-        
-        /*
-        // font-size : x-small 12px
-        //
-        $('.order1').css( 'top', '15px' );
-        $('.order2').css( 'top', '27px' );
-        $('.order3').css( 'top', '40px' );
-        $('.order4').css( 'top', '53px' );
-        $('.order5').css( 'top', '66px' );
-        $('.order6').css( 'top', '79px' );
-        $('.order7').css( 'top', '92px' );
-        $('.order8').css( 'top', '105px' );
-
-        // font-size : x-small 14px
-        //
-        $('.order1').css( 'top', '15px' );
-        $('.order2').css( 'top', '29px' );
-        $('.order3').css( 'top', '43px' );
-        $('.order4').css( 'top', '57px' );
-        $('.order5').css( 'top', '71px' );
-        $('.order6').css( 'top', '85px' );
-        $('.order7').css( 'top', '99px' );
-        $('.order8').css( 'top', '113px' );
-        */
-        
-        // font-size : small 15px
-        //
-        $('.order1').css( 'top', '15px' );
-        $('.order2').css( 'top', '30px' );
-        $('.order3').css( 'top', '45px' );
-        $('.order4').css( 'top', '60px' );
-        $('.order5').css( 'top', '75px' );
-        $('.order6').css( 'top', '90px' );
-        $('.order7').css( 'top', '105px' );
-        $('.order8').css( 'top', '130px' );
-    </script>
-@endif
 

@@ -2,7 +2,7 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 @include( 'layouts.header' )
-@include( 'layouts.groupware.app' )
+@include( 'layouts.groupware.app_mb' )
 
 <!--
   --

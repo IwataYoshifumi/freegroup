@@ -1,5 +1,11 @@
 @extends('layouts.app')
 
+@php
+
+use App\Http\Helpers\ScreenSize;
+
+@endphp
+
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
@@ -20,4 +26,7 @@
         </div>
     </div>
 </div>
+
+{{ ScreenSize::rendarScriptToGetScreenSize() }}
+
 @endsection

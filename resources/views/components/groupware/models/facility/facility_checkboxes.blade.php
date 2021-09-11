@@ -167,15 +167,22 @@ $request_categories = ( is_array( $request->$name_of_categories )) ? $request->$
             data.forEach( function( facility, i ) {
                 
                 var id   = "{{ $name }}_facility_id_" + facility['id'];
+                var name = "";
+                var title = "";
                 if( facility['type'] == 'company-wide' ) {
-                    var name = facility['name'] + " (全社)";
+                    name  = facility['name'] + " (全社)";
                 } else {
-                    var name = facility['name'];
+                    name = facility['name'];
+                }
+                if( facility['sub_category'] ) {
+                    title = facility['name'] + "（" + facility['category'] + " " + facility['sub_category'] + "）"; 
+                } else {
+                    title = facility['name'] + "（" + facility['category'] + "）"; 
                 }
                 
-                html += "<div style='background-color: " + facility['background_color'] + "; color: " + facility['text_color'] + ";'>";
+                html += "<div class='d-flex' style='background-color: " + facility['background_color'] + "; color: " + facility['text_color'] + ";'>";
                 html += '<input name="{{ $name }}[]" type="checkbox" class="m-1 {{ $name }}" id="' + id + '" value=' + facility['id'] + '>';
-                html += '<label for="' + id + '" style="cursor: pointer" class="m-1">' + name + '</label>'; 
+                html += '<label for="' + id + '" style="cursor: pointer" class="m-1 text-truncate" title="' + title + '">' + name + '</label>'; 
                 html += '<a class="btn btn-sm" href="{{ url( 'groupware/facility/show' ) }}/' + facility['id'] + '"><i class="fas fa-cog"></i></a>';
                 html += "</div>";
             });

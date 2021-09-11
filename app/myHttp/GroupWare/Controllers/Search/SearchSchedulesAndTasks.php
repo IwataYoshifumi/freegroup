@@ -108,10 +108,12 @@ class SearchSchedulesAndTasks {
         //　カレンダー表示用データの作成
         //
         $current_route_name = Route::currentRouteName();
-        
+        #dd( $current_route_name );
         if( $current_route_name == "groupware.show_all.weekly" ) {
-            $returns = self::arrange_outputs_for_weekly( $dates, $schedules, $tasks, $list_of_calendars, $list_of_tasklists, $request  );   
-        } elseif($current_route_name == "groupware.show_all.daily" ) {
+            $returns = self::arrange_outputs_for_weekly( $dates, $schedules, $tasks, $list_of_calendars, $list_of_tasklists, $request  );  
+            
+        } elseif( $current_route_name == "groupware.show_all.daily" or 
+                  $current_route_name == "groupware.show_all.dialog.daily" ) {
             // $returns = self::arrange_outputs_for_weekly( $dates, $schedules, $tasks, $list_of_calendars, $list_of_tasklists, $request  );   
 
             // $returns = self::arrange_outputs( $dates, $schedules, $tasks, $list_of_calendars, $list_of_tasklists );            
@@ -213,9 +215,9 @@ class SearchSchedulesAndTasks {
             $query->whereIn( 'id', $calendars );
         });
         
-        if_debug( $schedules );
+        // if_debug( $schedules );
         $schedules = $schedules->get();
-        if_debug( $schedules );
+        // if_debug( $schedules );
 
         return $schedules;
     }
@@ -331,6 +333,13 @@ class SearchSchedulesAndTasks {
         if( ! $request->show_hidden_calendars ) {
             $calendars = $calendars->whereHas( 'calprop', function( $query ) { $query->where( 'hide', 0 );  });
         }
+        
+        //　Disableの検索
+        //
+        if( ! $request->show_disabled_calendars ) { 
+            $calendars->where( 'disabled', 0 ); 
+        }
+        
         $calendars = $calendars->get();
         
         return $calendars;
@@ -347,12 +356,19 @@ class SearchSchedulesAndTasks {
         } else {
             $tasklists = TaskList::getCanWrite( user_id() );
         }
-
+        
         $tasklists = TaskList::with( ['taskprop' ] )->whereIn( 'id', $tasklists->pluck('id')->toArray() );
         
         if( ! $request->show_hidden_tasklists ) {
-            $tasklists = $tasklists->whereHas( 'taskprop', function( $query ) { $query->where( 'hide', 0 );  });
+            $tasklists->whereHas( 'taskprop', function( $query ) { $query->where( 'hide', 0 );  });
         }
+        
+        //　Disableの検索
+        //
+        if( ! $request->show_disabled_tasklists ) { 
+            $tasklists->where( 'disabled', 0 ); 
+        }
+        
         $tasklists = $tasklists->get();
         
         return $tasklists;

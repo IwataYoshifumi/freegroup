@@ -222,7 +222,9 @@ class MyCustomDirectiveProvider extends ServiceProvider
                 'file-video'            => '<i class="fas fa-file-video"></i>',                
                 'file-video-far'            => '<i class="far fa-file-video"></i>',                
                 'file-audio'            => '<i class="fas fa-file-audio"></i>',                
-                'file-audio-far'            => '<i class="far fa-file-audio"></i>',                
+                'file-audio-far'            => '<i class="far fa-file-audio"></i>',
+                
+                'loading'               => '<img class="loading" src="/loading.gif">',
                 
             ];    
     

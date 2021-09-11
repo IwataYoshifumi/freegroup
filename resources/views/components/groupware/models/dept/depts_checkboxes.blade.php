@@ -1,6 +1,7 @@
 @php
 use App\myHttp\GroupWare\Models\User;
 use App\myHttp\GroupWare\Models\Dept;
+use App\Http\Helpers\ScreenSize;
 
 $form_name = $name . "[]";
 $button_id = $name . "_component_checkboxes_depts_opener";
@@ -39,7 +40,7 @@ $me = auth( 'user' )->user()->load( 'dept' );
         {{ Form::text( 'dept_name', old( 'dept_name' ), [ 'class' => 'form-control col-6 m-1', 'id' => $dept_name_id, 'placeholder' => '部署名検索' ] ) }}
         <button type=button class="btn btn-outline-dark btn-sm col-3 m-1" onClick="{{ $name }}_search_depts()">検索</button>
         <div class="col-12"></div>
-        <button type=button class="btn btn-outline-dark btn-sm col-4 m-1" onClick="{{ $name }}_paste_dept()">「{{ $me->dept->name }}」で検索</button>
+        <button type=button class="btn btn-outline-dark btn-sm col-10 col-md-4 m-1" onClick="{{ $name }}_paste_dept()">「{{ $me->dept->name }}」で検索</button>
 
         <script>
             function {{ $name }}_paste_dept() {
@@ -57,7 +58,7 @@ $me = auth( 'user' )->user()->load( 'dept' );
                 $form_id = $dialog_id ."_" . $dept->id;
                 $form_group_id = $form_id . "_group";
             @endphp
-            <div id="{{ $form_group_id }}" class="col-3">
+            <div id="{{ $form_group_id }}" class="col-10 col-md-4"">
                 <label for="{{ $form_id }}" class"w-100">{{ $dept->name }}</label>
                 <input type="checkbox", name="{{ $form_name }}" value="{{ $dept->id }}" checked class="checkboxradio {{ $input_class }}" id="{{ $form_id }}" data-dept_name="{{ $dept->name }}">
                 {{-- Form::checkbox( $form_name, $dept->id, true, [ 'class' => 'checkboxradio', 'id' => $form_id ] ) --}}
@@ -114,7 +115,7 @@ $me = auth( 'user' )->user()->load( 'dept' );
             var form_id       = "{{ $dialog_id }}_" + id;
             var form_group_id = form_id + "_group";
 
-            var html     = '<div id="' + form_group_id + '" class="col-3">                     ';
+            var html     = '<div id="' + form_group_id + '" class="col-5 col-md-3">                     ';
             html        += '<label for="' + form_id + '" class"">' + name + '</label>                               ';
             html        += '<input type="checkbox" value="' + id + '" class="checkboxradio {{ $input_class }}" id="' + form_id + '" data-dept_name="' + name + '">   '; 
             html        += '</div>                                                                             ';
@@ -137,9 +138,13 @@ $me = auth( 'user' )->user()->load( 'dept' );
      * 検索ダイアログの初期設定
      */
     $('#{{ $dialog_id }}').dialog( {
+        @php
+        $screen_width = ( ScreenSize::getWidth() < ScreenSize::md ) ? ScreenSize::getWidth() : 750 ;
+        @endphp
+    
         autoOpen: false,
         modal: true,
-        width: 750,
+        width: {{ $screen_width }},
         buttons: [ {
             text: 'OK',
             icon: 'ui-icon-heart',

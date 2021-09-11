@@ -329,6 +329,25 @@ BootstrapのＣＳＳ定義集
   #selectable { list-style-type: none; margin: 0; padding: 0; width: 60%; }
   #selectable li { margin: 3px; padding: 0.4em; font-size: 1.4em; height: 18px; }
 
+.loading {
+    position: absolute;
+    margin: 0;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10000;
+    
+}
+
+.my_dialog {
+    position: fixed;
+    width: 670px;
+    height: 360px;    
+    top: 0%;
+    left: 0%;
+    /*transform: translate(-50%, -50%);*/
+    z-index: 2000;
+}
 
 /*
 

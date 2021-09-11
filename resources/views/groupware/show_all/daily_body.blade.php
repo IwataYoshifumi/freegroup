@@ -30,7 +30,9 @@ $dept_user = $returns['dept_user'];
 $route_name = Route::currentRouteName();
 
 setlocale(LC_ALL, 'ja_JP.UTF-8');
-#dd( $request->all() );
+
+if_debug( $request->all() );
+#dd( $users, $depts, $dept_user );
 
 @endphp
 
@@ -161,5 +163,6 @@ setlocale(LC_ALL, 'ja_JP.UTF-8');
     @endforeach  {{-- loop dept --}}
 </table>
 
-@include( 'groupware.show_all.modal_to_show_detail' )
-            
+<!-- スケジュール詳細ダイアログ -->
+<!--include( 'groupware.show_all.modal_to_show_detail' )-->
+@include( 'groupware.show_all.dialog.show_detail' )

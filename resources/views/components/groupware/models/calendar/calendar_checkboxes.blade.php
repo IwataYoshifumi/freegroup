@@ -121,9 +121,9 @@ $calendar_check_toggler = "component_" . $name . "_calendar_check_toggler";
                     var name = calendar['prop_name'];
                 }
                 
-                html += "<div style='background-color: " + calendar['background_color'] + "; color: " + calendar['text_color'] + ";'>";
+                html += "<div class='d-flex' style='background-color: " + calendar['background_color'] + "; color: " + calendar['text_color'] + ";'>";
                 html += '<input name="{{ $name }}[]" type="checkbox" class="m-1 {{ $name }}" id="' + id + '" value=' + calendar['id'] + '>';
-                html += '<label for="' + id + '" style="cursor: pointer" class="m-1">' + name + '</label>'; 
+                html += '<label for="' + id + '" style="cursor: pointer" class="m-1 text-truncate" title="' + name + '">' + name + '</label>'; 
                 html += '<a class="btn btn-sm" href="{{ url( 'groupware/calprop/show' ) }}/' + calendar['calprop_id'] + '"><i class="fas fa-cog"></i></a>';
                 html += "</div>";
             });

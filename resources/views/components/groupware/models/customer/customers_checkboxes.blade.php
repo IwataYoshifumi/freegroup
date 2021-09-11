@@ -1,6 +1,7 @@
 @php
 use App\myHttp\GroupWare\Models\User;
 use App\myHttp\GroupWare\Models\Customer;
+use App\Http\Helpers\ScreenSize;
 
 $form_name = $name . "[]";
 $button_id = $name . "_component_checkboxes_customers_opener";
@@ -10,7 +11,6 @@ $customer_name_id = $dialog_id . "_customer_name";
 
 $prepend_id = $name . "_component_checkboxes_prepend";
 $hidden_id  = $name . "_component_hidden_prepend";
-
 
 $url   = route( 'ajax.customer.search' );
 #if_debug( $url, $form_name, $button_id, $dialog_id );
@@ -37,8 +37,8 @@ $customer_ids = implode( ",", $customer_ids );
 <div id='{{ $dialog_id }}' title="{{ $button }}">
 
     <div class="row">
-        {{ Form::text( 'customer_name', old( 'customer_name' ), [ 'class' => 'form-control col-6 m-1', 'id' => $customer_name_id, 'autocomplete' => 'off', 'placeholder' => '顧客名検索'  ] ) }}
-        <button type=button class="btn btn-outline-dark btn-sm col-2 m-1" onClick="{{ $name }}_search_customers()">検索</button>
+        {{ Form::text( 'customer_name', old( 'customer_name' ), [ 'class' => 'form-control col-11 col-md-6 m-1', 'id' => $customer_name_id, 'autocomplete' => 'off', 'placeholder' => '顧客名検索'  ] ) }}
+        <button type=button class="btn btn-outline-dark btn-sm col-5 col-md-2 m-1" onClick="{{ $name }}_search_customers()">検索</button>
     </div>
     <hr>
 
@@ -48,7 +48,7 @@ $customer_ids = implode( ",", $customer_ids );
                 $form_id = $dialog_id ."_" . $customer->id;
                 $form_group_id = $form_id . "_group";
             @endphp
-            <div id="{{ $form_group_id }}" class="col-3">
+            <div id="{{ $form_group_id }}" class="col-11 col-md-4"">
                 <label for="{{ $form_id }}" class"w-100">{{ $customer->name }}</label>
                 <input type="checkbox", name="{{ $form_name }}" value="{{ $customer->id }}" checked class="checkboxradio {{ $input_class }}" id="{{ $form_id }}" data-customer_name="{{ $customer->name }}">
                 {{-- Form::checkbox( $form_name, $customer->id, true, [ 'class' => 'checkboxradio', 'id' => $form_id ] ) --}}
@@ -108,10 +108,10 @@ $customer_ids = implode( ",", $customer_ids );
             var form_id       = "{{ $dialog_id }}_" + id;
             var form_group_id = form_id + "_group";
 
-            var html     = '<div id="' + form_group_id + '" class="col-3">                     ';
-            html        += '<label for="' + form_id + '" class"">' + name + '</label>                               ';
+            var html     = '<div id="' + form_group_id + '" class="col-11 col-md-4">                     ';
+            html        += '<label for="' + form_id + '" class="">' + name + '</label>                               ';
             html        += '<input type="checkbox" value="' + id + '" class="checkboxradio {{ $input_class }}" id="' + form_id + '" data-customer_name="' + name + '">   '; 
-            html        += '</div>                                                                             ';
+            html        += '</div><br>                                                                             ';
             $('#{{ $prepend_id }}').before( html );
             customer_ids.push( id );
         }
@@ -131,9 +131,13 @@ $customer_ids = implode( ",", $customer_ids );
      * 検索ダイアログの初期設定
      */
     $('#{{ $dialog_id }}').dialog( {
+        @php
+        $screen_width = ( ScreenSize::getWidth() < ScreenSize::md ) ? ScreenSize::getWidth() : 750 ;
+        @endphp
+
         autoOpen: false,
         modal: true,
-        width: 750,
+        width: {{ $screen_width }},
         buttons: [ {
             text: 'OK',
             icon: 'ui-icon-heart',
