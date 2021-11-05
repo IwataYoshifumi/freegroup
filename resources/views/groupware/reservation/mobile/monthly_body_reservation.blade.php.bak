@@ -4,7 +4,6 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\URL;
 use App\Http\Helpers\MyForm;
 use App\Http\Helpers\OutputCSV;
-use App\Http\Helpers\ScreenSize;
 use Carbon\Carbon;
 
 use App\Models\Customer;
@@ -133,7 +132,7 @@ $others = [];  // 表示しきれずその他何件と表示するための配�
     @endwhile
 @endforeach
 --}}
-{{-- 予約状況の表示、１日以内の予定　を表示 --}}
+{{-- 終日予定、タスク、１日以内の予定　を表示 --}}
 
 @foreach( [ $returns['single'], $returns['time'] ] as $return_values )
     @foreach( $return_values as $Item )
@@ -219,8 +218,8 @@ $others = [];  // 表示しきれずその他何件と表示するための配�
                 <div class="row{{ $start_row }} col{{ $start_col }} span1 cal3" style="">
                     <div class="order{{ $order }} {{ $reservation_class }} single_schedule object_to_show_detail d-flex" style="{{ $style }}" {!! $data !!}> {{-- htmlspecialchars OK --}}
                         @if( $order < 6 )
-                            <span class="text-left  flex-fill"                   >{{ $reservation->p_time( 'monthly' ) }}</span>
-                            <span class="text-right flex-fill text-truncate pr-2">{{ $reservation->user->name          }} </span>
+                            <span class="text-left  flex-fill text-truncate">{{ $reservation->p_time( 'monthly' ) }}</span>
+                            <span class="text-right flex-fill text-truncate pr-2 d-none d-md-block">{{ $reservation->user->name }} </span>
                         @else
                             {{-- その他〇〇件 --}}
                             @php
@@ -264,58 +263,6 @@ $others = [];  // 表示しきれずその他何件と表示するための配�
         $('#search_form').submit();
     });
     
-    @if( ScreenSize::isMobile() )
-        
-        /*
-         *
-         * スマホ用画面調整・イベント調整
-         *
-         */
-        $('.object_to_show_detail').css( 'font-size', 'small' );
-        $('.object_to_show_detail').css( 'font-size', 'small' );
-        $('.object_to_show_detail').css( 'pointer-events', 'none' );
-                
-        // $('.calendar_item').addClass( 'mb_calendar_item' );
-        //$('.mb_calendar_item').removeClass( 'calendar_item' );
-        
-        // $('.mb_calendar_item').css( 'font-size', 'xx-small' );
-        $('.other_item').css( 'font-size', 'small' );
-        $('.other_item').css( ' pointer-events', 'none' );
-        
-        /*
-        // font-size : x-small 12px
-        //
-        $('.order1').css( 'top', '15px' );
-        $('.order2').css( 'top', '27px' );
-        $('.order3').css( 'top', '40px' );
-        $('.order4').css( 'top', '53px' );
-        $('.order5').css( 'top', '66px' );
-        $('.order6').css( 'top', '79px' );
-        $('.order7').css( 'top', '92px' );
-        $('.order8').css( 'top', '105px' );
 
-        // font-size : x-small 14px
-        //
-        $('.order1').css( 'top', '15px' );
-        $('.order2').css( 'top', '29px' );
-        $('.order3').css( 'top', '43px' );
-        $('.order4').css( 'top', '57px' );
-        $('.order5').css( 'top', '71px' );
-        $('.order6').css( 'top', '85px' );
-        $('.order7').css( 'top', '99px' );
-        $('.order8').css( 'top', '113px' );
-        */
-        
-        // font-size : small 15px
-        //
-        $('.order1').css( 'top', '15px' );
-        $('.order2').css( 'top', '30px' );
-        $('.order3').css( 'top', '45px' );
-        $('.order4').css( 'top', '60px' );
-        $('.order5').css( 'top', '75px' );
-        $('.order6').css( 'top', '90px' );
-        $('.order7').css( 'top', '105px' );
-        $('.order8').css( 'top', '130px' );
-    @endif
     
 </script>

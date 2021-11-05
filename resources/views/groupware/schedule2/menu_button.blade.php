@@ -11,7 +11,6 @@ $auth = auth( 'user' )->user();
 
 <div class="row m-1 w-100 container">
 
-
     @if( $auth->can( 'create', Schedule::class ))
         @if( ! ScreenSize::isMobile() )
             <a class="btn btn-primary col-2 col-lg-2 m-1" href="{{ route( 'groupware.schedule.create'   ) }}">
@@ -44,20 +43,21 @@ $auth = auth( 'user' )->user();
         <a class="btn btn-menu m-1" href="{{ route( 'groupware.show_all.index'  ) }}">
             <div class="">予定検索</div>
         </a>
-    @endif
-    
-    <a class="btn btn-menu m-1" href="{{ route( 'groupware.show_all.monthly'  ) }}">
-        <div class="">
-            <span class="">月表示</span>
-        </div>
-    </a>
         
-    <a class="btn btn-menu  m-1" href="{{ route( 'groupware.show_all.weekly'  ) }}">
-            <span class="">週表示</span>
-    </a>
+        <a class="btn btn-menu m-1" href="{{ route( 'groupware.show_all.monthly'  ) }}">
+            <div class="">
+                <span class="">月表示</span>
+            </div>
+        </a>
+            
+        <a class="btn btn-menu  m-1" href="{{ route( 'groupware.show_all.weekly'  ) }}">
+                <span class="">週表示</span>
+        </a>
+    
+        <a class="d-none d-lg-block btn btn-menu m-1" href="{{ route( 'groupware.calendar.index', $args   ) }}">
+            <div class="">カレンダー設定</div>
+        </a>
+    @endif
 
-    <a class="d-none d-lg-block btn btn-menu m-1" href="{{ route( 'groupware.calendar.index', $args   ) }}">
-        <div class="">カレンダー設定</div>
-    </a>
         
 </div>

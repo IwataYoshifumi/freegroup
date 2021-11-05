@@ -9,9 +9,9 @@ use App\Http\Helpers\ScreenSize;
 <div id="modal_window_to_show_detail" class="my_dialog draggable">
     <div class="w-100 border border-secondary bg-light"  id="modal_window_to_show_detail_header">
         <a class="btn" onClick="close_detail_dialog();">@icon( window-close )</a>
-        詳細表示
+        <span id='title_of_detail_modal'>詳細表示</span>
     </div>
-    <iframe id='iframe_to_show_detail' src="" style="width: 100%; height: 100%" class="border border-secondary">
+    <iframe id='iframe_to_show_detail' src="" style="width: 100%; height: 100%" class="border border-secondary bg-white">
     </iframe>
     <div class="w-100 bg-light border border-secondary d-flex justify-content-end" id="modal_window_to_show_detail_footer" style="position: relative; top: -7px;">
         <a class="btn btn-secondary btn-sm btn-border-dark text-white m-2" onClick="close_detail_dialog();">閉じる</a>
@@ -20,6 +20,7 @@ use App\Http\Helpers\ScreenSize;
 
 <script>
     var modal_window          = $('#modal_window_to_show_detail');
+    var modal_title           = $('#title_of_detail_modal');
     var iframe_to_show_detail = $('#iframe_to_show_detail');
     var header                = $('#modal_window_to_show_detail_header');
     var footer                = $('#modal_window_to_show_detail_footer');
@@ -44,15 +45,19 @@ use App\Http\Helpers\ScreenSize;
     modal_window.hide();
 
     $('.object_to_show_detail').on( 'click', function() {
-        click_object_to_show_detail( $(this ));
+        click_object_to_show_detail( $(this));
     });
+    
+    var scroll_top;
 
     function click_object_to_show_detail( object ) {
         var object_name = $(object).data('object');
         var object_id = $(object).data('object_id');
         var url = "";
         var title = "";
-        // console.log( object, object_id, $(this).html() );
+
+        scroll_top = $(window).scrollTop();
+        console.log( 'scroll_top', scroll_top, $(window).scrollTop(), document.body.clientHeight );
 
         if( object_name == "schedule" ) {
             url += "{{ url( '/groupware/schedule/show_modal/' ) }}";
@@ -67,16 +72,19 @@ use App\Http\Helpers\ScreenSize;
             url += "{{ url( '/groupware/report/show_modal/' ) }}";
             url += "/" + object_id;
             title = "日報詳細";
+
         } else if( object_name == "reservation" ) {
             url += "{{ url( '/groupware/reservation/show_modal/' ) }}";
             url += "/" + object_id;
             title = "設備予約詳細";
+
         }
+        modal_title.html( title );
         
         iframe_to_show_detail.attr( 'src', url );
         $('#loading').show();
     }
-
+    
     
     function close_detail_dialog() {
         var options = { percent: 50 };
@@ -86,6 +94,10 @@ use App\Http\Helpers\ScreenSize;
     iframe_to_show_detail.on( 'load', function() {
         $('#loading').hide();
         var options = { percent: 50 }
+        @if( ScreenSize::isMobile() )
+           $(window).scrollTop( -50 );
+           console.log( 'scroll_top', scroll_top, $(window).scrollTop(), document.body.clientHeight );
+        @endif
         modal_window.show( 'puff', options , 150 );
     });
 

@@ -1,6 +1,7 @@
 @php
 
 use App\Http\Helpers\BackButton;
+use App\Http\Helpers\ScreenSize;
 
 use App\myHttp\GroupWare\Models\Customer;
 use App\myHttp\GroupWare\Models\User;
@@ -9,6 +10,7 @@ use App\myHttp\GroupWare\Models\Facility;
 use App\myHttp\GroupWare\Models\AccessList;
 use App\myHttp\GroupWare\Models\Search\GetAccessLists;
 use App\myHttp\GroupWare\Models\File as MyFile;
+
 
 use App\myHttp\GroupWare\Controllers\SubClass\GetFacilityForReservationInput;
 
@@ -61,8 +63,8 @@ $is_invalid['facility_id'] = ( $errors->has( 'facility_id'         ) ) ? 'is-inv
                       
                         <div class="col-12">&nbsp;</div>
                         <div class="form-group row">
-                            <label for="place" class="col-2 col-form-label text-md-right">予約設備</label>
-                            <div class="col-10">
+                            <label for="place" class="col-12 col-sm-2 col-form-label text-sm-right">予約設備</label>
+                            <div class="col-12 col-sm-10">
                                 @foreach( $facilities as $facility )
                                     @if( $loop->first ) <div class="row m-1"> @endif
                                     @php
@@ -95,15 +97,15 @@ $is_invalid['facility_id'] = ( $errors->has( 'facility_id'         ) ) ? 'is-inv
                         </div>
                         
                         <div class="form-group row">
-                            <label for="name" class="col-2 col-form-label text-md-right">利用目的</label>
-                            <div class="col-10">
+                            <label for="name" class="col-12 col-sm-2 col-form-label text-sm-right">利用目的</label>
+                            <div class="col-12 col-sm-10">
                                 <input type="text" name="purpose" value="{{ old( 'purpose', optional( $reservation )->purpose ) }}" autocomplete="off" class="form-control @error('purpose') is-invalid @enderror">
                             </div>
                         </div>
 
                         <div class="form-group row">
-                            <label for="email" class="col-2 col-form-label text-md-right">日時</label>
-                            <div class="col-10 container">
+                            <label for="email" class="col-12 col-sm-2 col-form-label text-sm-right">日時</label>
+                            <div class="col-12 col-sm-10 container">
                                 <div class="container row">
 
                                     @if( $route_name == "groupware.reservation.create_modal" )
@@ -281,9 +283,9 @@ $is_invalid['facility_id'] = ( $errors->has( 'facility_id'         ) ) ? 'is-inv
                         @endpush
                     
                         <div class="form-group row">
-                            <label for="mobile" class="col-2 col-form-label text-md-right">備考</label>
+                            <label for="mobile" class="col-12 col-sm-2 col-form-label text-sm-right">備考</label>
                             <div class="col-10">
-                                {{ Form::textarea( 'memo', op( $reservation )->memo, [ 'class' => 'form-control', 'rows' => 3 ] ) }}
+                                {{ Form::textarea( 'memo', op( $reservation )->memo, [ 'class' => 'form-control col-12 col-sm-10', 'rows' => 3 ] ) }}
                             </div>
                         </div>
                         
@@ -300,7 +302,11 @@ $is_invalid['facility_id'] = ( $errors->has( 'facility_id'         ) ) ? 'is-inv
                                 @endphp
                                 <a class="btn {{ $btn_class }}" onClick="$('#input_form').submit()">{{ $btn_title }}</a>
 
-                            {{ BackButton::form() }}
+                            @if( 0 && ScreenSize::isPC() )
+                                {{ BackButton::form() }}
+                            @else
+                                <a class="btn btn-secondary text-white" onClick="window.parent.close_reserve_dialog();">閉じる</a>
+                            @endif
 
                             </div>
                         </div>

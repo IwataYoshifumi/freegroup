@@ -263,8 +263,9 @@ $others = [];  // 表示しきれずその他何件と表示するための配�
         <div class="date_item calendar_item order6 single_schedule other_item text-truncate" data-date="{{ $d_date }}">
             その他 {{ $num }} 件・・・
         </div>
-    </div>    
+    </div>
 @endforeach
+
 
 </div>
 

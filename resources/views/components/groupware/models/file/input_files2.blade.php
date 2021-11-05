@@ -1,4 +1,5 @@
 @php
+use App\Http\Helpers\ScreenSize;
 
 $route_to_upload_files = route( 'groupware.file.api.upload' );
 $route_to_delete_file  = route( 'groupware.file.api.delete' );
@@ -7,7 +8,7 @@ $route_to_delete_file  = route( 'groupware.file.api.delete' );
 <style>
 #droparea {
     border:2px dotted #0B85A1;
-    width:500px;
+    width: @if( ScreenSize::isMobile() ) {{ ScreenSize::width() - 60 }}px; @else 500px; @endif
     color:#92AAB0;
     text-align:left;vertical-align:middle;
     padding:10px 10px 10 10px;
@@ -81,7 +82,6 @@ $route_to_delete_file  = route( 'groupware.file.api.delete' );
         @endforeach
     </div>
     
-    
     <button type='button' class='btn btn-outline-secondary' id='component_input_files_dialog_button'>添付ファイル編集</button>
 </div>
 
@@ -134,7 +134,11 @@ $route_to_delete_file  = route( 'groupware.file.api.delete' );
 let component_input_files_dialog = $('#component_input_files_dialog').dialog( {
         autoOpen: false,
         modal: true,
-        width: 760,
+        @if( ScreenSize::isMobile() )
+            width: {{ ScreenSize::width() }},
+        @else
+            width: 760,
+        @endif
     });
 $('#component_input_files_dialog_button').on( 'click', function() { component_input_files_dialog.dialog( 'open' );  });
 

@@ -1,6 +1,7 @@
 @php
 
 use App\myHttp\GroupWare\Models\Report;
+use App\Http\Helpers\ScreenSize;
 
 $schedule_id = [ 'schedule' => $schedule->id ];
 $route_show       = route( 'groupware.schedule.show'  , $schedule_id ); 
@@ -19,30 +20,23 @@ $target = ( $route_name == 'groupware.schedule.show_modal' ) ? "target='_parent'
 
 
     @can( 'update', $schedule )
-        <a class="btn col-1 m-1 uitooltip" style="font-size: 20px;" href="{{ $route_edit }}" title="変更"  {!! $target !!}>   {{-- htmlspecialchars OK --}}
+        <a class="btn btn_icon col-1 uitooltip" href="{{ $route_edit }}" title="変更"  {!! $target !!}>   {{-- htmlspecialchars OK --}}
             <i class="fas fa-pen"></i>
         </a>
     @endcan
     
-    <a class="btn col-1 m-1 uitooltip" style="font-size: 20px;" href="{{ $route_copy }}" title="複製"  {!! $target !!}>   {{-- htmlspecialchars OK --}}
+    <a class="btn btn_icon col-1 uitooltip" href="{{ $route_copy }}" title="複製"  {!! $target !!}>   {{-- htmlspecialchars OK --}}
         <i class="fas fa-copy"></i>
     </a>
-    
-    
         
     @can( 'delete', $schedule )
-        <a class="btn col-1 m-1" style="font-size: 20px;" href="{{ $route_delete }}" title="削除"  {!! $target !!}>   {{-- htmlspecialchars OK --}}
+        <a class="btn btn_icon col-1 uitooltip" href="{{ $route_delete }}" title="削除"  {!! $target !!}>   {{-- htmlspecialchars OK --}}
             <i class="fas fa-trash-alt"></i>
         </a>
     @endcan
-    
-
-    @if( $route_name == 'groupware.schedule.show_modal' )
-        <a class="btn btn-outline-secondary m-1" href="{{ $route_show }}" {!! $target !!}>全画面表示</a>   {{-- htmlspecialchars OK --}}
-    @endif
 
     @if( $auth->can( 'update', $schedule ) and $auth->can( 'create', Report::class ))
-        <a class="btn btn-primary text-white col-2 m-1" href="{{ $route_new_report  }}" {!! $target !!}>新規日報</a>   {{-- htmlspecialchars OK --}}
+        <a class="btn btn_icon col-1 uitooltip" href="{{ $route_new_report  }}" {!! $target !!} title="新規日報">@icon( clipboard )</a>   {{-- htmlspecialchars OK --}}
     @endif
     
     @if( $show_more_info )
@@ -54,8 +48,14 @@ $target = ( $route_name == 'groupware.schedule.show_modal' ) ? "target='_parent'
                     カレンダー編集者も予定修正可
                 @endif
             @endif
-            <button class="btn m-1" id="schedule_info_btn"><i class="fas fa-info-circle" style="font-size: 21px; color: black;"></i></button>
+            <button class="btn btn_icon" id="schedule_info_btn">@icon( info-circle )</button>
         </div>
+    @endif
+
+    @if( ! ScreenSize::isMobile() )
+        @if( $route_name == 'groupware.schedule.show_modal' )
+            <a class="btn btn_icon uitooltip" href="{{ $route_show }}" {!! $target !!} title="全画面表示">@icon( expand )</a>   {{-- htmlspecialchars OK --}}
+        @endif
     @endif
 </div>
 

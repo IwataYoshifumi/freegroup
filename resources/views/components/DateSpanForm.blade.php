@@ -1,5 +1,6 @@
 @php
 
+use App\Http\Helpers\ScreenSize;
 use Carbon\Carbon;
 
 $today = new Carbon( 'today' );
@@ -31,9 +32,9 @@ $button['今日']['end']   = $today->format('Y-m-d');
 
 <div class="w-100 container">
     <div>
-        {{ Form::text( $start_name, $start_value, [ 'class' => 'datepicker', 'id' => 'start_date' ] ) }}
+        {{ Form::text( $start_name, $start_value, [ 'class' => 'datepicker col-5 col-md-3', 'id' => 'start_date', 'autocomplete' => 'off' ] ) }}
         <span>～</span>
-        {{ Form::text( $end_name,   $end_value  , [ 'class' => 'datepicker',   'id' => 'end_date' ] ) }}
+        {{ Form::text( $end_name,   $end_value  , [ 'class' => 'datepicker col-5 col-md-3',   'id' => 'end_date', 'autocomplete' => 'off' ] ) }}
         @if( $search_condition_for_span_name )
             @php
                 $search_conditions = [ '期間' => 'の期間', '以前' => 'より以前', '以降' => 'より以降' ];
@@ -82,7 +83,13 @@ $button['今日']['end']   = $today->format('Y-m-d');
         @endforeach
     </div>
     <script>
-        $('.datepicker').datepicker( { numberOfMonths : 2, showButtonPanel : true } );
+        
+        @if( ScreenSize::isMobile() )
+            $('.datepicker').datepicker();
+            $('.datepicker').css( 'font-size', 'small' );
+        @else         
+            $('.datepicker').datepicker( { numberOfMonths : 2, showButtonPanel : true } );
+        @endif
 
         $('.date_button').click( function(){
             var start_date = $('#start_date');

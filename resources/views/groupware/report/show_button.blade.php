@@ -2,30 +2,32 @@
 
 $report_id = [ 'report' => $report->id ];
 
-
+$route_show       = route( 'groupware.report.show'  , $report_id );
 $route_edit       = route( 'groupware.report.edit'  , $report_id ); 
 $route_copy       = route( 'groupware.report.copy'  , $report_id ); 
 $route_delete     = route( 'groupware.report.delete', $report_id ); 
 $route_new_report = route( 'groupware.report.create'  , $report_id ); 
 $show_more_info   = ( $route_name == 'groupware.report.show' ) ? 1 : 0;
 
+$target = ( $route_name == 'groupware.report.show_modal' ) ? "target='_parent'" : "";
+
 @endphp
 
 <div class="row m-1 w-100 container">
 
     @can( 'update', $report )
-        <a class="btn icon_btn uitooltip" style="font-size: 20px;" href="{{ $route_edit }}" title="変更">
+        <a class="btn icon_btn uitooltip" href="{{ $route_edit }}" title="変更"  {!! $target !!}> {{-- htmlspecialchars OK --}}
             @icon( edit )
         </a>
     @endcan
     
-    <a class="btn col-1 m-1 uitooltip" style="font-size: 20px;" href="{{ $route_copy }}" title="複製">
+    <a class="btn icon_btn uitooltip" href="{{ $route_copy }}" title="複製"  {!! $target !!}> {{-- htmlspecialchars OK --}}
         <i class="fas fa-copy"></i>
     </a>
     
         
     @can( 'delete', $report )
-        <a class="btn btn_icon uitooltip" style="font-size: 20px;" href="{{ $route_delete }}" title="削除">
+        <a class="btn btn_icon uitooltip" href="{{ $route_delete }}" title="削除"  {!! $target !!}> {{-- htmlspecialchars OK --}}
             @icon( trash-alt )
         </a>
     @endcan
@@ -46,6 +48,11 @@ $show_more_info   = ( $route_name == 'groupware.report.show' ) ? 1 : 0;
             <button class="btn m-1" id="report_info_btn"><i class="fas fa-info-circle" style="font-size: 21px; color: black;"></i></button>
         </div>
     @endif
+    
+    @if( $route_name == 'groupware.report.show_modal' )
+        <a class="btn btn_icon uitooltip ml-auto" href="{{ $route_show }}" {!! $target !!} title="全画面表示">@icon( expand )</a>   {{-- htmlspecialchars OK --}}
+    @endif
+    
 </div>
 
 @if( $show_more_info )
@@ -98,10 +105,6 @@ $show_more_info   = ( $route_name == 'groupware.report.show' ) ? 1 : 0;
                 @endif
                 {{ $report_list->type }}
             </div>
-            
-                        
-        
-            
         </div>
     </div>
     

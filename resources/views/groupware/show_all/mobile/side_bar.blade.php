@@ -2,13 +2,10 @@
 use Illuminate\Support\Facades\Route;
 
 $current_route         = Route::currentRouteName();
-
-
 $calendars = ( is_array( $request->calendars )) ? $request->calendars : [];
 $tasklists = ( is_array( $request->tasklists )) ? $request->tasklists : [];
 
 @endphp
-
 
 <div class="bg-light">
     {{ Form::open( [ 'route' => $current_route, 'method' => 'GET', 'id' => 'search_form' ] ) }}

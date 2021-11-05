@@ -163,7 +163,7 @@ class Task extends Model {
     /////////////////////////////////////////////////////////////////////////////////////////////
     public function p_due() {
         if( $this->all_day ) {
-            return $this->due_date;
+            return $this->due_date->format( 'Y-m-d' );
         } else {
             return $this->due_time->format( 'Y-m-d H:i' );
         }

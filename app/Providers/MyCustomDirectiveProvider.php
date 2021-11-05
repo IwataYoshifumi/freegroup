@@ -226,6 +226,14 @@ class MyCustomDirectiveProvider extends ServiceProvider
                 
                 'loading'               => '<img class="loading" src="/loading.gif">',
                 
+                'expand'        => '<i class="fas fa-expand"></i>',
+                'compress'      => '<i class="fas fa-compress"></i>',
+                
+                'book'          => '<i class="fas fa-book"></i>',
+                'bookmark'      => '<i class="fas fa-bookmark"></i>',
+                'book-open'     => '<i class="fas fa-book-open"></i>',
+                'book-reader'   => '<i class="fas fa-book-reader"></i>',
+                
             ];    
     
     public function register()

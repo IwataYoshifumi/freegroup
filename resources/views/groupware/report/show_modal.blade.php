@@ -35,8 +35,7 @@ $schedules = $report->schedules;
         
         @include( 'groupware.report.show_button' )
         
-        include( 'groupware.report.show_parts' ) 
-                                @include( 'groupware.report.show_parts' ) 
+        @include( 'groupware.report.show_parts' ) 
     </div>
 </div>
 

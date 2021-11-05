@@ -77,10 +77,10 @@ $facilities = $returns['facilities'];
         @endphp
         
         <div class="col01 span01 cal3 border border-dark bg-white" style="{{ $row_style }}">
-            <div class="order1 font-weight-bold">
+            <div class="order1 font-weight-bold text-truncate">
                 {{ $facility->category }} {{ $facility->sub_category }}<br>
                 {{ $facility->name }}<br>
-                @if( 1 and is_debug() ) 
+                @if( 0 && is_debug() ) 
                     Facility ID : {{ $facility->id }} : {{ $max }}/{{ $row_style }} 
                 @endif
             </div>

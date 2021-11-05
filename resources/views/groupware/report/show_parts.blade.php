@@ -7,19 +7,21 @@ use App\myHttp\GroupWare\Models\User;
 
 <div class="container">
     
+    <div class="col-12">&nbsp;</div>
+    
     <div class="form-group row">
-        <label for="name" class="col-md-4 col-form-label text-md-right">件名</label>
-        <div class="col-md-8">
+        <div for="name" class="col-3 text-left">件名</div>
+        <div class="col-8 text-left text-truncate">
             {{ $report->name }}
         </div>
     
-        <label for="place" class="col-md-4 col-form-label text-md-right">場所</label>
-        <div class="col-md-8">
+        <div class="col-3 text-left">場所</div>
+        <div class="col-8 text-left">
             {{ $report->place }}
         </div>
     
-        <label for="place" class="col-md-4 col-form-label text-md-right">日報リスト</label>
-        <div class="col-md-8">
+        <div class="col-3 text-left">日報リスト</div>
+        <div class="col-8 text-left">
             {{ op( $report->report_list )->name }}
 
             @if( $report_list->is_disabled() )
@@ -32,42 +34,42 @@ use App\myHttp\GroupWare\Models\User;
         </div>
         
     
-        <label for="email" class="col-md-4 col-form-label text-md-right">日時</label>
-        <div class="col-md-8">
+        <div for="email" class="col-3 text-left">日時</div>
+        <div class="col-8 text-left">
             {{ $report->p_time() }}
         </div>
     
         @if( count( $customers ))
-            <label for="customers" class="col-md-4 col-form-label text-md-right">関連顧客</label>
-            <div class="col-md-8">
+            <div for="customers" class="col-3 text-left">関連顧客</div>
+            <div class="col-8">
                 @foreach( $customers as $c )
-                    <div class="col-12">
-                        <a href="{{ route( 'customer.show', [ 'customer' => $c->id ] ) }}" class="btn btn_icon uitooltip" title="詳細"> @icon( address-book ) </a>
-                        {{ $c->name }} {{ $c->p_age() }}
+                    <div class="w-100">
+                        <a href="{{ route( 'customer.show', [ 'customer' => $c->id ] ) }}" class="btn uitooltip" title="詳細" target="_top"> @icon( address-book ) </a>
+                        <span class="text-truncate">{{ $c->name }} {{ $c->p_age() }}</span>
                     </div>        
                 @endforeach
             </div>
         @endif
     
         @if( count( $users ))
-            <label for="customers" class="col-md-4 col-form-label text-md-right">関連社員</label>
-            <div class="col-md-8">
+            <div for="customers" class="col-3 text-left">関連社員</div>
+            <div class="col-8">
                 @foreach( $users as $u )
-                    <div class="col-12">
-                        <a href="{{ route( 'groupware.user.show', [ 'user' => $u->id ] )}}" class="btn btn_icon"> @icon( user ) </a>
-                        【 {{ $u->dept->name }} 】{{ $u->name }} {{ $u->grade }}
+                    <div class="w-100">
+                        <a href="{{ route( 'groupware.user.show', [ 'user' => $u->id ] )}}" class="btn" target="_top"> @icon( user ) </a>
+                        <span class="text-left text-truncate">【 {{ $u->dept->name }} 】{{ $u->name }} {{ $u->grade }}</span>
                     </div>        
                 @endforeach
             </div>
         @endif
     
         @if( count( $schedules )) 
-                <label for="customers" class="col-md-4 col-form-label text-md-right">関連予定</label>
-                <div class="col-md-8">
+                <div for="customers" class="col-3 text-left">関連予定</div>
+                <div class="col-8">
                     @foreach( $schedules as $schedule )
-                        <div class="col-12">
-                            <a href="{{ route( 'groupware.schedule.show', [ 'schedule' => $schedule->id ] ) }}" class="btn btn-sm btn-outline-secondary">
-                                {{ $schedule->start_date }} : {{ $schedule->name }}
+                        <div class="w-100">
+                            <a href="{{ route( 'groupware.schedule.show', [ 'schedule' => $schedule->id ] ) }}" class="btn btn-sm btn-outilne-secondary">
+                                <span class="text-truncate text-left">{{ $schedule->start_date }} : {{ $schedule->name }}</span>
                             </a>
                         </div>
                     @endforeach
@@ -75,8 +77,8 @@ use App\myHttp\GroupWare\Models\User;
         @endif
     
         @if( count( $files ))
-            <label for="mobile" class="col-md-4 col-form-label text-md-right">添付ファイル</label>
-            <div class="col-md-8">
+            <div class="col-3 text-left">添付ファイル</div>
+            <div class="col-8">
                 @foreach( $files as $file ) 
                     <div class="col-12">
                         <div class="row">
@@ -98,8 +100,9 @@ use App\myHttp\GroupWare\Models\User;
             </div>
         @endif
     
-        <label for="mobile" class="col-md-4 col-form-label text-md-right">備考</label>
-        <div class="col-md-8">
+        <div class="col-12">&nbsp;</div>
+        <div class="col-3 text-left">備考</div>
+        <div class="col-8">
             <pre>{{ $report->memo }}</pre>
         </div>
 

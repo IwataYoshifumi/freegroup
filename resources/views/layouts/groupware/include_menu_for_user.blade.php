@@ -43,21 +43,7 @@ $route = [  0  => route( 'groupware.user.home', $options  ),
 
 <a class="nav-item nav-link d-none d-md-block" href="{{ $route[21] }}">検索</a>
 <a class="nav-item nav-link" href="{{ $route[23] }}">日報</a>
-
-<div class="dropdown">
-    <a id="dropdownfacility"
-            class="nav-item nav-link dropdown-toggle"
-            data-toggle="dropdown"
-            aria-haspopup="true"
-            aria-expanded="false">設備予約</a>
-    <div class="dropdown-menu" aria-labelledby="dropdownfacility" style="z-index:9999;">
-        <a class="dropdown-item" href="{{ $route[33] }}">予約状況</a>
-        <a class="dropdown-item" href="{{ $route[32] }}">予約一覧</a>
-        <div class="dropdown-divider"></div>        
-        <a class="dropdown-item" href="{{ $route[30] }}">設備管理</a>
-    </div>
-</div>
-
+<a class="nav-item nav-link" href="{{ $route[33] }}">設備予約</a>
 
 @if( 0 )
     <a class="nav-item nav-link" href="{{ $route[4]  }}">【旧】タクス</a>

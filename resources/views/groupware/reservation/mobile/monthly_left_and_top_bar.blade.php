@@ -1,6 +1,5 @@
 @php
 use Illuminate\Support\Facades\Route;
-use App\Http\Helpers\ScreenSize;
 
 $current_route         = Route::currentRouteName();
 
@@ -70,8 +69,17 @@ $facilities = ( is_array( $request->facilities )) ? $request->facilities : [];
 </div>
 
 <div class="top_area border border-dark" style="background-color: palegreen" id="top_area">
-    <div class="no-gutters d-flex junstify-content-between">
+    <div class="row no-gutters d-flex junstify-content-center bg-inf">
         <div class="flex-fill">
+            {{--
+              --
+              --  新規ボタン・検索ボタン
+              --
+              --}}
+            
+            <!--<div class="btn ml-2 btn_icon" id="sidebar_opener">@icon( angle-double-right )</div>-->
+        </div>
+        <div class="">
             @php
             $previous_date = $base_date->copy()->subMonth()->format( 'Y-m-d' );
             $next_date     = $base_date->copy()->addMonth()->format( 'Y-m-d' );
@@ -81,36 +89,20 @@ $facilities = ( is_array( $request->facilities )) ? $request->facilities : [];
             {{--
               --
               --
-              --　新規　設備予約ボタン
-              --
-              --}}
-            <a class="btn ml-auto" title="新規　設備予約" onClick="open_dialog_to_create_reservation( $(this) );" data-date="{{ op( $request )->base_date }}">@icon( book )</a>
-            @if( ScreenSize::isPC() )
-                <a class="btn" style="width: 5%" title="予約状況　一覧" href="{{ route( 'groupware.reservation.index' ) }}?from_menu=1">@icon( list )</a>
-            @endif
-            
-            
-            {{--
-              --
-              --
               --　月切替ボタン
               --
               --}}
-        </div>
-        <div class="flex-fill">
-            <div class="d-flex justify-content-center">
-                <div class="btn btn_icon month_button" data-date="{{ $previous_date }}">@icon( angle-left )</div>
-                <div class="btn btn_icon font-weight-bold">{{ $date_title }}</div>
-                <div class="btn btn_icon month_button" data-date="{{ $next_date }}"    >@icon( angle-right )</div>
-                <div class="btn btn-sm border border-dark month_button" date-date="{{ $today }}">今月</div>
-                <script>
-                    $('.month_button').on( 'click', function() {
-                        var date = $(this).data('date');
-                        $("#base_date").val( date );
-                        $("#search_form").submit();
-                    });
-                </script>
-            </div>
+            <div class="btn btn_icon month_button" data-date="{{ $previous_date }}">@icon( angle-left )</div>
+            <div class="btn btn_icon font-weight-bold">{{ $date_title }}</div>
+            <div class="btn btn_icon month_button" data-date="{{ $next_date }}"    >@icon( angle-right )</div>
+            <div class="btn btn-sm border border-dark month_button" date-date="{{ $today }}">今月</div>
+            <script>
+                $('.month_button').on( 'click', function() {
+                    var date = $(this).data('date');
+                    $("#base_date").val( date );
+                    $("#search_form").submit();
+                });
+            </script>
         </div>
         <div class="flex-fill"></div>
         

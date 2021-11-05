@@ -16,42 +16,42 @@ $target = ( $route_name == 'groupware.task.show_modal' ) ? "target='_parent'" : 
 <div class="row m-1 w-100 container">
 
     @can( 'update', $task )
-        <a class="btn icon_btn uitooltip" style="font-size: 20px;" href="{{ $route_edit }}" title="変更"  {!! $target !!}> {{-- htmlspecialchars OK --}}
+        <a class="btn icon_btn uitooltip" href="{{ $route_edit }}" title="変更"  {!! $target !!}> {{-- htmlspecialchars OK --}}
             @icon( edit )
         </a>
     @endcan
     
-    <a class="btn col-1 m-1 uitooltip" style="font-size: 20px;" href="{{ $route_copy }}" title="複製"  {!! $target !!}> {{-- htmlspecialchars OK --}}
+    <a class="btn btn_icon uitooltip" href="{{ $route_copy }}" title="複製"  {!! $target !!}> {{-- htmlspecialchars OK --}}
         <i class="fas fa-copy"></i>
     </a>
-    
         
     @can( 'delete', $task )
-        <a class="btn btn_icon uitooltip" style="font-size: 20px;" href="{{ $route_delete }}" title="削除"  {!! $target !!}> {{-- htmlspecialchars OK --}}
+        <a class="btn btn_icon uitooltip" href="{{ $route_delete }}" title="削除"  {!! $target !!}> {{-- htmlspecialchars OK --}}
             @icon( trash-alt )
         </a>
     @endcan
-    
-    @if( $route_name == 'groupware.task.show_modal' )
-        <a class="btn btn-outline-secondary m-1" href="{{ $route_show }}" {!! $target !!}>全画面表示</a>   {{-- htmlspecialchars OK --}}
-    @endif
-    
+
+    <div class="ml-auto">
     @if( $show_more_info )
-        <div class="ml-auto">
-            @if( $tasklist->is_disabled() )
-                 <span class="alert-danger p-2 uitooltip" title="タスクリストが無効化中の為、編集・削除はできません">タスクリスト管理者設定により無効化中</span>   
-            @else
-                @if( $task->user_id == $auth->id )
-                    @if( $task->permission == "attendees" )
-                        関連社員も予定修正可
-                    @elseif( $task->permission == "writers" )
-                        タスクリスト編集者も予定修正可
-                    @endif
+        @if( $tasklist->is_disabled() )
+             <span class="alert-danger p-2 uitooltip" title="タスクリストが無効化中の為、編集・削除はできません">タスクリスト管理者設定により無効化中</span>   
+        @else
+            @if( $task->user_id == $auth->id )
+                @if( $task->permission == "attendees" )
+                    関連社員も予定修正可
+                @elseif( $task->permission == "writers" )
+                    タスクリスト編集者も予定修正可
                 @endif
             @endif
-            <button class="btn m-1" id="task_info_btn"><i class="fas fa-info-circle" style="font-size: 21px; color: black;"></i></button>
-        </div>
+        @endif
+        <button class="btn m-1" id="task_info_btn"><i class="fas fa-info-circle" style="font-size: 21px; color: black;"></i></button>
     @endif
+
+    @if( $route_name == 'groupware.task.show_modal' )
+        <a class="btn btn_icon uitooltip" href="{{ $route_show }}" {!! $target !!} title="全画面表示">@icon( expand )</a>   {{-- htmlspecialchars OK --}}
+    @endif
+    </div>
+
 </div>
 
 @if( $show_more_info )

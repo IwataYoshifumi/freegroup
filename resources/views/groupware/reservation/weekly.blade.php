@@ -29,7 +29,7 @@ $dates = $returns['dates'];
 $today     = new Carbon( 'today' );
 $base_date = Arr::first( $dates )->copy();
 
-if_debug( $request->all(), $returns );
+#if_debug( $request->all(), $returns );
 
 @endphp
 
@@ -76,7 +76,7 @@ if_debug( $request->all(), $returns );
 
 
 <!-- 詳細表示ダイアログ -->
-@include( 'groupware.show_all.modal_to_show_detail' )
+@include( 'groupware.show_all.dialog.show_detail' )
 
 <!-- 設備予約モーダルウインドウ -->
 @include( 'groupware.reservation.modal_to_create_reservation' )

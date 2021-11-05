@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\URL;
 use App\Http\Helpers\MyForm;
 use App\Http\Helpers\OutputCSV;
+use App\Http\Helpers\ScreenSize;
 use Carbon\Carbon;
 
 use App\Models\Customer;
@@ -15,11 +16,11 @@ use App\myHttp\GroupWare\Models\CalProp;
 use App\myHttp\GroupWare\Models\Task;
 use App\myHttp\GroupWare\Models\TaskProp;
 use App\myHttp\GroupWare\Models\TaskList;
+use App\Http\Helpers\BackButton;
 
 $user_id = user_id();
 
 $sidebar_height = 30;
-
 
 $depts = $returns['depts'];  
 $users = $returns['users'];
@@ -47,7 +48,7 @@ $j = 0;
             @endphp
 
             @if( $j ) <div class="col-12">&nbsp;</div> @endif
-            <div class="col-12 h5 shadow p-2">{{ $dept->name }} {{ $user->name }} {{ $user->grade }}</div>
+            <div class="col-12 h5 shadow p-1">{{ $dept->name }} {{ $user->name }} {{ $user->grade }}</div>
             
             @foreach( Arr::collapse( [ $objects['task'], $objects['multi'], $objects['single'], $objects['time'] ] ) as $object )
                 @if( 0 and $object->user_id != $user_id ) @continue @endif
@@ -87,15 +88,14 @@ $j = 0;
                             @endif
                         </div>
                         <div class="w-50 text-truncate text-left" style="{{ $style }} {{ $style_complete }}">
+
                             {{ $object->name }}
                         </div>
                         <div class="text-truncate text-left ml-1">
                             {{ $object->p_time( 'daily' ) }}
-                            {{--
-                            <span class="uitooltip" title="関連社員">
-                                @if( $object->user_id != $user->id ) @icon( users ) @else &nbsp; @endif
-                            </span>
-                            --}}
+                            @if( $object->user_id != $user->id )
+                                <span class="uitooltip" title="関連社員登録">@icon( users )</span>
+                            @endif
                         </div>
                     </div>
                 @elseif( $object instanceof Schedule and ! $object->all_day )
@@ -116,11 +116,9 @@ $j = 0;
 
                         {{ $object->p_time_for_daily_form() }}
                         </div>
-                        {{--
-                        <span class="uitooltip" title="関連社員">
-                            @if( $object->user_id != $user->id ) @icon( users ) @else &nbsp; @endif
-                        </span>
-                        --}}
+                        @if( $object->user_id != $user->id ) 
+                            <span class="uitooltip" title="関連社員登録">@icon( users )</span>
+                        @endif
                     </div>
                 @endif
                 @php
@@ -132,15 +130,20 @@ $j = 0;
     @endforeach  {{-- loop dept --}}
 </div>
 
-<!--
-  --
-  -- 詳細表示ダイヤログ（親スクリプトを実行）
-  --
-  -->
 <script>
+    // 
+    // 詳細表示ダイヤログ（親スクリプトを実行）
+    // 
     $('.object_to_show_detail').on( 'click', function() {
          window.parent.click_object_to_show_detail( $(this) );
     });
-</script>
 
-            
+    //
+    // モバイル用に表示調整
+    //
+    @if( ScreenSize::isMobile() ) 
+    $('.object_to_show_detail').css( 'font-size', 'x-small' );
+    $('.object_to_show_detail').css( 'padding', '0' );
+    @endif
+
+</script>

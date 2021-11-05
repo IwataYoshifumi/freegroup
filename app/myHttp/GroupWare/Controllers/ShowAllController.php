@@ -209,7 +209,10 @@ class ShowAllController extends Controller {
             $request->tasklists = [];
             $request->task_status = '未完';
         }
-        if( empty( $request->order_by )) { $request->order_by = [ 'time' ]; }
+        if( empty( $request->order_by )) { 
+            $request->order_by = [ 'time' ]; 
+            $request->asc_desc = [ 'desc' ]; 
+        }
         
         if( ! $request->pegination ) { $request->pagination = 30; }
 
@@ -227,7 +230,7 @@ class ShowAllController extends Controller {
         if( empty( $request->order_by )) { $request->order_by = [ 'time' ]; }
         if( ! $request->pegination ) { $request->pagination = 30; }
 
-        //　スケジュール・タスク・（報告書）の検索
+        //　スケジュール・タスク・日報を検索
         //
         $returns = SearchForShowALLIndex::search( $request );
 

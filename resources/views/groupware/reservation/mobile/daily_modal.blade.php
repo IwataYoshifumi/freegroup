@@ -34,7 +34,7 @@
     $loop = 0;
     #$requested_url = "";
     // $requested_url = route( 'groupware.show_all.daily' ) . "?";
-    $requested_url = route( 'groupware.show_all.dialog.daily' ) . "?";
+    $requested_url = route( 'groupware.reservation.dialog.daily' ) . "?";
     foreach( request()->all() as $key => $values ) {
         if( $key == "base_date" ) { continue; }
 
@@ -73,7 +73,7 @@
         var url = requested_url + "&base_date=" + d;
         iframe.attr( 'src', url );
         $('#loading').show();
-        // console.log( d, url );
+        console.log( d, url );
     }
 
     // iframeの高さ調整

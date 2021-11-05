@@ -62,7 +62,7 @@ class Schedule2IndexController extends Controller {
         if( empty( $request->search_query )) { 
             $request->users = [ user_id() ]; 
             $request->calendar_auth = 'reader';
-            $request->display_axis = 'calendar';
+            $request->display_axis  = 'calendar';
 
         } else {
             $return = SearchSchedule::search( $request );
@@ -78,7 +78,6 @@ class Schedule2IndexController extends Controller {
 
         BackButton::setHere( $request );
         return view( 'groupware.schedule2.index' )->with( 'schedules', $schedules )
-                                                //   ->with( 'find'   , $find    )
                                                   ->with( 'request', $request );
     }
     

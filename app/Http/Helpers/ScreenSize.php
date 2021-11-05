@@ -104,6 +104,14 @@ class ScreenSize {
     public static function getHeight() {
         return ( self::isSet() ) ? session( 'ScreenSize.height' ) : null;
     }
+
+    public static function width() {
+        return self::getWidth();
+    }
+    
+    public static function height() {
+        return self::getHeight();
+    }
     
     public static function isMobile() {
         if( ! self::isSet() ) { return null; }

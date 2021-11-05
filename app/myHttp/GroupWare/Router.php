@@ -617,6 +617,9 @@ class Router {
             Route::get(   '/monthly',    'ReservationController@monthly'        )->name('monthly' );
             Route::get(   '/weekly',     'ReservationController@weekly'         )->name('weekly'  );
             Route::get(   '/index',      'ReservationController@index'          )->name('index'   );
+
+            Route::get(   '/dialog/daily',  'ReservationController@daily'          )->name( 'dialog.daily' );
+
             
             Route::get(   '/create',     'ReservationController@create'          )->name('create');
             Route::post(  '/create',     'ReservationController@store'           )->name('store' );

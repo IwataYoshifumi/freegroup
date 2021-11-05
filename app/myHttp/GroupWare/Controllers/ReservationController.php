@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Log;
 
 use App\Http\Helpers\BackButton;
 use App\Http\Helpers\MyForm;
+use App\Http\Helpers\ScreenSize;
 
 use App\myHttp\GroupWare\Models\Reservation;
 use App\myHttp\GroupWare\Models\Facility;
@@ -34,6 +35,7 @@ use App\myHttp\GroupWare\Requests\ReservationRequest;
 use App\myHttp\GroupWare\Controllers\Search\SearchReservation;
 use App\myHttp\GroupWare\Controllers\Search\SearchReservationMonthly;
 use App\myHttp\GroupWare\Controllers\Search\SearchReservationWeekly;
+use App\myHttp\GroupWare\Controllers\Search\SearchReservationDaily;
 use App\myHttp\GroupWare\Controllers\Search\IndexReservation;
 use App\myHttp\GroupWare\Controllers\Search\CheckAvailableFacilities;
 
@@ -65,8 +67,14 @@ class ReservationController extends Controller {
         $returns = SearchReservationMonthly::search( $request );
         
         BackButton::setHere( $request );
-        return view( 'groupware.reservation.monthly' )->with( 'request', $request )
-                                                      ->with( 'returns', $returns );
+        if( ScreenSize::isMobile() ) {
+            return view( 'groupware.reservation.mobile.monthly' )->with( 'request', $request )
+                                                                 ->with( 'returns', $returns );
+                
+        } else {
+            return view( 'groupware.reservation.monthly' )->with( 'request', $request )
+                                                          ->with( 'returns', $returns );
+        }
     }
 
     //  設備予約状況（週表示）
@@ -81,6 +89,23 @@ class ReservationController extends Controller {
         BackButton::stackHere( $request );
         return view( 'groupware.reservation.weekly' )->with( 'request', $request )
                                                      ->with( 'returns', $returns );
+    }
+    
+    //　設備予約状況（日次表示、モバイル用）
+    //
+    public function daily( Request $request ) {
+
+        if( ! isset( $request->base_date  )) { $request->base_date  = Carbon::today()->format( 'Y-m-d' ); }
+        if( ! isset( $request->facilities )) { $request->facilities = Facility::whereCanWrite( user_id() )->where('disabled', 0 )->pluck('id')->toArray(); }
+    
+        $returns = SearchReservationDaily::search( $request );
+    
+        // dd( __METHOD__, $returns, $request );
+        
+        BackButton::stackHere( $request );
+        return view( 'groupware.reservation.mobile.daily.daily' )->with( 'request', $request )
+                                                                 ->with( 'returns', $returns );
+        
     }
     
     // 　ルーティングコントローラー

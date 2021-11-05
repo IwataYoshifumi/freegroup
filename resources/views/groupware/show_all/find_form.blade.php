@@ -43,10 +43,12 @@ $depts = ( op( $request )->depts ) ? $request->depts : [];
     @csrf
     @method( 'GET' )
 
-
-    <div class="widget">
-        <fieldset class="border border-dark m-2">
-            <div class="container m-2 coltrolgroup">
+    <div class="widget bg-white">
+        <fieldset class="border border-dark m-2" >
+            <div>
+                <a class="btn btn-light w-100 text-left" id="toggler_for_search_form">@icon( angle-down ) 検索フォーム</a>
+            </div>
+            <div class="container m-2 coltrolgroup" id="area_of_search_form">
                 <div class="row">
 
                     {{-- 
@@ -72,6 +74,11 @@ $depts = ( op( $request )->depts ) ? $request->depts : [];
                             </div>
                         </div>
                     </div>
+                    <div class="col-11 row d-flex justify-content-start">
+                            <button type="button" class="btn btn-search m-1 col-12 col-md-3" onClick="this.form.submit()">検索</button>
+                    </div>
+                    <hr>
+
 
                     {{-- 
                       --
@@ -255,12 +262,13 @@ $depts = ( op( $request )->depts ) ? $request->depts : [];
                             if( $check_clear ) { $('#search_form').submit(); }
                         }
                     </script>
-
-
-                    <div class="col-11 m-1 row d-flex justify-content-start">
-                            <button type="button" class="btn btn-search m-1 col-3" onClick="this.form.submit()">検索</button>
+                    
+                    <hr>
+                    <div class="col-11 row d-flex justify-content-start">
+                            <button type="button" class="btn btn-search m-1 col-12 col-md-3" onClick="this.form.submit()">検索</button>
                             <div class="m-1 bg-info">{{ BackButton::form() }}</div>
                     </div>
+
             </div>
             
             </div>
@@ -295,3 +303,18 @@ $depts = ( op( $request )->depts ) ? $request->depts : [];
         
     </div>
 {{ Form::close() }}
+
+<script>
+    
+    var area_of_search_form = $('#area_of_search_form');
+
+    @if( count( $data ))
+        area_of_search_form.hide();        
+    @endif
+    
+    $('#toggler_for_search_form').on( 'click', function() {
+        area_of_search_form.toggle( 'blind', { percent: 100 }, 300 );
+    });
+    
+    
+</script>
