@@ -18,50 +18,29 @@
             </script>
             
         </div>
-        <table class="card-body m-2 table table-border table-sm" id="report_list">
-            <tr>
-                <th>件名</th>
-                <th>月日</th>
-                <th>時間</th>
-            </tr>
-            
-            @php
-            $date = "";
-            @endphp
-            
-            @foreach( $reports as $report ) 
+        <div class="card-body m-2 table table-border table-sm" id="report_list">
+            <div class="row">
+                <div class="col-5 d-none d-lg-block font-wieght-bold">件名</div>
+                <div class="col-5 d-none d-lg-block font-wieght-bold">日付</div>
+                <hr  class="col-12 d-none d-lg-block">
                 @php
-                $style = $report->style();
+                $date = "";
                 @endphp
-            
-                <tr class="" data-object_type='report' data-object_id={{ $report->id }}>
-                    <td style="">
-                        @php
-                        $url = route( 'groupware.report.show', [ 'report' => $report->id ] );
-                        @endphp
-                        <a href="{{ $url }}" class="btn ">
-                            @icon( clipboard ) {{ $report->name }}
-                        </a>
-                    </td>
-                    <td>
-                        @if( $date != $report->start->format( 'Y-m-d' )) 
-                            {{ $report->start->format( 'n月j日' ) }}【{{ p_date_jp( $report->start->format('w') ) }}】               
-                        @endif
-                        @if( $report->end->diffInDays( $report->start ) >= 1 )
-                            ～{{ $report->end->format( 'n月j日' ) }}【{{ p_date_jp( $report->end->format('w') ) }}】
-                        @endif
-                    </td>
-                    <td>
-                        @if( $report->all_day ) 
-                            終日
-                        @else
-                            {{ $report->start->format( 'G:i' ) }}～ {{ $report->end->format( 'G:i' ) }}
-                        @endif
-                    </td>
-                </tr>
-            @endforeach
+                
+                @foreach( $reports as $report ) 
+                    @php
+                    $style = $report->style();
+                    @endphp
+                
+                    <div class="col-5 btn object_to_show_detail text-truncate text-left" data-object='report' data-object_id={{ $report->id }}>
+                        @icon( clipboard ) {{ $report->name }}
+                    </div>
+                    <div class="col-5 btn object_to_show_detail text-truncate text-left" data-object='report' data-object_id={{ $report->id }}>
+                        {{ $report->p_time() }}                    
+                    </div>
+                @endforeach
             </div>
-        </table>
+        </div>
     </div>
 @else
     <div class="col-12">日報はありません</div>

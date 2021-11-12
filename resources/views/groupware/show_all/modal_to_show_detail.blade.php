@@ -44,7 +44,7 @@ use App\Http\Helpers\ScreenSize;
             var object_id = $(this).data('object_id');
             var url = "";
             var title = "";
-            // console.log( object, object_id, $(this).html() );
+            console.log( object, object_id, $(this).html() );
 
             if( object == "schedule" ) {
                 url += "{{ url( '/groupware/schedule/show_modal/' ) }}";

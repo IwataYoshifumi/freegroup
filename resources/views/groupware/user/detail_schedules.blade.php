@@ -4,13 +4,14 @@
 
 @endphp
 
-<div class="col-12">&nbsp;</div>
+<div class="col-12 d-none d-lg-block">&nbsp;</div>
+
 @if( count( $schedules ))             
     <div class="card">
-        <div class="card-header">
+        <div class="card-header p-1 p-lg-20">
             <div class="row">
-                <span class="col   btn btn_icon text-left" id="btn_toggle_schedule_item">@icon( caret-square-down )  本日の予定</span>
-                <span class="col-1 btn btn_icon ml-auto" onClick="location.reload();">@icon( sync ) </span>
+                <span class="col   btn btn_icon text-left" id="btn_toggle_schedule_item">@icon( caret-square-down ) 本日の予定</span>
+                <span class="col-1 btn btn_icon ml-auto d-none d-lg-block" onClick="location.reload();">@icon( sync ) </span>
             </div>
             <script>
                 $('#btn_toggle_schedule_item').on( 'click', function() {
@@ -19,47 +20,36 @@
             </script>
             
         </div>
-        <table class="card-body m-2 table table-border table-sm" id="schedule_list">
-            <tr>
-                <th>件名</th>
-                <th>月日</th>
-                <th>時間</th>
-            </tr>
-            
-            @php
-            $date = "";
-            @endphp
-            
-            @foreach( $schedules as $schedule ) 
+        <div class="m-1" id="schedule_list">
+            <div class="row no-gutters">
+                <div class="col-7  d-none d-lg-block font-weight-bold">件名</div>
+                <div class="col-4  d-none d-lg-block font-weight-bold">日時</div>
+                <hr  class="col-12 d-none d-lg-block m-0 mb-1">
+                
                 @php
-                $style = $schedule->style();
+                $date = "";
                 @endphp
-            
-                <tr class="show_modal_detail_object date_item" data-object_type='schedule' data-object_id={{ $schedule->id }}>
-                    <td style="">
-                        <span>
+                
+                @foreach( $schedules as $schedule ) 
+                    @php
+                    $style = $schedule->style();
+                    @endphp
+                    <div class="object_to_show_detail date_item text-truncate col-7" data-object='schedule' data-object_id={{ $schedule->id }}>
                             @icon( schedule ) {{ $schedule->name }}
-                        </span>
-                    </td>
-                    <td>
-                        @if( $date != $schedule->start->format( 'Y-m-d' )) 
-                            {{ $schedule->start->format( 'n月j日' ) }}【{{ p_date_jp( $schedule->start->format('w') ) }}】               
-                        @endif
-                        @if( $schedule->end->diffInDays( $schedule->start ) >= 1 )
-                            ～{{ $schedule->end->format( 'n月j日' ) }}【{{ p_date_jp( $schedule->end->format('w') ) }}】
-                        @endif
-                    </td>
-                    <td>
+                    </div>
+                    <div class="object_to_show_detail date_item text-truncate col-4" data-object='schedule' data-object_id={{ $schedule->id }}>
+                        {{ $schedule->p_time_for_daily_form() }}
+                        {{--
                         @if( $schedule->all_day ) 
                             終日
                         @else
                             {{ $schedule->start->format( 'G:i' ) }}～ {{ $schedule->end->format( 'G:i' ) }}
                         @endif
-                    </td>
-                </tr>
-            @endforeach
+                        --}}
+                    </div>
+                @endforeach
             </div>
-        </table>
+        </div>
     </div>
 @else
     <div class="col-12">本日の予定はありません</div>

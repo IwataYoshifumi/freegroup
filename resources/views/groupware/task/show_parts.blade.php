@@ -8,13 +8,13 @@ $route_name = Route::currentRouteName();
 <div class="container">
     
     <div class="form-group row">
-        <label for="name" class="col-4 col-form-label text-md-right">件名</label>
-        <div class="col-8">
+        <label for="name" class="col-12 col-md-4 my_label col-form-label text-md-right">件名</label>
+        <div class="col-12 col-md-8">
             {{ $task->name }}
         </div>
     
-        <label for="place" class="col-4 col-form-label text-md-right">タスクリスト</label>
-        <div class="col-8">
+        <label for="place" class="col-12 col-md-4 my_label col-form-label text-md-right">タスクリスト</label>
+        <div class="col-12 col-md-8">
             {{ op( $task->tasklist )->name }}
 
             @if( $tasklist->is_disabled() )
@@ -26,16 +26,16 @@ $route_name = Route::currentRouteName();
             @endif
         </div>
         
-        <label for="name" class="col-4 col-form-label text-md-right">作成者</label>
-        <div class="col-8">
+        <label for="name" class="col-12 col-md-4 my_label col-form-label text-md-right">作成者</label>
+        <div class="col-12 col-md-8">
             {{ $task->creator->dept->name }} {{ $task->creator->name }}
         </div>
         
         @php
             $status_class = ( $task->status == "完了" ) ? "task_finished" : "task_unfinish";
         @endphp
-        <label for="email" class="col-4 col-form-label text-md-right">ステータス</label>
-        <div class="col-8">
+        <label for="email" class="col-12 col-md-4 my_label  col-form-label text-md-right">ステータス</label>
+        <div class="col-12 col-md-8">
             <span class="col m-1 {{ $status_class }}" id="task_status">{{ $task->status }}</span>
 
             @can( 'update', $task )
@@ -85,14 +85,14 @@ $route_name = Route::currentRouteName();
             
         </div>
     
-        <label for="email" class="col-4 col-form-label text-md-right">期日</label>
-        <div class="col-8">
+        <label for="email" class="col-12 col-md-4 my_label  col-form-label text-md-right">期日</label>
+        <div class="col-12 col-md-8">
             {{ $task->p_due() }}
         </div>
 
         @if( $task->status == "完了" )        
-            <label for="email" class="col-4 col-form-label text-md-right">完了日時</label>
-            <div class="col-8">
+            <label for="email" class="col-12 col-md-4 my_label  col-form-label text-md-right">完了日時</label>
+            <div class="col-12 col-md-8">
                 {{ op( $task->completed_time )->format( 'Y-m-d H:i' ) }} 　完了者：{{ op( op($task->complete_user)->dept)->name }} {{ op( $task->complete_user )->name }}
             </div>
         @endif
@@ -100,8 +100,8 @@ $route_name = Route::currentRouteName();
         
     
         @if( count( $customers ))
-            <label for="customers" class="col-4 col-form-label text-md-right">関連顧客</label>
-            <div class="col-8">
+            <label for="customers" class="col-12 col-md-4 my_label  col-form-label text-md-right">関連顧客</label>
+            <div class="col-12 col-md-8">
                 @foreach( $customers as $c )
                     <div class="col-12">
                         <a href="{{ route( 'customer.show', [ 'customer' => $c->id ] ) }}" class="btn btn_icon uitooltip" title="詳細"> @icon( address-book ) </a>
@@ -112,8 +112,8 @@ $route_name = Route::currentRouteName();
         @endif
     
         @if( count( $users ))
-            <label for="customers" class="col-4 col-form-label text-md-right">関連社員</label>
-            <div class="col-8">
+            <label for="customers" class="col-12 col-md-4 my_label  col-form-label text-md-right">関連社員</label>
+            <div class="col-12 col-md-8">
                 @foreach( $users as $u )
                     <div class="col-12">
                         <a href="{{ route( 'groupware.user.show', [ 'user' => $u->id ] )}}" class="btn btn_icon"> @icon( user ) </a>
@@ -125,8 +125,8 @@ $route_name = Route::currentRouteName();
 
         {{--    
         @if( count( $schedules )) 
-                <label for="customers" class="col-4 col-form-label text-md-right">関連予定</label>
-                <div class="col-8">
+                <label for="customers" class="col-12 col-md-4 my_label  col-form-label text-md-right">関連予定</label>
+                <div class="col-12 col-md-8">
                     @foreach( $schedules as $schedule )
                         <div class="col-12">
                             <a href="{{ route( 'groupware.schedule.show', [ 'schedule' => $schedule->id ] ) }}" class="btn btn-sm btn-outline-secondary">
@@ -139,8 +139,8 @@ $route_name = Route::currentRouteName();
         --}}
     
         @if( count( $files ))
-            <label for="mobile" class="col-4 col-form-label text-md-right">添付ファイル</label>
-            <div class="col-8">
+            <label for="mobile" class="col-12 col-md-4 my_label  col-form-label text-md-right">添付ファイル</label>
+            <div class="col-12 col-md-8">
                 @foreach( $files as $file ) 
                     <div class="col-12">
                         <div class="row">
@@ -162,8 +162,8 @@ $route_name = Route::currentRouteName();
             </div>
         @endif
     
-        <label for="mobile" class="col-4 col-form-label text-md-right">備考</label>
-        <div class="col-8">
+        <label for="mobile" class="col-12 col-md-4 my_label  col-form-label text-md-right">備考</label>
+        <div class="col-12 col-md-8">
             <pre>{{ $task->memo }}</pre>
         </div>
 

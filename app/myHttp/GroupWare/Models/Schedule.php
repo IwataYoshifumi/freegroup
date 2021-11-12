@@ -242,9 +242,18 @@ class Schedule extends Model {
 
         if( $num_day >= 2 ) {
             if( $this->all_day ) {
-                return "終日" . $this->end->format( ' 【 ～ Y年 n月 j日 】');
+                return "終日" . $this->end->format( ' 【 ～n月j日 】');
             } else {
-                return $this->start->format( 'H:i' ) . '～' . $this->end->format( 'H:i' ) . $this->end->format( ' 【 ～ Y年 n月 j日 】');   
+                $today = Carbon::today();
+                if( $today->diffInDays( $this->end ) == 0 ) {
+                    return $this->start->format( 'H:i' ) . '～' . $this->end->format( 'H:i' ) . "（今日まで）";   
+                } else {
+                    if( $this->end->gt( $today )) {
+                        return $this->end->format( '終日（～n月j日）');   
+                    } else {
+                        return $this->start->format( 'Y-n-j H:i' ) . '～' . $this->end->format( 'Y-n-j H:i' );
+                    }
+                }
             }
         }
         if( $this->all_day ) {
@@ -252,7 +261,21 @@ class Schedule extends Model {
         } else {
             return $this->start->format( 'H:i' ) . '～' . $this->end->format( 'H:i' );   
         }
+    }
 
+    public function p_time_for_index() {
+
+        $num_day = $this->getNumDates();
+
+        if( $num_day >= 2 ) {
+            return $this->start->format( 'n月j日') . '～'. $this->end->format( 'n月j日' );
+        } else {
+            if( $this->all_day ) {
+                return $this->start->format( 'n月j日');
+            } else {
+                return $this->start->format( 'n月j日 H:i' ) . '～' . $this->end->format( 'H:i' );
+            }
+        }
     }
     
     public function p_end_time() {
@@ -287,6 +310,7 @@ class Schedule extends Model {
             return $this->p_time_for_montly_form();
 
         } elseif( $form_type == 'index' ) {
+            return $this->p_time_for_index();
 
         } elseif( $form_type == 'detail' ) {
             

@@ -57,8 +57,8 @@ foreach( $columns as $column ) {
 
             @foreach( $columns as $column ) 
                 @if( in_array( $column, $show, true ))
-                    <div class="col-3 d-{{ $bk }}-none">{{ $columns_name[$column] }}</div>
-                    <div class="col-9 col-{{ $bk }}  text-truncate">{{ $row->$column }}</div>
+                    <div class="col-3 d-{{ $bk }}-none text-truncate">{{ $columns_name[$column] }}</div>
+                    <div class="col-9 col-{{ $bk }}    text-truncate uitooltip" title="{{ $row->$column }}">{{ $row->$column }}</div>
                 @endif
             @endforeach
             <div class="col-11 d-{{ $bk }}-none border border-secondary container mt-1 mb-1"></div>

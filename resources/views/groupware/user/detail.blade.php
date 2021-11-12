@@ -68,35 +68,48 @@ if_debug( $tasks, $returns );
 @endphp
 
 @section('content')
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-12 col-md-8">
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8">
 
             @include( 'layouts.flash_message' )
             @include( 'layouts.error' )
 
             @include( 'groupware.user.detail_parts' )
             
-            <div class="card-body text-center">
-                <div class="h2 d-none d-lg-block">
-                   今日の日付： {{ $today->format( 'Y年n月j日'  ) }} 【{{ p_date_jp( $today->format('w') ) }}】
-                </div>
+            <div class="h2 d-none d-lg-block">
+               今日の日付： {{ $today->format( 'Y年n月j日'  ) }} 【{{ p_date_jp( $today->format('w') ) }}】
             </div>
-            
+
+            <!--
+              --
+              -- 本日の予定
+              --
+              -->
             @include( 'groupware.user.detail_schedules' )
+
+            <!--
+              --
+              -- 本日のタスク
+              --
+              -->
             @include( 'groupware.user.detail_tasks' )
-            
+
             
             {{--
             @include( 'groupware.user.detail_reports' )
             --}}
 
-
         </div>
     </div>
 </div>
-
-@include( 'groupware.modal_window.include_detail_objects' )
+<!-- 
+  --
+  -- スケジュール・タスク詳細表示ダイアログ 
+  --
+  -->
+@include( 'groupware.show_all.dialog.show_detail' )
 
 {{ ScreenSize::rendarScriptToGetScreenSize() }}
 

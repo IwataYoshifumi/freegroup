@@ -23,9 +23,9 @@ $array_role_select = ACL::get_array_roles_for_select();
 
 {{ Form::open( [ 'route' => Route::currentRouteName(), 'method' => 'GET', 'id' => 'search_form' ] ) }}
     @csrf
-    <div class="border border-dark m-1">
-        <div class="row">        
-            <div class="col-3 p-3 m-2">
+    <div class="border border-dark container-fluid">
+        <div class="row no-gutters">        
+            <div class="col-12 col-md m-1">
                 {{-- 
                   --
                   -- User_id 
@@ -39,10 +39,13 @@ $array_role_select = ACL::get_array_roles_for_select();
                     <input type='hidden' name='find[user_id]' value={{ $user->id }}>
                 @endif
             </div>
-            <div class="col-8 p-3 m-2">
-                <div class='row'>
+            <div class="col-12 col-md-8 m-1">
+                <div class='row no-gutters'>
                     {{-- アクセス権限 --}}
+
+                    
                     <fieldset class="border border-dark col-12">
+                        <div class="m-1">検索対象の権限</div>
                         @foreach( $array_role_select as $role => $value )
                             @if( empty( $role )) @continue @endif
                             @php
@@ -62,11 +65,9 @@ $array_role_select = ACL::get_array_roles_for_select();
                     @endif
                 </div>
             </div>            
-    
-        </div>
-        <div class="col-12 m-2">
-            <a class="btn btn-secondary text-white m-1" id="submit_btn">検索</a>
-            
+            <div class="col-12 m-1">
+                <a class="btn btn-secondary text-white m-1" id="submit_btn">検索</a>
+            </div>
         </div>
     </div>
 {{ Form::close() }}

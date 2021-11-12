@@ -95,16 +95,28 @@ $reports = $returns['reports'];
                     @include( 'layouts.flash_message' )
                     @include( 'layouts.error' )
 
-
                     @include( 'groupware.customer.detail_parts' )
-                    
 
                 </div>
             </div>
-            
+
+            <!--
+              --
+              -- スケジュール
+              --
+              -->
             @include( 'groupware.customer.detail_schedules' )
+            <!--
+              --
+              -- タスク
+              --
+              -->
             @include( 'groupware.customer.detail_tasks'     )
-            
+            <!--
+              --
+              -- 日報
+              --
+              -->
             @include( 'groupware.customer.detail_reports' )
 
             <div class="card-body">
@@ -116,6 +128,11 @@ $reports = $returns['reports'];
     </div>
 </div>
 
-@include( 'groupware.modal_window.include_detail_objects' )
+<!--
+  --
+  -- 詳細表示ダイヤログ
+  --
+  -->
+@include( 'groupware.show_all.dialog.show_detail' )
 
 @endsection

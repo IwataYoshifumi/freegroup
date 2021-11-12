@@ -44,7 +44,6 @@ $route_name = Route::currentRouteName();
             @include( 'groupware.calendar.menu' )
             <div class="card">
                 <div class="card-header">{{ config( $route_name ) }}</div>
-
                 <div class="card-body">
                     
                     @if( $errors->count() )
@@ -59,52 +58,44 @@ $route_name = Route::currentRouteName();
                 
                     <form method="POST" action="{{ url()->full() }}">
                         @csrf
-                        <div class="form-group row">
-                            <label for="name" class="col-md-4 col-form-label text-md-right m-1">カレンダー名</label>
+                        <div class="form-group row no-gutters">
+                            <label for="name" class="col-12 col-md-4 my_label text-md-right">カレンダー名（管理者設定）</label>
                             <div class="col-md-6">
                                 {{ Form::text( 'name', old( 'name', optional( $calendar )->name ), ['class' => 'form-control m-1', ] ) }}
                                 
                                 @if( $route_name == 'groupware.calendar.update' )
-                                    <label for='change_name_all_users' class='m-1'>各ユーザの表示名を変更する</label>
+                                    <label for='change_name_all_users' class='m-1'>各ユーザのカレンダー表示名も一括変更する</label>
                                     {{ Form::checkbox( 'change_name_all_users', 1, 0, [ 'id' => 'change_name_all_users' ] ) }}
-                                    <hr>
                                 @endif
-                                
                             </div>
                             
-                            <label for="memo" class="col-md-4 col-form-label text-md-right m-1">備考</label>
-                            <div class="col-md-6">
-                                {{ Form::text( 'memo', old( 'memo',  optional( $calendar )->memo ), ['class' => 'form-control m-1' ] ) }}
-                            </div>
-                            
-                            <label for="memo" class="col-md-4 col-form-label text-md-right m-1">アクセスリスト</label>
+                            <label for="memo" class="col-12 col-md-4 my_label text-md-right">アクセスリスト</label>
                             <div class="col-md-6">
                                 {{ Form::select( 'access_list_id', $access_lists, old( 'access_list_id', $access_list->id ),  [ 'class' => 'form-control m-1' ] ) }}
                             </div>
                             
-                            <label for="memo" class="col-md-4 col-form-label text-md-right m-1">カレンダー公開種別</label>
+                            <label for="memo" class="col-12 col-md-4 my_label text-md-right">カレンダー公開種別</label>
                             <div class="col-md-6">
                                 {{ Form::select( 'type', $calendar_types, old( 'type', $calendar->type ),  [ 'class' => 'form-control m-1' ] ) }}
                             </div>
                             
-                            <label for="memo" class="col-md-4 col-form-label text-md-right m-1">スケジュール変更権限　初期値</label>
+                            <label for="memo" class="col-12 col-md-4 my_label text-md-right">予定変更権限 初期値</label>
                             <div class="col-md-6">
                                 {{ Form::select( 'default_permission', $permissions, $calendar->default_permission, [ 'class' => 'form-control m-1' ] ) }}
                                 @if( $route_name == 'groupware.calendar.update' )
                                     <label for='init_users_default_permission' class='m-1'>各ユーザの変更権限　初期値を変更する</label>
                                     {{ Form::checkbox( 'init_users_default_permission', 1, 0, ['id' => 'init_users_default_permission' ] ) }}
-                                    <hr>
                                 @endif
                             </div>
                             
                             @if( $route_name == "groupware.calendar.update" )
-                                <label for="memo" class="col-md-4 col-form-label text-md-right m-1">新規予定追加</label>
+                                <label for="memo" class="col-12 col-md-4 my_label text-md-right">新規予定追加</label>
                                 <div class="col-md-6">
                                     <label for="not_use">今後、新規の予定作成はしない</label>
                                     {{ Form::checkbox( 'not_use', 1, old( 'not_use', $calendar->not_use ),  [ 'class' => 'form-control m-1', 'id' => 'not_use' ] ) }}
                                 </div>
                                 
-                                <label for="memo" class="col-md-4 col-form-label text-md-right m-1">無効化</label>
+                                <label for="memo" class="col-12 col-md-4 my_label text-md-right">無効化</label>
                                 <div class="col-md-6">
                                     <label for="disabled">無効化する</label>
                                     {{ Form::checkbox( 'disabled', 1, old( 'disabled', $calendar->disabled ),  [ 'class' => 'form-control m-1', 'id' => 'disabled' ] ) }}
@@ -112,7 +103,7 @@ $route_name = Route::currentRouteName();
                                 
                                 @if( old( 'disabled' )) 
                                     
-                                    <label for="memo" class="col-md-4 col-form-label text-md-right m-1">カレンダー無効化の再確認</label>
+                                    <label for="memo" class="col-12 col-md-4 my_label text-md-right m-1">カレンダー無効化の再確認</label>
                                     <div class="col-md-6">
                                         <label for="comfirm-disabled_1">無効化後は、登録済みの予定も変更できません。</label>
                                         {{ Form::checkbox( 'comfirm_disabled[0]', 1, false,  [ 'class' => 'form-control m-1', 'id' => 'comfirm-disabled_1' ] ) }}
@@ -122,6 +113,12 @@ $route_name = Route::currentRouteName();
                                     </div>
                                 
                                 @endif
+                                
+                                <label for="memo" class="col-12 col-md-4 my_label text-md-right">備考</label>
+                                <div class="col-md-6">
+                                    {{ Form::textarea( 'memo', old( 'memo',  optional( $calendar )->memo ), ['class' => 'form-control m-1' ] ) }}
+                                </div>
+                                
                                 
                                 @push( 'javascript' )
                                     <script>

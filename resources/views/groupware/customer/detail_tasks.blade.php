@@ -8,38 +8,31 @@
     <div class="card">
         <div class="card-header">
             <div class="row">
-                <span class="col-5 btn btn_icon text-left" id="btn_toggle_task_item">@icon( caret-square-down )  直近１年のタスク</span>
-                <span class="col-1 btn btn_icon ml-auto" onClick="location.reload();">@icon( sync ) </span>
+                <span class="col   btn btn_icon text-left text-truncate" id="btn_toggle_task_item">@icon( caret-square-down ) 直近１年のタスク</span>
+                <span class="col-1 btn btn_icon ml-auto mr-2" onClick="location.reload();">@icon( sync ) </span>
             </div>
             <script>
                 $('#btn_toggle_task_item').on( 'click', function() {
                      $('#task_list').toggle( 'blind', 100 );
                 });
-                
-                
             </script>
-            
         </div>
         <div class="container">
-            <table class="card-body m-2 table table-border table-sm" id="task_list">
-                <tr>
-                    <th>タスク名</th>
-                    <th>期日</th>
-                    <th>ステータス</th>
-                </tr>
-                
-                @php
-                $date = "";
-                @endphp
-                
-                @foreach( $tasks as $task ) 
+            <div id="task_list" class="table m-2">
+                <div class="row">
+                    <div class="d-none d-lg-block col-6 text-left text-truncate font-weight-bold">タスク名</div>
+                    <div class="d-none d-lg-block col-6 text-left text-truncate font-weight-bold">期日</div>
+                    <hr  class="d-none d-lg-block col-12">
+                    
                     @php
-                    $border_today = 0;
-                    $style = $task->style();
+                    $date = "";
                     @endphp
-                
-                    <tr class="show_modal_detail_object date_item" data-object_type='task' data-object_id={{ $task->id }}>
+                    
+                    @foreach( $tasks as $task ) 
                         @php
+                        $border_today = 0;
+                        $style = $task->style();
+
                         $extremly_due_exceed = "";
                         $due = $task->due_time->format( 'n月j日' );
 
@@ -59,25 +52,23 @@
                         } else {
                             $due_style = "";
                         }
+                        $task_style = ( $task->status == "完了" ) ? "text-decoration:line-through" : "";
+                        
                         @endphp
-                        <td style="">
+                        <div class="col-6 btn text-left text-truncate object_to_show_detail" data-object='task' data-object_id={{ $task->id }} style="{{ $task_style }}">
                             @if( $task->status == "完了" )
                                 @icon( check-circle )
                             @else
                                 @icon( check-circle-r )
                             @endif
                              {{ $task->name }}
-                        </td>
-                        <td class="">
-                            {{ $due }}【{{ p_date_jp( $task->due_time->format('w') ) }}】
-                        </td>
-                        <td>
-                            {{ $task->status }}
-                        </td>
-                    </tr>
-                @endforeach
+                        </div>
+                        <div class="col-6 btn text-left text-truncate object_to_show_detail" data-object='task' data-object_id={{ $task->id }}>
+                            {{ $due }}
+                        </div>
+                    @endforeach
                 </div>
-            </table>
+            </div>
         </div>
     </div>
 @else

@@ -349,6 +349,48 @@ BootstrapのＣＳＳ定義集
     z-index: 2000;
 }
 
+.my_label {
+    font-size: inherit;
+}
+
+.my_item {
+    font-size: inherit;
+}
+
+@media ( max-width:576px ) {
+    .my_label {
+        font-size: x-small;
+        background-color: #efefef;
+    }
+
+
+    /*.my_item {*/
+    /*    padding-left: 25px;*/
+    /*}*/
+}
+
+/* sm */
+
+
+/* md */
+
+.border-none {
+    border-color: transparent !important;
+}
+
+@media (min-width: 768px) {
+
+    .border-md-none {
+        border-color: transparent !important;
+    }
+    
+    .border-md-dark {
+        border-color: #343a40 !important;;
+    }
+}
+
+/* lg */
+
 /*
 
 チェックボックスのON・ＯFF表示CSS
@@ -422,3 +464,4 @@ https://webparts.cman.jp/button/onoff/
   transform      : translateX(37px);    /* 丸も右へ移動       */
   background     : #1a1aff;             /* カーソルタブの背景 */
 }
+

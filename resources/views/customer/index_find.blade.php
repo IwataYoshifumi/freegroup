@@ -30,7 +30,7 @@ use App\Models\Customer;
                 {{ Form::text( 'find[email]', old( 'find[email]', ( isset( $find['email'] )) ? $find['email'] : null  ), 
                                 ['class' => 'form-control col-lg-4 p-1 clearfix', 'placeholder' => 'メール' ] ) }}
             </div>
-            <div class="row w-90 container m-lg-1 p-lg-1 ">
+            <div class="row w-90 container m-lg-1 p-lg-1">
                 <div class="col-3 d-none d-lg-block p-1">都道府県</div>
                 <div class="col-3 d-none d-lg-block p-1">市区町村</div>
                 <div class="col-3 d-none d-lg-block p-1">町名番地</div>
@@ -91,7 +91,9 @@ use App\Models\Customer;
                     @php
                         ( in_array( $item, $show, true )) ? $checked = 1 : $checked = 0 ;
                     @endphp
-                    <div class='col'>{{ Form::checkbox( "show[".$item."]", $item, $checked ) }} {{ optional( config( 'customer.columns_name'))[$item] }}</div>
+                    <label for="show_{{ $item }}">{{ optional( config( 'customer.columns_name'))[$item] }}</label>
+                    {{ Form::checkbox( "show[".$item."]", $item, $checked, [ 'id' => "show_". $item, 'class' => 'checkboxradio' ] ) }}
+                    
                 @endforeach
             </div>
         </div>
@@ -111,17 +113,20 @@ use App\Models\Customer;
                     //$sort_items = config( 'customer.columns.name' );
                 @endphp
     
-                @for( $i = 0; $i <= 2; $i++ ) 
+                @for( $i = 0; $i <= 2; $i++ )
+                    @php $j = $i + 1; @endphp
+                    <div class="d-none d-lg-block col-2 text-right">ソート順{{ $i + 1 }}：</div>
                     {{ Form::select( "sort[$i]", $sort_items, old( "sort[".$i."]", ( ! empty( $sort[$i] )) ? $sort[$i] : null ),
-                                    [ 'class' => 'form-control col-3' ] ) }}  
+                                    [ 'class' => 'form-control col-7 col-lg-3' ] ) }}  
 
-                @endfor
-                <div class="col-12"></div>
-                @for( $i = 0; $i <= 2; $i++ ) 
                     {{ Form::select( "asc_desc[$i]", config( 'constant.asc_desc' ), old( "asc_desc[".$i."]", ( ! empty( $asc_desc[$i] )) ? $asc_desc[$i] : null ),
-                                    [ 'class' => 'form-control col-3' ] ) }}  
+                                    [ 'class' => 'form-control col-4 col-lg-2'] ) }}  
+                    
+                    <div class="col-12 d-none d-lg-block m-1"></div>
 
                 @endfor
+
+
             
             </div>
         </div>
