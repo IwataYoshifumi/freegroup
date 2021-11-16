@@ -8,8 +8,8 @@ $route_name = Route::currentRouteName();
 <div class="container">
     
     <div class="form-group row">
-        <label for="name" class="col-12 col-md-4 my_label col-form-label text-md-right">件名</label>
-        <div class="col-12 col-md-8">
+        <label for="name" class="col-12 col-sm-4 my_label col-form-label text-md-right">件名</label>
+        <div class="col-12 col-sm-8">
             {{ $task->name }}
         </div>
     

@@ -10,18 +10,18 @@ use App\myHttp\GroupWare\Models\User;
     <div class="col-12">&nbsp;</div>
     
     <div class="form-group row">
-        <div for="name" class="col-12 col-md-4 my_label text-left">件名</div>
-        <div class="col-12 col-md-8 text-left text-truncate">
+        <div for="name" class="col-12 col-sm-4 my_label text-left">件名</div>
+        <div class="col-12 col-sm-8 text-left text-truncate">
             {{ $report->name }}
         </div>
     
-        <div class="col-12 col-md-4 my_label text-left">場所</div>
-        <div class="col-12 col-md-8 text-left">
+        <div class="col-12 col-sm-4 my_label text-left">場所</div>
+        <div class="col-12 col-sm-8 text-left">
             {{ $report->place }}
         </div>
     
-        <div class="col-12 col-md-4 my_label text-left">日報リスト</div>
-        <div class="col-12 col-md-8 text-left">
+        <div class="col-12 col-sm-4 my_label text-left">日報リスト</div>
+        <div class="col-12 col-sm-8 text-left">
             {{ op( $report->report_list )->name }}
 
             @if( $report_list->is_disabled() )
@@ -34,14 +34,14 @@ use App\myHttp\GroupWare\Models\User;
         </div>
         
     
-        <div for="email" class="col-12 col-md-4 my_label text-left">日時</div>
-        <div class="col-12 col-md-8 text-left">
+        <div for="email" class="col-12 col-sm-4 my_label text-left">日時</div>
+        <div class="col-12 col-sm-8 text-left">
             {{ $report->p_time() }}
         </div>
     
         @if( count( $customers ))
-            <div for="customers" class="col-12 col-md-4 my_label text-left">関連顧客</div>
-            <div class="col-12 col-md-8">
+            <div for="customers" class="col-12 col-sm-4 my_label text-left">関連顧客</div>
+            <div class="col-12 col-sm-8">
                 @foreach( $customers as $c )
                     <div class="w-100">
                         <a href="{{ route( 'customer.show', [ 'customer' => $c->id ] ) }}" class="btn uitooltip" title="詳細" target="_top"> @icon( address-book ) </a>
@@ -52,8 +52,8 @@ use App\myHttp\GroupWare\Models\User;
         @endif
     
         @if( count( $users ))
-            <div for="customers" class="col-12 col-md-4 my_label text-left">関連社員</div>
-            <div class="col-12 col-md-8">
+            <div for="customers" class="col-12 col-sm-4 my_label text-left">関連社員</div>
+            <div class="col-12 col-sm-8">
                 @foreach( $users as $u )
                     <div class="w-100">
                         <a href="{{ route( 'groupware.user.show', [ 'user' => $u->id ] )}}" class="btn" target="_top"> @icon( user ) </a>
@@ -64,8 +64,8 @@ use App\myHttp\GroupWare\Models\User;
         @endif
     
         @if( count( $schedules )) 
-                <div for="customers" class="col-12 col-md-4 my_label text-left">関連予定</div>
-                <div class="col-12 col-md-8">
+                <div for="customers" class="col-12 col-sm-4 my_label text-left">関連予定</div>
+                <div class="col-12 col-sm-8">
                     @foreach( $schedules as $schedule )
                         <div class="w-100">
                             <a href="{{ route( 'groupware.schedule.show', [ 'schedule' => $schedule->id ] ) }}" class="btn btn-sm btn-outilne-secondary">
@@ -77,8 +77,8 @@ use App\myHttp\GroupWare\Models\User;
         @endif
     
         @if( count( $files ))
-            <div class="col-12 col-md-4 my_label text-left">添付ファイル</div>
-            <div class="col-12 col-md-8">
+            <div class="col-12 col-sm-4 my_label text-left">添付ファイル</div>
+            <div class="col-12 col-sm-8">
                 @foreach( $files as $file ) 
                     <div class="col-12">
                         <div class="row">

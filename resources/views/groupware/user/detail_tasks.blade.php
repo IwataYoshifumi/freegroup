@@ -58,7 +58,7 @@
                     <div class="object_to_show_detail date_item text-truncate col-7" data-object='task' data-object_id={{ $task->id }}>
                             @icon( check ) {{ $task->name }}
                     </div>
-                    <div class="object_to_show_detail date_item text-truncate col-4 {{ $due_style }}" data-object='task' data-object_id={{ $task->id }}">
+                    <div class="object_to_show_detail date_item text-truncate col-4 {{ $due_style }}" data-object='task' data-object_id={{ $task->id }}>
                         {{ $due }}【{{ p_date_jp( $task->due_time->format('w') ) }}】
                     </div>
                 @endforeach

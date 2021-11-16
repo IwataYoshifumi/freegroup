@@ -29,7 +29,7 @@ $dept_user = $returns['dept_user'];
 setlocale(LC_ALL, 'ja_JP.UTF-8');
 #dd( $request->all() );
 
-#if_debug( $request->all() );
+if_debug( $request->all(),$returns );
 
 $j = 0;
 @endphp

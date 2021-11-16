@@ -1,3 +1,13 @@
+@php
+use Illuminate\Support\Arr;
+
+use App\myHttp\GroupWare\Models\Calendar;
+use App\myHttp\GroupWare\Models\TaskList;
+
+#if_debug( $request->all(), $request, $request->calendars, $request->tasklists, $returns, Arr::collapse( [ op( $returns )['list_of_calendars'] ,op( $returns )['list_of_tasklists'] ] ) );
+
+@endphp
+
 <!--
   --
   -- 日次表示ダイヤログ
@@ -11,6 +21,8 @@
     <iframe id="iframe_for_daily_modal" style="width: 100%; height:100%" >
     </iframe>
 </div>
+
+
 
 <!--<div class="loading">@icon( loading )</div>-->
 
@@ -34,21 +46,45 @@
     $loop = 0;
     #$requested_url = "";
     // $requested_url = route( 'groupware.show_all.daily' ) . "?";
+
     $requested_url = route( 'groupware.show_all.dialog.daily' ) . "?";
-    foreach( request()->all() as $key => $values ) {
-        if( $key == "base_date" ) { continue; }
 
-        if( is_array( $values )) {
-            foreach( $values as $i => $value ) {
+    if( count( $request->all() )) {
+        foreach( request()->all() as $key => $values ) {
+            if( $key == "base_date" ) { continue; }
+    
+            if( is_array( $values )) {
+                foreach( $values as $i => $value ) {
+                    if( $loop ) { $requested_url .= "&"; }
+                    $requested_url .= $key . '[]=' . $value;
+                }
+            } else {
                 if( $loop ) { $requested_url .= "&"; }
-                $requested_url .= $key . '[]=' . $value;
+    
+                $requested_url .= $key . "=" . $values;
             }
-        } else {
-            if( $loop ) { $requested_url .= "&"; }
-
-            $requested_url .= $key . "=" . $values;
+            $loop++;
         }
-        $loop++;
+    } else {
+        //　メニューから月表示した時にカレンダーやタクスクリストがないため
+        // 日次表示が正しくされない問題を修正
+        //
+        if( count( op( $returns )['list_of_calendars'] ) or count( op( $returns )['list_of_tasklists'] )) {
+            $loop = 0;
+            foreach( Arr::collapse( [ op( $returns )['list_of_calendars'] ,op( $returns )['list_of_tasklists'] ] ) as $object ) {
+                if( $loop ) { $requested_url .= "&"; }
+                #if_debug( $object );
+                if( $object instanceof Calendar ) { 
+                    $requested_url .= 'calendars[]=' . $object->id;
+                } elseif( $object instanceof TaskList ) {
+                    $requested_url .= 'tasklists[]=' . $object->id;
+                } else {
+                    continue;
+                }
+                $loop++;
+            }
+        }
+
     }
     #$requested_url = route( 'groupware.show_all.daily' ) . "?" . $requested_url;
     @endphp

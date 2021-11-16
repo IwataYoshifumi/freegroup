@@ -5,25 +5,24 @@ use App\myHttp\GroupWare\Models\User;
 @endphp
 
 <div class="container">
-    
     <div class="row">
-        <label for="name" class="col-12 col-md-4 my_label col-form-label text-md-right">件名</label>
-        <div class="col-12 col-md-8">
+        <label for="name" class="col-12 col-sm-4 my_label col-form-label text-md-right">件名</label>
+        <div class="col-12 col-sm-8">
             {{ $schedule->name }}
         </div>
     
-        <label for="place" class="col-12 col-md-4 my_label col-form-label text-md-right">場所</label>
-        <div class="col-12 col-md-8">
+        <label for="place" class="col-12 col-sm-4 my_label col-form-label text-md-right">場所</label>
+        <div class="col-12 col-sm-8">
             {{ $schedule->place }}
         </div>
         
-        <label for="place" class="col-12 col-md-4 my_label col-form-label text-md-right">作成者</label>
-        <div class="col-12 col-md-8">
+        <label for="place" class="col-12 col-sm-4 my_label col-form-label text-md-right">作成者</label>
+        <div class="col-12 col-sm-8">
             {{ $schedule->user->dept->name }} {{ $schedule->user->name }}
         </div>
     
-        <label for="place" class="col-12 col-md-4 my_label col-form-label text-md-right">カレンダー</label>
-        <div class="col-12 col-md-8">
+        <label for="place" class="col-12 col-sm-4 my_label col-form-label text-md-right">カレンダー</label>
+        <div class="col-12 col-sm-8">
             {{ op( $schedule->calendar )->name }}
 
             @if( $calendar->is_disabled() )
@@ -37,14 +36,14 @@ use App\myHttp\GroupWare\Models\User;
             @endif
         </div>
     
-        <label for="email" class="col-12 col-md-4 my_label col-form-label text-md-right">日時</label>
-        <div class="col-12 col-md-8">
+        <label for="email" class="col-12 col-sm-4 my_label col-form-label text-md-right">日時</label>
+        <div class="col-12 col-sm-8">
             {{ $schedule->p_dateTime() }}
         </div>
     
         @if( count( $customers ))    
-            <label for="customers" class="col-12 col-md-4 my_label col-form-label text-md-right">関連顧客</label>
-            <div class="col-12 col-md-8">
+            <label for="customers" class="col-12 col-sm-4 my_label col-form-label text-md-right">関連顧客</label>
+            <div class="col-12 col-sm-8">
                 @foreach( $customers as $c )
                     <div class="col-12">
                         <a href="{{ route( 'customer.show', [ 'customer' => $c->id ] ) }}" class="btn btn-sm btn-outline-secondary">詳細</a>
@@ -55,8 +54,8 @@ use App\myHttp\GroupWare\Models\User;
         @endif
     
         @if( count( $users ))
-            <label for="customers" class="col-12 col-md-4 my_label col-form-label text-md-right">関連社員</label>
-            <div class="col-12 col-md-8">
+            <label for="customers" class="col-12 col-sm-4 my_label col-form-label text-md-right">関連社員</label>
+            <div class="col-12 col-sm-8">
                 @foreach( $users as $u )
                     <div class="col-12">
                         【 {{ $u->dept->name }} 】{{ $u->name }} {{ $u->grade }}
@@ -66,8 +65,8 @@ use App\myHttp\GroupWare\Models\User;
         @endif
     
         @if( count( $reports )) 
-            <label for="customers" class="col-12 col-md-4 my_label col-form-label text-md-right">関連日報</label>
-            <div class="col-12 col-md-8">
+            <label for="customers" class="col-12 col-sm-4 my_label col-form-label text-md-right">関連日報</label>
+            <div class="col-12 col-sm-8">
                 @foreach( $reports as $r )
                     @php
                         $route_to_report = route( 'groupware.report.show', [ 'report' => $r->id ] );
@@ -82,8 +81,8 @@ use App\myHttp\GroupWare\Models\User;
         @endif
     
         
-        <label for="mobile" class="col-12 col-md-4 my_label col-form-label text-md-right">添付ファイル</label>
-        <div class="col-12 col-md-8">
+        <label for="mobile" class="col-12 col-sm-4 my_label col-form-label text-md-right">添付ファイル</label>
+        <div class="col-12 col-sm-8">
             @foreach( $files as $file ) 
                 <div class="col-12">
                     <div class="row">
@@ -105,14 +104,14 @@ use App\myHttp\GroupWare\Models\User;
         </div>
     
     
-        <label for="mobile" class="col-12 col-md-4 my_label col-form-label text-md-right">備考</label>
-        <div class="col-12 col-md-8">
+        <label for="mobile" class="col-12 col-sm-4 my_label col-form-label text-md-right">備考</label>
+        <div class="col-12 col-sm-8">
             <pre>{{ $schedule->memo }}</pre>
         </div>
         
         @if( optional( $schedule )->google_calendar_event_id )
-            <label for="mobile" class="col-12 col-md-4 my_label col-form-label text-md-right">Google Calendar Event ID</label>
-            <div class="col-12 col-md-8">
+            <label for="mobile" class="col-12 col-sm-4 my_label col-form-label text-md-right">Google Calendar Event ID</label>
+            <div class="col-12 col-sm-8">
                 {{ $schedule->google_calendar_event_id }}
             </div>
         @endif

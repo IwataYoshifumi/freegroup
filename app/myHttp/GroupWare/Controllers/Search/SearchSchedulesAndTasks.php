@@ -772,7 +772,7 @@ class SearchSchedulesAndTasks {
         }
         
         
-        if_debug( $returns );
+        #if_debug( $returns );
         return $returns;
     }
     
@@ -907,7 +907,7 @@ class SearchSchedulesAndTasks {
         // ksort( $returns['time_for_daily' ] );
         // dd( $returns['time_for_daily']);
 
-        if_debug( $returns );
+        #if_debug( $returns );
         // dd( $returns );
 
         return $returns;
