@@ -7,7 +7,7 @@ use App\myHttp\GroupWare\Models\User;
     @can( 'create', User::class )
         <a class="btn btn-primary col-2 m-1" href="{{ route( 'groupware.user.create' ) }}">新規　社員登録</a> 
     @endcan
-    <a class="btn btn-outline-secondary col-2 m-1" href="{{ route( 'groupware.user.index' ) }}">社員一覧</a>
+    <a class="d-none d-sm-block btn btn-outline-secondary col-2 m-1" href="{{ route( 'groupware.user.index' ) }}">社員一覧</a>
     
     @if( auth( 'admin' )->check() )
         @php

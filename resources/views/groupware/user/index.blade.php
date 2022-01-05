@@ -22,7 +22,6 @@ use App\User;
             <div class="card">
                 <div class="card-header">{{ config( Route::currentRouteName() ) }}</div>
 
-
                 <div class="card-body">
                     @include( 'layouts.flash_message' )
                     @include( 'layouts.error' )
@@ -30,50 +29,54 @@ use App\User;
                     @include( 'groupware.user.index_find' )
                     <br>
 
-                    <table class="table table-border table-sm">
-                        <tr>
-                            <th>詳細</th>
-                            @if( isset( $show['dept_id'] )) <th>部署</th> @endif
-                            @if( isset( $show['grade']   )) <th>役職</th> @endif
-                            <th>名前</th>
-                            @if( isset( $show['email']   )) <th>メール</th> @endif
-                            @if( isset( $show['retired'] )) <th>退職</th>   @endif
-                        </tr>
-                        @foreach( $users as $user )
-                            @php
-                                $show_route = route( 'groupware.user.show', [ 'user' => $user->id ] );
-                                $edit_route = route( 'groupware.user.edit', [ 'user' => $user->id ] );
-                            @endphp
-                            <tr>
-                                <td>
+                    <div class="container-fluid">
+                        <div class="row no-gutters">
+                            <div class="d-none d-sm-block col-1">詳細</div>
+                            @if( isset( $show['dept_id'] )) <div class="d-none d-sm-block col-2">部署</div> @endif
+                            @if( isset( $show['grade']   )) <div class="d-none d-sm-block col-2">役職</div> @endif
+                            <div class="d-none d-sm-block col-3">名前</div>
+                            @if( isset( $show['email']   )) <div class="d-none d-sm-block col-3">メール</div> @endif
+                            @if( isset( $show['retired'] )) <div class="d-none d-sm-block col-2">退職</div>   @endif
+                            
+                            <div class="col-12"></div>
+
+                            @foreach( $users as $user )
+                                @php
+                                    $show_route = route( 'groupware.user.show', [ 'user' => $user->id ] );
+                                    $edit_route = route( 'groupware.user.edit', [ 'user' => $user->id ] );
+                                @endphp
+                                <div class="col-12 col-sm-1">
                                     <a class="btn btn-sm btn-outline-dark" href="{{ $show_route }}">詳細</a>
                                     @can( 'update', $user )
                                         <a class="btn btn-sm btn-warning"  href="{{ $edit_route }}">変更</a>
                                     @endcan
-                                </td>
+                                </div>
                                 
                                 @if( isset( $show['dept_id'] )) 
-                                    <td>{{ op( $user->dept )->name }}</td>
+                                    <div class="col-5 col-sm-2 text-truncate">{{ op( $user->dept )->name }}</div>
                                 @endif
 
                                 @if( isset( $show['grade'] )) 
-                                    <td>{{ $user->grade }}</td>
+                                    <div class="col-5 col-sm-2 text-truncate">{{ $user->grade }}</div>
                                 @endif
                                 
-                                <td>{{ $user->name }}</td>
+                                <div class="col-12 col-sm-3 text-truncate">{{ $user->name }}</div>
 
                                 @if( isset( $show['email'] )) 
-                                    <td>{{ $user->email }}</td>
+                                    <div class="col-12 col-sm-3 text-truncate">{{ $user->email }}</div>
                                 @endif
                                 
                                 @if( isset( $show['retired'] )) 
-                                    <td>
+                                    <div class="col-12 col-sm-2 text-truncate">
                                         @if( $user->retired ) {{ $user->date_of_retired }} 退職 @endif                                        
-                                    </td>
+                                    </div>
                                 @endif
-                            </tr>
-                        @endforeach
-                    </table>
+                                <div class="d-none d-sm-block col-12"></div>
+                                <div class="d-block d-sm-none col-12 border border-secondary mb-1 mt-1"></div>
+
+                            @endforeach
+                        </div> 
+                    </div>
 
                     @if( method_exists( $users, 'links' )) 
                         {{ $users->appends( request()->all() )->links() }}

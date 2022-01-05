@@ -28,18 +28,18 @@ $array_role_select = ACL::get_array_roles_for_select();
 
 {{ Form::open( [ 'route' => 'groupware.calendar.index' , 'method' => 'GET', 'id' => 'search_form' ] ) }}
     @csrf
-    <div class="border border-dark m-1">
-        <div class="row">        
-            <div class="col-3 p-3 m-2">
+    <div class="border border-dark m-1 contaner-fluid">
+        <div class="row no-gutters">
+            <div class="col-12 col-md-3 p-3 m-2">
                 {{-- User_id --}}
                 <x-select_user :array="$array_user_form" />
             </div>
-            <div class="col-8 p-3 m-2">
-                <div class='row'>
+            <div class="col-12 col-md-8 p-3 m-2">
+                <div class='row no-gutters'>
                     {{-- アクセス権限 --}}
                     <fieldset class="border border-dark col-12 p-1">
                         <div>アクセスリスト設定権限</div>
-                        {{ Form::select( "find[keyword]", $search_keywords, op( $find )['keyword'], [ 'class' => 'form-control col-5' ] ) }}
+                        {{ Form::select( "find[keyword]", $search_keywords, op( $find )['keyword'], [ 'class' => 'form-control col-12 col-md-5' ] ) }}
                         
                         <div class="col-12">公開種別</div>
                         @foreach( $calendar_types as $type => $value )

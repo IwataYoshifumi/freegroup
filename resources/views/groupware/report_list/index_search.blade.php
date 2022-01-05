@@ -22,19 +22,19 @@ $array_role_select = ACL::get_array_roles_for_select();
 @endphp
 {{ Form::open( [ 'route' => $route_name, 'method' => 'GET', 'id' => 'search_form' ] ) }}
     @csrf
-    <div class="border border-dark m-1">
-        <div class="row container">
+    <div class="border border-dark m-1 container-fluid">
+        <div class="row no-gutters">
             @if( is_debug() )
                 <div class="col-12 m-1 p-1 container" style="color:red">@icon( debug )  開発モード中はログインユーザの検索は外されます</div>
             @endif
             
-            <div class="col border border-dark m-1 p-1 container">
+            <div class="col-12 col-md border border-dark m-1 p-1 container">
                 日報リスト名
                 {{ Form::text( 'name', $request->name, [ 'class' => 'form-control container' ] ) }}
             </div>
 
             {{-- ユーザ検索 --}}
-            <fieldset class="col-4 border border-dark m-1 p-1">
+            <fieldset class="col-12 col-md-4 border border-dark m-1 p-1">
                     <div class="m-2">アクセス権限</div>
 
                     {{ Form::select( 'user_auth', $report_list_auths, $request->user_auth, [ 'class' => 'form-control w-75' ] ) }}
@@ -52,18 +52,11 @@ $array_role_select = ACL::get_array_roles_for_select();
                     --}}
 
                     <div class="m-2">検索対象社員<span title="自分は必ず検索対象に含まれます" class="m-1 uitooltip">@icon( info-circle )</span></div>
-                    @if( 0 and is_debug() ) 
-                        <x-checkboxes_users :users="op( $request )->users" name='users' button="社員検索" />
-                    @else 
-                        <input type=number name='users[]' value="{{ $auth->id }}">{{ $auth->name }}
-                    
-                    @endif
-
+                    <x-checkboxes_users :users="op( $request )->users" name='users' button="社員検索" />
             </fieldset>
 
-
-            <fieldset class="col-4 border border-dark m-1 p-1">
-                    <div class="m-2">検索対象日報リスト</div>
+            <fieldset class="col-12 col-md-4 border border-dark m-1 p-1">
+                    <div class="m-2">公開種別</div>
                     @php
                         $array = ( is_array( $request->types )) ? $request->types : [];
                     @endphp
@@ -77,7 +70,7 @@ $array_role_select = ACL::get_array_roles_for_select();
                         {{ Form::checkbox( 'types[]', $type, $checked, [ 'class' => 'checkboxradio', 'id' => $id ] ) }}
                     @endforeach
 
-
+                    <div class="m-2">その他の検索条件</div>
                     @php 
                         $checked = ( $request->show_hidden ) ? 1 : 0;
                     @endphp
@@ -89,16 +82,8 @@ $array_role_select = ACL::get_array_roles_for_select();
                     @endphp
                     <label for="show_disabled">無効日報リストも検索</label>
                     {{ Form::checkbox( "show_disabled", 1,  $checked, [ 'id' => 'show_disabled', "class" => "checkboxradio m-1" ] ) }}
-                    
-                    
             </fieldset>
 
-
-
-
-
-                        
-    
         </div> {{-- close row --}}
 
         <div class="col-12 m-1 container">

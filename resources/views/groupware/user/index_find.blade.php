@@ -11,75 +11,66 @@ use App\Models\Dept;
     {{ Form::hidden( 'SearchQuery', 1 ) }} 
     @csrf
                 
-    <div class="container border border-dark p-1 w-95 m-1 p-1">
-        <div class="row w-90 container m-lg-1 p-lg-1 ">
+    <div class="border border-dark p-sm-1 container-fluid">
+        <div class="row no-gutters">
             <div class="col-4 d-none d-lg-block p-1">名前</div>
             <div class="col-4 d-none d-lg-block p-1">メール</div>
-            <div class="col-4 d-none d-lg-block p-1">退職</div>
+            <div class="col-4 d-none d-lg-block p-1">在職・退職</div>
             
-        </div>
-        <div class="row p-1 container m-1">
-            <div class="col-12 d-lg-none p-1">名前</div>
+            <div class="col-12 d-lg-none my_label">名前</div>
             {{ Form::text( 'find[name]', old( 'find[name]', ( isset( $find['name'] )) ? $find['name'] : "" ), 
                             ['class' => 'form-control col-lg-4 p-1 clearfix', 'placeholder' => '名前' ] ) }}
-            <div class="col-12 d-lg-none p-1">メール</div>
+            <div class="col-12 d-lg-none my_label">メール</div>
 
             {{ Form::text( 'find[email]', old( 'find[email]', ( isset( $find['email'] )) ? $find['email'] : null  ), 
-                            ['class' => 'form-control col-lg-4 p-1 clearfix', ] ) }}
-            <div class="col-4 d-lg-none m-2 p-1">退職</div>
+                            ['class' => 'form-control col-lg-4 p-1 clearfix', 'placeholder' => 'メールアドレス' ] ) }}
+            <div class="col-12 d-lg-none my_label">在職・退職</div>
             {{ Form::select( 'find[retired]', [ "" => "", 0 => "在職", 1 => "退社", 'all' => "全て" ] , 
                                             old( 'find[retired]', ( isset( $find['retired'] )) ? $find['retired'] : "" ),
-                                            ['class' => 'form-control col-6 col-lg-2 m-2 m-lg-0 p-1 clearfix' ] )  }}
+                                            ['class' => 'form-control col-6 col-lg-2' ] )  }}
 
-        </div>
-        <div class="row w-90 container m-lg-1 p-lg-1 ">
-            <div class="col-4 d-none d-lg-block p-1">部署</div>
-            <div class="col-4 d-none d-lg-block p-1">表示数</div>
-            <div class="col-4 d-none d-lg-block p-1"></div>
-        </div>
+            <div class="col-4 d-none d-lg-block">部署</div>
+            <div class="col-4 d-none d-lg-block">表示数</div>
+            <div class="col-4 d-none d-lg-block"></div>
 
-        <div class="row w-100 container p-1 m-1">        
-            <div class="col-4 d-lg-none m-2 p-1">部署</div>
+            <div class="col-12 d-lg-none my_label">部署</div>
             @php
                 $depts = Dept::getArrayforSelect();
             @endphp
             {{ Form::select( 'find[dept_id]', $depts, old( 'find[dept_id]', ( isset( $find['dept_id'] )) ? $find['dept_id'] : null ),
-                            ['class' => 'form-control form-control col-8 col-lg-3 m-2 m-lg-0 p-1' ] ) }}
+                            ['class' => 'form-control form-control col-8 col-lg-3' ] ) }}
             
             
-            <div class="col-4 d-lg-none m-2 p-1">表示数</div>
+            <div class="col-12 d-lg-none my_label">表示数</div>
                 {{ Form::select( 'find[paginate]', config( 'constant.pagination' ),
                                     old( 'find[paginate]', ( isset( $find['paginate'] )) ? $find['paginate'] : ""  ),
-                                    ['class' => 'form-control col-6 col-lg-2 m-2 m-lg-0 p-1' ] )  }}
+                                    ['class' => 'form-control col-6 col-lg-2' ] )  }}
         </div>
-        
-
     </div>
         
-    <div class='container border border-dark m-1'>
+    <div class='container border border-dark mt-1'>
         <a class="col-12 btn btn-sm btn-outline text-left" data-toggle="collapse" href="#show_items" role="button" aria-expanded="true" aria-controls="collapseExample">
             表示項目<div class="navbar-toggler-icon"></div>
         </a>
         <div class="col-12"></div>
         <div class="container w-100 m-1 collapse" id="show_items">
-            <div class='row'>
-                @php 
-                    $show_items   = [ 'email','grade', 'dept_id', 'retired' ];
-                    // if_debug( config( 'user.columns_name' ));
-                    //if_debug( $show );
+            @php 
+                $show_items   = [ 'email','grade', 'dept_id', 'retired' ];
+                // if_debug( config( 'user.columns_name' ));
+                //if_debug( $show );
+            @endphp
+
+            @foreach( $show_items as $item ) 
+                @php
+                    ( in_array( $item, $show, true )) ? $checked = 1 : $checked = 0 ;
                 @endphp
-    
-                @foreach( $show_items as $item ) 
-                    @php
-                        ( in_array( $item, $show, true )) ? $checked = 1 : $checked = 0 ;
-                    @endphp
-                    <div class='col'>{{ Form::checkbox( "show[".$item."]", $item, $checked ) }} {{ config( 'user.columns_name')[$item] }}</div>
-                @endforeach
-            </div>
+                <label for="{{ $item }}">{{ config( 'user.columns_name')[$item] }}</label>
+                {{ Form::checkbox( "show[".$item."]", $item, $checked, [ 'id' => $item, 'class' => 'checkboxradio' ] ) }} 
+            @endforeach
         </div>
     </div>
     
-    <div class='container border border-dark m-1'>
+    <div class='container border border-dark mt-1'>
         <a class="col-12 btn btn-sm btn-outline text-left" data-toggle="collapse" href="#sort" role="button" aria-expanded="true" aria-controls="collapseExample">
             ソート<div class="navbar-toggler-icon"></div>
         </a>
@@ -107,7 +98,7 @@ use App\Models\Dept;
         </div>
 
     </div>
-    <div class="row w-100 container p-1 m-1">
+    <div class="row w-100 container mt-1">
         <button type="submit" class="btn btn-search col-6 col-lg-3">検索</button>
     </div>
 {{ Form::close() }}

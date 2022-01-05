@@ -10,6 +10,7 @@ use App\myHttp\GroupWare\Models\AccessList;
 use App\myHttp\GroupWare\Models\ACL;
 use App\myHttp\GroupWare\Models\File as MyFile;
 use App\myHttp\GroupWare\Models\Search\ListOfUsersInTheAccessList;
+use App\Http\Helpers\ScreenSize;
 
 //　表示用データの取得
 //
@@ -58,24 +59,40 @@ $class_names = [ Group::class => "グループ",
     <hr>
 
     <table class="table table-border col-11 m-3 p-1">
-        <tr>
-            <th>順序</th>
-            <th>権限</th>
-            <th>種別</th>
-            <th colspan=2>社員・部署・グループ</th>
-        </tr>
-        @foreach( $acls as $acl )
+        @if( ! ScreenSize::isMobile() )
             <tr>
-                <td>{{ $acl->order            }}</td>
-                <td>{{ $roles[ $acl->role ]   }}</td>
-                <td>{{ $acl->p_type()         }}</td>
-                <td>{{ $acl->p_aclable_name() }}</td>
-                <td>
-                    <a class="btn btn-sm btn-outline-secondary" href="{{ $acl->aclable_url() }}">詳細</a>
-                </td>
+                <th>順序</th>
+                <th>権限</th>
+                <th>種別</th>
+                <th colspan=2>社員・部署・グループ</th>
             </tr>
+        @endif
+        @foreach( $acls as $acl )
+            @if( ! ScreenSize::isMobile() )
+                <tr>
+                    <td>{{ $acl->order            }}</td>
+                    <td>{{ $roles[ $acl->role ]   }}</td>
+                    <td>{{ $acl->p_type()         }}</td>
+                    <td>{{ $acl->p_aclable_name() }}</td>
+                    <td>
+                        <a class="btn btn-sm btn-outline-secondary" href="{{ $acl->aclable_url() }}">詳細</a>
+                    </td>
+                </tr>
+            @else
+                <tr>
+                    <td>
+                        <div class="row">
+                            <div class="col-4 text-truncate">権限：</div>
+                            <div class="col-8 text-truncate">{{ $roles[ $acl->role ]   }}</div>
+                            <div class="col-4 text-truncate">{{ $acl->p_type()         }}：</div>
+                            <div class="col-8 text-truncate"><a href="{{ $acl->aclable_url() }}">{{ $acl->p_aclable_name() }}</a></div>
+                        </div>                        
+                    </td>                    
+                </tr>
+            @endif
         @endforeach
     </table>
+    
     
     <div class="col-12"></div>
     <a class="btn btn-outline-secondary m-3 p-1 runEffect" data-target="user_role_list">ユーザの権限リストを表示</a>

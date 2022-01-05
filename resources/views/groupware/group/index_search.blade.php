@@ -23,19 +23,19 @@ $array_role_select = ACL::get_array_roles_for_select();
 
 {{ Form::open( [ 'route' => Route::currentRouteName(), 'method' => 'GET', 'id' => 'search_form' ] ) }}
     @csrf
-    <div class="border border-dark m-1">
+    <div class="border border-dark m-1 container-fluid">
         <div class="row">        
             
             <div class="col-12">
                 <a class="btn btn-secondary text-white m-2" onClick="submit_btn_1()">自分が管理者のグループを検索</a> 
             </div>
             
-            <div class="col-3 pt-1 m-2" id="search_access_list_user">
+            <div class="col-11 col-md-3 pt-1 m-2" id="search_access_list_user">
                 {{-- User_id --}}
                 <x-select_user :array="$array_user_form" />
             </div>
             
-            <div class="col-8 pt-1 m-2" id="search_access_list_role">
+            <div class="col-11 col-md-8 pt-1 m-2" id="search_access_list_role">
                 <div class='row'>
                     {{-- アクセスリスト検索 --}}
                     <fieldset class="border border-dark col-12">

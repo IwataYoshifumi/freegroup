@@ -30,18 +30,18 @@ $array_role_select = ACL::get_array_roles_for_select();
 
 {{ Form::open( [ 'route' => 'groupware.tasklist.index' , 'method' => 'GET', 'id' => 'search_form' ] ) }}
     @csrf
-    <div class="border border-dark m-1">
-        <div class="row">        
-            <div class="col-3 p-3 m-2">
+    <div class="border border-dark m-1 container-fluid">
+        <div class="row no-gutters">        
+            <div class="col-12 col-md-3 p-3 m-2">
                 {{-- User_id --}}
                 <x-select_user :array="$array_user_form" />
             </div>
-            <div class="col-8 p-3 m-2">
+            <div class="col-12 col-md-8 p-3 m-2">
                 <div class='row'>
                     {{-- アクセス権限 --}}
                     <fieldset class="border border-dark col-12 p-1">
                         <div>アクセスリスト設定権限</div>
-                        {{ Form::select( "find[auth]", $search_auths, op( $find )['auth'], [ 'class' => 'form-control col-5' ] ) }}
+                        {{ Form::select( "find[auth]", $search_auths, op( $find )['auth'], [ 'class' => 'form-control col-12 col-md-5' ] ) }}
                         
                         <div class="col-12">公開種別</div>
                         @foreach( $tasklist_types as $type => $value )
@@ -57,10 +57,7 @@ $array_role_select = ACL::get_array_roles_for_select();
                         {{ Form::checkBox( "find[not_use]", 1, op( $find )['not_use'], [ 'id' => 'not_use', 'class' => 'checkbox_class' ] ) }}
                         <label for='disabled'>無効タスクリスト</label>
                         {{ Form::checkBox( "find[disabled]", 1, op( $find )['disabled'], [ 'id' => 'disabled', 'class' => 'checkbox_class' ] ) }}
-                        
-                        
                     </fieldset>
-
                 </div>
             </div>            
     
