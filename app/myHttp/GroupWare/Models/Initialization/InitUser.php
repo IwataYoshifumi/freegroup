@@ -74,6 +74,10 @@ class InitUser  {
         InitReportProp::forUser( $user );
         InitTaskList::forUser( $user );
         
+        //　AccessListUserRole DBを更新
+        //
+        AccessListUserRoleUpdate::withUser( $user );
+        
         //　アクセス権がなくなったカレンダーのGoogleカレンダー同期を解除
         //
         self::unSyncGoogleCalendars( $user );

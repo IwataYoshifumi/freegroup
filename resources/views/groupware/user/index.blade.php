@@ -31,12 +31,12 @@ use App\User;
 
                     <div class="container-fluid">
                         <div class="row no-gutters">
-                            <div class="d-none d-sm-block col-1">詳細</div>
+                            <div class="d-none d-sm-block col-2">詳細</div>
                             @if( isset( $show['dept_id'] )) <div class="d-none d-sm-block col-2">部署</div> @endif
                             @if( isset( $show['grade']   )) <div class="d-none d-sm-block col-2">役職</div> @endif
                             <div class="d-none d-sm-block col-3">名前</div>
                             @if( isset( $show['email']   )) <div class="d-none d-sm-block col-3">メール</div> @endif
-                            @if( isset( $show['retired'] )) <div class="d-none d-sm-block col-2">退職</div>   @endif
+                            @if( isset( $show['retired'] )) <div class="d-none d-sm-block col-1">退職</div>   @endif
                             
                             <div class="col-12"></div>
 
@@ -45,7 +45,7 @@ use App\User;
                                     $show_route = route( 'groupware.user.show', [ 'user' => $user->id ] );
                                     $edit_route = route( 'groupware.user.edit', [ 'user' => $user->id ] );
                                 @endphp
-                                <div class="col-12 col-sm-1">
+                                <div class="col-12 col-md-2">
                                     <a class="btn btn-sm btn-outline-dark" href="{{ $show_route }}">詳細</a>
                                     @can( 'update', $user )
                                         <a class="btn btn-sm btn-warning"  href="{{ $edit_route }}">変更</a>
@@ -53,21 +53,21 @@ use App\User;
                                 </div>
                                 
                                 @if( isset( $show['dept_id'] )) 
-                                    <div class="col-5 col-sm-2 text-truncate">{{ op( $user->dept )->name }}</div>
+                                    <div class="col-5 col-md-2 text-truncate">{{ op( $user->dept )->name }}</div>
                                 @endif
 
                                 @if( isset( $show['grade'] )) 
-                                    <div class="col-5 col-sm-2 text-truncate">{{ $user->grade }}</div>
+                                    <div class="col-5 col-md-2 text-truncate">{{ $user->grade }}</div>
                                 @endif
                                 
-                                <div class="col-12 col-sm-3 text-truncate">{{ $user->name }}</div>
+                                <div class="col-12 col-md-3 text-truncate">{{ $user->name }}</div>
 
                                 @if( isset( $show['email'] )) 
-                                    <div class="col-12 col-sm-3 text-truncate">{{ $user->email }}</div>
+                                    <div class="col-12 col-md-3 text-truncate">{{ $user->email }}</div>
                                 @endif
                                 
                                 @if( isset( $show['retired'] )) 
-                                    <div class="col-12 col-sm-2 text-truncate">
+                                    <div class="col-12 col-md-1 text-truncate">
                                         @if( $user->retired ) {{ $user->date_of_retired }} 退職 @endif                                        
                                     </div>
                                 @endif
